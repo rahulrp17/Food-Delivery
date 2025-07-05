@@ -10,7 +10,7 @@ const stripe=new Stripe(process.env.STRIPE_SECRET_KEY);
 
 dotenv.config();
 const placeOrder=async(req,res)=>{
-  const frontend_url="http://localhost:5173";
+  const frontend_url="https://food-delivery-frontend-ib75.onrender.com/";
 
     try {
         const newOrder = new orderModel({
