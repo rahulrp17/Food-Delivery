@@ -1,0 +1,65 @@
+.my-orders{
+    width: 80%;
+   margin: 50px 0px; 
+   align-items: center;
+   margin: auto;
+  
+}
+.my-orders .container{   
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+.order-container{
+   display: grid;
+   grid-template-columns: 0.5fr 2fr 1fr 1fr 2fr 1fr;
+   align-items: center;
+   gap: 30px;
+   padding: 12px 15px;
+   border: 1px solid #9d7777;
+   font-size: 13px;
+   border: 1px solid tomato;
+}
+.order-container img{
+    max-width: 50px;
+}
+
+.order-container p span{
+    color: tomato;
+}
+
+.order-container p b{
+    color: rgb(55, 54, 54);
+    font-weight: 600;
+}
+.order-container button{
+    padding: 5px 10px;
+    border-radius: 5px;
+    border: none;
+    background-color: #eee9e9;
+    color: rgb(9, 0, 0);
+    cursor: pointer;
+    height: 40px;
+}
+
+.order-container button:hover{
+    background-color: tomato;
+    box-shadow: 0px 0px 10px 0px tomato;
+    transform: scale(1.05);
+    transition: 1s;
+    color: white;
+}
+
+@media (max-width: 900px) {
+    .order-container{
+        grid-template-columns: 1fr 2fr 1fr;
+        row-gap: 5px;
+        font-size: 12px;
+        text-align: center;
+    }   
+    .order-container img{
+        max-width: 40px;
+        margin: auto auto;
+    }
+ }
