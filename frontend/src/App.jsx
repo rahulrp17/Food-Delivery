@@ -10,7 +10,7 @@ import Footer from "./component/Footer/Footer";
 import Home from "./pages/Home/Home";
 import Cart from "./pages/Cart/Cart";
 import PlaceOrder from "./pages/PlaceOrder/PlaceOrder";
-import Verify from "./pages/Verify/Verify";
+import Verify from "./pages/verify/Verify";
 import MyOrders from "./pages/MyOrders/MyOrders";
 import LoginPopUp from "./component/LoginPopUp/LoginPopUp";
 
