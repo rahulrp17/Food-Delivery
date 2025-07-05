@@ -8,7 +8,7 @@ import ProtectedRoute from "./ProtectedRoutes";
 import Navbar from "./component/Navbar/Navbar";
 import Footer from "./component/Footer/Footer";
 import Home from "./pages/Home/Home";
-import Cart from "./pages/Cart/cart";
+import Cart from "./pages/Cart/Cart";
 import PlaceOrder from "./pages/PlaceOrder/PlaceOrder";
 import Verify from "./pages/Verify/Verify";
 import MyOrders from "./pages/MyOrders/MyOrders";
