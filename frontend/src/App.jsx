@@ -14,12 +14,12 @@ import Verify from "./pages/verify/Verify";
 import MyOrders from "./pages/MyOrders/MyOrders";
 import LoginPopUp from "./component/LoginPopUp/LoginPopUp";
 
-// Admin components
-import AdminNavbar from "./component/navbar/AdminNavbar";
-import Sidebar from "./component/Sidebar/Sidebar";
-import Add from "./pages/add/Add";
-import List from "./pages/List/List";
-import Orders from "./pages/orders/Orders";
+// // Admin components
+// import AdminNavbar from "./component/navbar/AdminNavbar";
+// import Sidebar from "./component/Sidebar/Sidebar";
+// import Add from "./pages/add/Add";
+// import List from "./pages/List/List";
+// import Orders from "./pages/orders/Orders";
 
 function App() {
   const [showLogin, setShowLogin] = useState(false);
@@ -28,42 +28,6 @@ function App() {
   return (
     <>
       {showLogin && <LoginPopUp setShowLogin={setShowLogin} />}
-
-      {role === "admin" ? (
-        <div className="admin-app">
-          <AdminNavbar />
-          <hr />
-          <div className="app-content">
-            <Sidebar />
-            <Routes>
-              <Route
-                path="/add"
-                element={
-                  <ProtectedRoute allowedRoles={["admin"]}>
-                    <Add url="http://localhost:4000" />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/list"
-                element={
-                  <ProtectedRoute allowedRoles={["admin"]}>
-                    <List url="http://localhost:4000" />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/orders"
-                element={
-                  <ProtectedRoute allowedRoles={["admin"]}>
-                    <Orders url="http://localhost:4000" />
-                  </ProtectedRoute>
-                }
-              />
-            </Routes>
-          </div>
-        </div>
-      ) : (
         <div className="user-app">
           <Navbar setShowLogin={setShowLogin} />
           <Routes>
