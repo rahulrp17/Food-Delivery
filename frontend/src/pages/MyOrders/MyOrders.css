@@ -2,8 +2,10 @@
     width: 80%;
    margin: 50px 0px; 
    align-items: center;
-   margin: auto;
-  
+   margin:  auto;
+  position: relative;
+  top: 100px;
+  padding-bottom: 70px;
 }
 .my-orders .container{   
     display: flex;
