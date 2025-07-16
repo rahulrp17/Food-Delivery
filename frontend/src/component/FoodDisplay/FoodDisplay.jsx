@@ -2,9 +2,12 @@ import React, { useContext } from "react";
 import "./FoodDisplay.css";
 import { StoreContext } from "../../context/StoreContext";
 import FoodItem from "../FoodItem/FoodItem";
+import Loader from "../Loader/Loader";
 
 const FoodDisplay = ({ category }) => {
   const { food_list } = useContext(StoreContext);
+    const { loading } = useContext(StoreContext);
+  if (loading) return <Loader />;
 
   return (
     <div className="food-display" id="food-display">
@@ -21,12 +24,12 @@ const FoodDisplay = ({ category }) => {
                 description={item.description}
                 image={item.image}
               />
-            );
+            )
           }
         })}
       </div>
     </div>
-  );
-};
+  )
+}
 
 export default FoodDisplay;
