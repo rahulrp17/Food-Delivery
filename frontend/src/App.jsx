@@ -28,10 +28,10 @@ function App() {
 
   return (
     <>
+       <ScrollToTop />
       {showLogin && <LoginPopUp setShowLogin={setShowLogin} />}
         <div className="user-app">
           <Navbar setShowLogin={setShowLogin} />
-       <ScrollToTop />
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/cart" element={<Cart />} />
