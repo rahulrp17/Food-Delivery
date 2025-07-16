@@ -3,6 +3,7 @@
     width: 80vw;
     align-items: center;
     margin: auto;
+    height: 100vh;
 }
 .cartItems-title{
     display: grid;
