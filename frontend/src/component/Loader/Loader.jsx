@@ -4,7 +4,7 @@ import './Loader.css';
 
 const Loader = () => {
   return (
-    <div className="loader-c">
+   <div  style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '50vh'}}>
       <div className="spinner"></div>
     </div>
   );
