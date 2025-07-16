@@ -1,5 +1,5 @@
 .footer{
-    margin-top: 50Px;
+    margin-top: 200Px;
     background-color: #373737;
     color: #fff;
     padding: 20px 8vw;
@@ -9,7 +9,7 @@
     justify-content: center;
     gap: 20px;
     padding-top: 80px;
-     position: absolute;
+     
 }
 .footer-content{
     display: grid;
@@ -70,8 +70,6 @@
     text-align: center;
     margin-top: -19;
    }
-   .footer{
-    max-height: 710px;
-   }
+ 
 }
     
