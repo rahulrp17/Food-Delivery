@@ -13,7 +13,7 @@ import PlaceOrder from "./pages/PlaceOrder/PlaceOrder";
 import Verify from "./pages/verify/Verify";
 import MyOrders from "./pages/MyOrders/MyOrders";
 import LoginPopUp from "./component/LoginPopUp/LoginPopUp";
-import ScrollToTop from "./ScrollTop";
+import ScrollToTop from "./ScrollToTop";
 
 // // Admin components
 // import AdminNavbar from "./component/navbar/AdminNavbar";
@@ -29,9 +29,9 @@ function App() {
   return (
     <>
       {showLogin && <LoginPopUp setShowLogin={setShowLogin} />}
-       <ScrollToTop />
         <div className="user-app">
           <Navbar setShowLogin={setShowLogin} />
+       <ScrollToTop />
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/cart" element={<Cart />} />
