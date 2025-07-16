@@ -1,13 +1,17 @@
 .cart{
-    margin-top: 100px;
+    margin-top: 300px;
     width: 80vw;
     align-items: center;
     margin: auto;
-    height: 100vh;
+   
+   
+}
+.cartItems{
+ margin-top: 120px;
 }
 .cartItems-title{
     display: grid;
-    grid-template-columns: 1fr 1.9fr 1fr 1fr 1fr 0.5fr;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
     align-items: center;
     font-size: max(1vw,12px);
     font-weight: 600;
@@ -17,6 +21,7 @@
 .cart-items-item{
   margin: 10px 0px;
   color: black;
+  gap: 8px;
 }
 .cart-items-item img{
   width: 50px;
