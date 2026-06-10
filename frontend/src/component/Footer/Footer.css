@@ -11,6 +11,10 @@
     padding-top: 80px;
      
 }
+.footer-logo{
+    width: 150px;
+    height: 100px;
+}
 .footer-content{
     display: grid;
     grid-template-columns: 2fr 1fr 1fr;
