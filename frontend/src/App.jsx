@@ -34,6 +34,7 @@ function App() {
           <Navbar setShowLogin={setShowLogin} />
           <Routes>
             <Route path="/" element={<Home />} />
+            <Route path="/login" element={<LoginPopUp />}
             <Route path="/cart" element={<Cart />} />
             <Route path="/placeOrder" element={<PlaceOrder />} />
             <Route path="/verify" element={<Verify />} />
