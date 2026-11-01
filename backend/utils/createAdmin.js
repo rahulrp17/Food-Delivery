@@ -1,26 +1,30 @@
-// utils/createAdmin.js
 import bcrypt from "bcrypt";
 import userModel from "../models/userModel.js";
 
 export const createAdminUser = async () => {
-  const existing = await userModel.findOne({ email: "admin@gmail.com" });
+  const email = process.env.ADMIN_EMAIL;
+  const password = process.env.ADMIN_PASSWORD;
+
+  if (!email || !password) {
+    console.log("Admin seed skipped: ADMIN_EMAIL/ADMIN_PASSWORD not set");
+    return;
+  }
+
+  const existing = await userModel.findOne({ email });
   if (existing) {
-   
     console.log("Admin already exists");
     return;
   }
 
-  const hashedPassword = await bcrypt.hash("12345678", 10);
+  const hashedPassword = await bcrypt.hash(password, 10);
 
-  const admin = new userModel({
+  await userModel.create({
     name: "admin",
-    email: "admin@gmail.com",
+    email,
     password: hashedPassword,
     role: "admin",
-    cartData: {}
+    cartData: {},
   });
 
-  await admin.save();
- 
-  console.log("✅ Admin user created: admin@gmail.com / 12345678");
+  console.log("Admin user created");
 };
