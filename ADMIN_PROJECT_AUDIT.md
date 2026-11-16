@@ -815,3 +815,36 @@ Only the store information tab had E2E coverage; the other nine tabs were untest
 | E2E `e2e/settings-tabs.spec.js` | 8 tests passed |
 | Full E2E suite | 11 specs / **18 tests passed** |
 
+### 15.9 Backend environment variables (2026-11-16)
+
+The backend env schema (`backend/src/config/env.js`) declares seventeen variables, but the local `.env` only held six of them and two implemented variables were missing from the documentation.
+
+**Added to `backend/.env` (local, git-ignored)**
+
+`PORT`, `NODE_ENV`, `CLIENT_URL`, `ADDITIONAL_ORIGINS`, `COOKIE_DOMAIN`, `TRUST_PROXY`, `ACCESS_TOKEN_TTL`, `REFRESH_TOKEN_TTL_DAYS`, `STORAGE_DRIVER`, `CLOUDINARY_URL`, `LOG_LEVEL` and the `REFRESH_CATEGORY_IMAGES` script flag. Every one of them was previously relying on the schema default, so the effective configuration did not change — they are now explicit and documented.
+
+**`backend/.env.example`**
+
+Every variable now carries a comment that says what it does and when it matters, including the two that are easy to get wrong:
+
+- `TRUST_PROXY` — must be `true` behind a proxy (Render, Heroku, Nginx), otherwise every visitor shares one rate-limit bucket and the client IP is wrong.
+- `COOKIE_DOMAIN` — empty in development, the shared domain in production.
+- `ADDITIONAL_ORIGINS` — the deployed frontend origin, comma separated.
+
+**Documentation**
+
+| File | Fix |
+| --- | --- |
+| `ARCHITECTURE.md` §10.1 | Added the missing `ADDITIONAL_ORIGINS` and `TRUST_PROXY` rows and corrected the "required" column against the actual schema. |
+| `ARCHITECTURE.md` §10.2 | Removed `VITE_STRIPE_PUBLISHABLE_KEY` and `VITE_APP_NAME` — neither exists in the code (checkout runs through a backend Stripe Checkout session, the brand name is hardcoded). Only `VITE_API_URL` is read. |
+| `README.md` | Split the env list into required and optional with the default for each, and corrected the stale backend test count. |
+
+**Verification**
+
+| Gate | Result |
+| --- | --- |
+| `node -e "import('./src/config/env.js')"` | Parses the new `.env` cleanly, all seventeen values resolved |
+| `backend: npm test` | 18 files, **105 tests passed** (`NODE_ENV=test` still selects the test-only database) |
+| `frontend: npm run test:e2e` | The E2E helper still reads `ADMIN_EMAIL`/`ADMIN_PASSWORD` from the rewritten `.env` |
+
+

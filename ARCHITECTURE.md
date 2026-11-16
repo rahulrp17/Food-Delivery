@@ -933,28 +933,32 @@ Error boundary wraps the router; a global `ErrorState` renders on render crashes
 
 | Key | Required | Notes |
 |---|---|---|
-| `NODE_ENV` | yes | `development` / `test` / `production` |
+| `NODE_ENV` | no | `development` (default) / `test` / `production` |
 | `PORT` | no | default 4000 |
-| `MONGO_URI` | yes | env only, never source |
-| `JWT_SECRET` | yes | >= 64 random bytes |
+| `MONGO_URI` | yes | env only, never source. Defaults to a local test database when `NODE_ENV=test` |
+| `JWT_SECRET` | yes | >= 32 characters. Defaults to a test-only value when `NODE_ENV=test` |
 | `ACCESS_TOKEN_TTL` | no | default `15m` |
 | `REFRESH_TOKEN_TTL_DAYS` | no | default `30` |
-| `CLIENT_URL` | yes | CORS + Stripe redirect base |
-| `COOKIE_DOMAIN` | no | empty in dev |
-| `STRIPE_SECRET_KEY` | yes | |
-| `STRIPE_WEBHOOK_SECRET` | yes | production |
-| `STORAGE_DRIVER` | no | `local` / `cloudinary` |
+| `CLIENT_URL` | no | default `http://localhost:5173`. CORS + CSRF origin check + Stripe redirect base |
+| `ADDITIONAL_ORIGINS` | no | extra CORS/CSRF origins, comma separated (e.g. the deployed frontend) |
+| `COOKIE_DOMAIN` | no | empty in dev; the shared domain in production so the cookie reaches every host |
+| `TRUST_PROXY` | no | default `false`; set to `true` behind a proxy so rate limits see the real client IP |
+| `STRIPE_SECRET_KEY` | production | payments |
+| `STRIPE_WEBHOOK_SECRET` | production | webhook signature check |
+| `STORAGE_DRIVER` | no | `local` (default) / `cloudinary` |
 | `CLOUDINARY_URL` | no | required when driver is cloudinary |
-| `LOG_LEVEL` | no | default `info` |
-| `ADMIN_EMAIL`, `ADMIN_PASSWORD` | seed only | never auto-create on boot |
+| `LOG_LEVEL` | no | default `info` (`silent` in tests) |
+| `ADMIN_EMAIL`, `ADMIN_PASSWORD` | no | only used by `npm run seed:admin`, never on boot |
 
 ### 10.2 Frontend env
 
 | Key | Required | Notes |
 |---|---|---|
-| `VITE_API_URL` | yes | e.g. `http://localhost:4000` (empty = same origin) |
-| `VITE_STRIPE_PUBLISHABLE_KEY` | no | only if using Stripe.js inline |
-| `VITE_APP_NAME` | no | fallback brand name |
+| `VITE_API_URL` | no | default `/api/v1`; absolute URL in production |
+
+Only `VITE_API_URL` is read by the app (`frontend/src/api/client.js`). There is
+no `VITE_STRIPE_PUBLISHABLE_KEY` — checkout runs through a backend Stripe
+Checkout session — and no `VITE_APP_NAME` — the brand name is hardcoded.
 
 ---
 

@@ -38,8 +38,28 @@ Required in `.env`:
 | --- | --- |
 | `MONGO_URI` | Connection string. Required outside tests. |
 | `JWT_SECRET` | At least 32 characters. Required outside tests. |
-| `CLIENT_URL` | Allowed CORS origin, e.g. `http://localhost:5173`. |
 | `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET` | Required when `NODE_ENV=production`. |
+
+Optional in `.env` (the defaults below are what the app uses):
+
+| Variable | Default | Notes |
+| --- | --- | --- |
+| `NODE_ENV` | `development` | `development` / `test` / `production`. |
+| `PORT` | `4000` | Backend listen port. |
+| `CLIENT_URL` | `http://localhost:5173` | CORS + CSRF origin check + Stripe redirect base. |
+| `ADDITIONAL_ORIGINS` | empty | Extra allowed origins, comma separated. |
+| `COOKIE_DOMAIN` | empty | Shared cookie domain in production. |
+| `TRUST_PROXY` | `false` | Set to `true` behind a proxy so rate limits see the real client IP. |
+| `ACCESS_TOKEN_TTL` | `15m` | Access token lifetime. |
+| `REFRESH_TOKEN_TTL_DAYS` | `30` | Refresh token lifetime. |
+| `STORAGE_DRIVER` | `local` | Uploads are written to `backend/uploads`. |
+| `CLOUDINARY_URL` | empty | Only needed for a cloud storage driver. |
+| `LOG_LEVEL` | `info` | `fatal`/`error`/`warn`/`info`/`debug`/`trace`/`silent`. |
+| `ADMIN_EMAIL`, `ADMIN_PASSWORD` | empty | Only used by `npm run seed:admin`. |
+
+`backend/.env.example` lists all of them with comments, and
+`backend/src/config/env.js` validates them at boot — a malformed value fails
+immediately instead of surfacing later as a broken request.
 
 Then:
 
@@ -59,7 +79,7 @@ npm run seed:admin   # create the ADMIN_EMAIL / ADMIN_PASSWORD admin account
 ### Backend tests
 
 ```bash
-cd backend && npm test      # 16 files, 94 tests
+cd backend && npm test      # 18 files, 105 tests
 ```
 
 ## 3. Frontend setup
