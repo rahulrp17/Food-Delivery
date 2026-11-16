@@ -1,0 +1,46 @@
+.logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.65rem;
+  color: var(--color-text);
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: -0.05em;
+  line-height: 1;
+}
+
+.mark {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 12px;
+  background: linear-gradient(145deg, var(--tomato-500), var(--tomato-700));
+  color: var(--color-on-primary);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.22),
+    inset 0 -2px 0 rgb(18 13 10 / 0.14),
+    0 6px 16px rgb(194 65 45 / 0.24);
+  transition: transform var(--duration-base) var(--ease-spring);
+}
+
+.logo:hover .mark {
+  transform: rotate(-5deg) scale(1.04);
+}
+
+.inverse {
+  color: var(--color-dark-text);
+}
+
+.inverse .mark {
+  background: var(--saffron-500);
+  color: var(--ink-950);
+}
+
+/* The logo is a link — give it a full tap target on touch-sized screens. */
+@media (max-width: 767px) {
+  .logo {
+    min-height: 44px;
+  }
+}

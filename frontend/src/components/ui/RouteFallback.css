@@ -1,0 +1,23 @@
+.route-fallback {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: calc(100dvh - 5rem);
+  padding: var(--space-8);
+}
+
+.route-fallback-spinner {
+  width: 28px;
+  height: 28px;
+  border: 3px solid var(--color-border);
+  border-top-color: var(--color-primary);
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .route-fallback-spinner {
+    animation: none;
+    border-top-color: var(--color-border-strong);
+  }
+}

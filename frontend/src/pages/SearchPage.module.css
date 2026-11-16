@@ -1,0 +1,315 @@
+/* ============================================================
+   Foodie — Search
+   A dark masthead with the search field as the hero object, then a
+   calm results area. Colours come exclusively from tokens.css.
+   ============================================================ */
+
+.header {
+  padding-block: var(--space-12) var(--space-8);
+  background:
+    radial-gradient(circle at 12% 0%, var(--color-primary-soft), transparent 26rem),
+    radial-gradient(circle at 92% 100%, var(--color-accent-soft), transparent 24rem),
+    var(--color-bg);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.headerInner {
+  display: grid;
+  gap: var(--space-8);
+  align-items: end;
+}
+
+.headerCopy {
+  min-width: 0;
+}
+
+.title {
+  max-width: 18ch;
+  margin-top: var(--space-3);
+  font-size: var(--text-h1);
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+}
+
+.lede {
+  max-width: 48ch;
+  margin-top: var(--space-3);
+  color: var(--color-text-muted);
+  font-size: var(--text-body-l);
+  line-height: 1.6;
+}
+
+/* ---------- Search field ---------- */
+.searchForm {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  max-width: 720px;
+}
+
+.searchInput {
+  min-height: 56px;
+  font-size: var(--text-body);
+}
+
+.clearButton {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-full);
+  color: var(--color-text-muted);
+}
+
+.clearButton:hover {
+  background: var(--color-surface-2);
+  color: var(--color-text);
+}
+
+/* ---------- Suggestions ---------- */
+.suggestions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  margin-top: var(--space-8);
+}
+
+.suggestionLabel {
+  color: var(--color-text-subtle);
+  font-size: var(--text-overline);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  min-height: 38px;
+  padding: 0 var(--space-4);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-full);
+  background: var(--color-surface);
+  color: var(--color-text-muted);
+  font-size: var(--text-body-s);
+  font-weight: 600;
+  transition:
+    border-color var(--duration-fast) var(--ease-standard),
+    background-color var(--duration-fast) var(--ease-standard),
+    color var(--duration-fast) var(--ease-standard);
+}
+
+.chip:hover {
+  border-color: var(--color-border-strong);
+  background: var(--color-surface-2);
+  color: var(--color-text);
+}
+
+.recentChip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: 38px;
+  padding: 0 var(--space-4);
+  border: 1px solid transparent;
+  border-radius: var(--radius-full);
+  background: var(--color-surface-2);
+  color: var(--color-text-muted);
+  font-size: var(--text-body-s);
+  font-weight: 500;
+  transition:
+    border-color var(--duration-fast) var(--ease-standard),
+    background-color var(--duration-fast) var(--ease-standard),
+    color var(--duration-fast) var(--ease-standard);
+}
+
+.recentChip:hover {
+  border-color: var(--color-border-strong);
+  background: var(--color-surface-3);
+  color: var(--color-text);
+}
+
+/* ---------- Results ---------- */
+.content {
+  padding-block: var(--space-8) var(--space-16);
+}
+
+.resultHeader {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding-bottom: var(--space-5);
+  margin-bottom: var(--space-6);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.resultTitle {
+  min-width: 0;
+}
+
+.resultCount {
+  color: var(--color-text-muted);
+  font-size: var(--text-body-s);
+  font-variant-numeric: tabular-nums;
+}
+
+.resultHeading {
+  margin-top: var(--space-1);
+  font-size: var(--text-h3);
+  letter-spacing: -0.02em;
+}
+
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: var(--space-3);
+}
+
+.toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: 44px;
+  padding: 0 var(--space-4);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-full);
+  background: var(--color-surface);
+  color: var(--color-text-muted);
+  font-size: var(--text-body-s);
+  font-weight: 600;
+  transition:
+    border-color var(--duration-fast) var(--ease-standard),
+    background-color var(--duration-fast) var(--ease-standard),
+    color var(--duration-fast) var(--ease-standard);
+}
+
+.toggle:hover {
+  border-color: var(--color-border-strong);
+  color: var(--color-text);
+}
+
+.toggleActive {
+  border-color: var(--color-success);
+  background: var(--color-success-soft);
+  color: var(--color-success);
+}
+
+.selectField {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.selectLabel {
+  color: var(--color-text-muted);
+  font-size: var(--text-caption);
+  font-weight: 600;
+}
+
+.select {
+  min-height: 44px;
+  padding: 0 var(--space-4);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-full);
+  background-color: var(--color-surface);
+  color: var(--color-text);
+  font-size: var(--text-body-s);
+  font-weight: 600;
+}
+
+.select:focus {
+  outline: none;
+  border-color: var(--color-focus);
+  box-shadow: var(--shadow-focus);
+}
+
+/* ---------- Empty ---------- */
+.empty {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.emptySuggestions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 639px) {
+  .header {
+    padding-block: var(--space-8) var(--space-5);
+  }
+
+  .headerInner {
+    gap: var(--space-5);
+  }
+
+  .title {
+    max-width: none;
+    font-size: var(--text-h2);
+    margin-top: var(--space-2);
+  }
+
+  .searchForm {
+    max-width: 100%;
+    margin-top: 0;
+  }
+
+  .suggestions {
+    margin-top: var(--space-5);
+  }
+
+  .content {
+    padding-block: var(--space-5) var(--space-12);
+  }
+
+  .resultHeader {
+    margin-bottom: var(--space-5);
+  }
+
+  .chip,
+  .recentChip {
+    min-height: 36px;
+    padding: 0 var(--space-3);
+    font-size: var(--text-caption);
+  }
+
+  .clearButton {
+    width: 44px;
+    height: 44px;
+  }
+}
+
+@media (min-width: 640px) {
+  .searchForm {
+    flex-direction: row;
+    align-items: flex-end;
+  }
+
+  .searchForm > :first-child {
+    flex: 1;
+  }
+}
+
+@media (min-width: 900px) {
+  .headerInner {
+    grid-template-columns: minmax(0, 1fr) minmax(380px, 0.9fr);
+    gap: var(--space-12);
+  }
+
+  .searchForm {
+    max-width: none;
+  }
+}

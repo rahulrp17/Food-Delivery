@@ -1,0 +1,192 @@
+/* ===== Stat Card — Premium ===== */
+.statcard {
+  position: relative;
+  overflow: hidden;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  min-width: 0;
+  box-shadow: var(--shadow-xs);
+  transition: transform var(--duration-fast), box-shadow var(--duration-fast), border-color var(--duration-fast);
+}
+
+.statcard::after {
+  content: '';
+  position: absolute;
+  top: -60px;
+  right: -60px;
+  width: 160px;
+  height: 160px;
+  border-radius: 50%;
+  background: radial-gradient(circle, color-mix(in srgb, var(--color-primary) 10%, transparent) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.statcard:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+  border-color: var(--color-border-strong);
+}
+
+.statcard-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-3);
+  position: relative;
+  z-index: 1;
+}
+
+.statcard-icon {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border-radius: var(--radius-md);
+  background: var(--color-primary-soft);
+  color: var(--color-primary);
+  flex-shrink: 0;
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--color-primary) 14%, transparent);
+  transition: transform var(--duration-fast), box-shadow var(--duration-fast);
+}
+
+/* The secondary accent is deliberately used for one tone only, so the eye
+   always reads the primary metric first. */
+.statcard.is-secondary .statcard-icon {
+  background: var(--color-secondary-soft);
+  color: var(--color-secondary-strong);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--color-secondary) 22%, transparent);
+}
+
+.statcard.is-secondary::after {
+  background: radial-gradient(circle, color-mix(in srgb, var(--color-secondary) 12%, transparent) 0%, transparent 70%);
+}
+
+.statcard.is-neutral .statcard-icon {
+  background: var(--color-surface-3);
+  color: var(--color-text-muted);
+  box-shadow: inset 0 0 0 1px var(--color-border);
+}
+
+.statcard-hint {
+  position: relative;
+  z-index: 1;
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: var(--text-caption);
+  line-height: 1.4;
+}
+
+.statcard:hover .statcard-icon {
+  transform: scale(1.06);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--color-primary) 24%, transparent),
+    0 6px 14px color-mix(in srgb, var(--color-primary) 16%, transparent);
+}
+
+.statcard-label {
+  font-size: var(--text-body-s);
+  font-weight: 600;
+  color: var(--color-text-muted);
+  line-height: 1.4;
+  flex: 1;
+}
+
+.statcard-value {
+  position: relative;
+  z-index: 1;
+  font-size: var(--text-display-l);
+  font-weight: 800;
+  line-height: 1.1;
+  color: var(--color-text);
+  letter-spacing: -0.03em;
+  font-variant-numeric: tabular-nums;
+}
+
+.statcard-delta {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  font-size: var(--text-body-s);
+  font-weight: 700;
+  border-radius: var(--radius-full);
+  padding: var(--space-1) var(--space-2);
+  align-self: flex-start;
+  position: relative;
+  z-index: 1;
+}
+
+.statcard-delta.positive {
+  color: var(--herb-700);
+  background: var(--herb-100);
+}
+
+.statcard-delta.negative {
+  color: var(--danger-700);
+  background: var(--danger-100);
+}
+
+.statcard-delta.neutral {
+  color: var(--color-text-muted);
+  background: var(--color-surface-3);
+}
+
+.statcard-delta-label {
+  font-size: var(--text-caption);
+  font-weight: 400;
+  opacity: 0.8;
+}
+
+/* Grid layout for stat cards */
+.statcard-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--space-4);
+  min-width: 0;
+}
+
+@media (max-width: 1199px) {
+  .statcard-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 767px) {
+  .statcard-grid {
+    gap: var(--space-3);
+  }
+}
+
+@media (max-width: 639px) {
+  .statcard-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .statcard {
+    gap: var(--space-2);
+    padding: var(--space-4);
+  }
+
+  .statcard-header {
+    align-items: center;
+  }
+
+  .statcard-icon {
+    width: 38px;
+    height: 38px;
+  }
+
+  .statcard-value {
+    font-size: clamp(1.75rem, 9vw, 2.25rem);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .statcard,
+  .statcard-icon { transition: none; }
+  .statcard:hover { transform: none; }
+  .statcard:hover .statcard-icon { transform: none; }
+}

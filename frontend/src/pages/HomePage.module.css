@@ -1,0 +1,75 @@
+/* ============================================================
+   Foodie — Home
+   Section rhythm: light masthead, light rail, light grid, dark
+   band, light sequence, dark story, light list, dark CTA.
+   Colours come exclusively from src/styles/tokens.css.
+   ============================================================ */
+
+.errorWrap {
+  padding-block: var(--space-12);
+}
+
+/* ---------- Closing call to action ---------- */
+.ctaSection {
+  padding-block: 0 var(--space-16);
+}
+
+.ctaPanel {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-6);
+  padding: var(--space-8) var(--space-9);
+  border-radius: var(--radius-xl);
+  background:
+    radial-gradient(circle at 88% 10%, var(--color-secondary-soft), transparent 24rem),
+    var(--color-dark-bg);
+  color: var(--color-dark-text);
+  box-shadow: var(--shadow-lg);
+}
+
+.ctaCopy {
+  min-width: 0;
+}
+
+.ctaEyebrow {
+  display: block;
+  color: var(--saffron-400);
+  font-size: var(--text-overline);
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.ctaTitle {
+  margin-top: var(--space-2);
+  font-size: var(--text-h2);
+  line-height: 1.06;
+  letter-spacing: -0.03em;
+}
+
+.ctaText {
+  max-width: 44ch;
+  margin-top: var(--space-2);
+  color: var(--color-dark-muted);
+  font-size: var(--text-body-s);
+  line-height: 1.6;
+}
+
+@media (max-width: 639px) {
+  .ctaPanel {
+    padding: var(--space-6) var(--space-5);
+  }
+}
+
+@media (max-width: 479px) {
+  .ctaPanel {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .ctaPanel > :last-child {
+    width: 100%;
+  }
+}

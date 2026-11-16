@@ -1,0 +1,89 @@
+/* ============================================================
+   Delivery promise strip — the "how fast / how much / can I
+   trust it" answers every food platform puts above the fold.
+   ============================================================ */
+
+.delivery-strip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2) var(--space-3);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.delivery-promise {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 7px 14px 7px 8px;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-xs);
+}
+
+.delivery-promise-icon {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  flex-shrink: 0;
+  border-radius: var(--radius-full);
+  background: var(--color-surface-2);
+  color: var(--color-primary);
+}
+
+.delivery-promise-copy {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.15;
+}
+
+.delivery-promise-label {
+  color: var(--color-text-subtle);
+  font-size: var(--text-caption);
+  font-weight: 500;
+}
+
+.delivery-promise-value {
+  color: var(--color-text);
+  font-size: var(--text-body-s);
+  font-weight: 700;
+}
+
+.tone-speed .delivery-promise-icon {
+  background: var(--color-primary-soft);
+  color: var(--color-primary);
+}
+
+.tone-offer .delivery-promise-icon {
+  background: var(--color-accent-soft);
+  color: var(--color-accent);
+}
+
+.tone-trust .delivery-promise-icon {
+  background: var(--color-success-soft);
+  color: var(--color-success);
+}
+
+.tone-fresh .delivery-promise-icon {
+  background: var(--color-success-soft);
+  color: var(--color-success);
+}
+
+@media (max-width: 639px) {
+  .delivery-strip {
+    gap: var(--space-2);
+  }
+
+  .delivery-promise {
+    flex: 1 1 calc(50% - var(--space-2));
+    padding: 6px 10px 6px 6px;
+  }
+
+  .delivery-promise-icon {
+    width: 26px;
+    height: 26px;
+  }
+}

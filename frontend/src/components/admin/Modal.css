@@ -1,0 +1,285 @@
+/* ===== Modal — Premium ===== */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: var(--color-overlay);
+  display: grid;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-4);
+  z-index: var(--z-modal, 1300);
+}
+
+.modal {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-xl);
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  overflow: hidden;
+}
+
+.modal-sm { max-width: 420px; }
+.modal-md { max-width: 560px; }
+.modal-lg { max-width: 800px; }
+.modal-xl { max-width: 960px; }
+
+.modal-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding: var(--space-4) var(--space-5);
+  border-bottom: 1px solid var(--color-border);
+  background: var(--color-surface-2);
+  flex-shrink: 0;
+}
+
+.modal-heading {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  min-width: 0;
+}
+
+.modal-title {
+  font-size: var(--text-h3);
+  font-weight: 700;
+  color: var(--color-text);
+  margin: 0;
+  font-family: var(--font-display);
+  letter-spacing: -0.01em;
+}
+
+.modal-description {
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: var(--text-body-s);
+  line-height: 1.5;
+}
+
+.modal-close {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+  border-radius: var(--radius-md);
+  background: transparent;
+  border: none;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  transition: background var(--duration-fast), color var(--duration-fast);
+}
+
+.modal-close:hover {
+  background: var(--color-surface-3);
+  color: var(--color-text);
+}
+
+.modal-close:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+}
+
+.modal-body {
+  padding: var(--space-5);
+  overflow-y: auto;
+  flex: 1;
+  min-height: 0;
+}
+
+/* Full-bleed action bar — a sibling of the body so the modal's bottom
+   radius is never clipped and the footer spans the full width. */
+.modal-footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--space-3);
+  width: 100%;
+  margin: 0;
+  box-sizing: border-box;
+  padding: var(--space-4) var(--space-5);
+  border-top: 1px solid var(--color-border);
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+  background: var(--color-surface-2);
+  flex-shrink: 0;
+}
+
+.modal-footer > .confirm-footer,
+.modal-footer > .form-footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--space-3);
+  flex: 1;
+  flex-wrap: wrap;
+  min-width: 0;
+}
+
+/* Form layout within modal */
+.modal-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.modal-form-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+/* Legacy grid body kept for pages that ship their own .modal-form-body */
+.modal-form-body {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-4);
+}
+
+/* Raw fields inside admin modals */
+.modal-form-content .form-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  min-width: 0;
+}
+
+.modal-form-content .form-field > label {
+  font-size: var(--text-body-s);
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.modal-form-content .form-row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-4);
+}
+
+.modal-form-content .field-hint {
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: var(--text-caption);
+  line-height: 1.5;
+}
+
+.modal-field-input,
+.modal-field-select,
+.modal-field-textarea {
+  width: 100%;
+  min-width: 0;
+  padding: var(--space-3);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: inherit;
+  font-size: var(--text-body-s);
+  transition: border-color var(--duration-fast), box-shadow var(--duration-fast), background var(--duration-fast);
+}
+
+.modal-field-textarea {
+  min-height: 110px;
+  resize: vertical;
+}
+
+.modal-field-input::placeholder,
+.modal-field-textarea::placeholder {
+  color: var(--color-text-subtle);
+}
+
+.modal-field-input:focus,
+.modal-field-select:focus,
+.modal-field-textarea:focus {
+  outline: none;
+  border-color: var(--color-focus);
+  box-shadow: var(--shadow-focus);
+  background: var(--color-surface);
+}
+
+/* Confirm dialog */
+.confirm-message {
+  margin: 0;
+  color: var(--color-text);
+  line-height: 1.6;
+  font-size: var(--text-body-s);
+}
+
+/* Shared inline field error */
+.field-error {
+  margin: var(--space-2) 0 0;
+  color: var(--color-danger);
+  font-size: var(--text-body-s);
+  font-weight: 500;
+}
+
+/* Extended actions row */
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-3);
+  margin-top: var(--space-4);
+}
+
+/* Single column on mobile — replace grid with stack */
+@media (max-width: 639px) {
+  .modal-overlay {
+    padding: 0;
+    align-items: flex-end;
+  }
+
+  .modal {
+    max-height: 100vh;
+    max-width: 100%;
+    margin: 0;
+    border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+  }
+
+  .modal-body {
+    padding: var(--space-4);
+  }
+
+  .modal-form-body,
+  .modal-form-content .form-row {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .modal-footer {
+    flex-direction: column-reverse;
+    align-items: stretch;
+    gap: var(--space-2);
+    padding: var(--space-3) var(--space-4) calc(var(--space-4) + env(safe-area-inset-bottom, 0px));
+  }
+
+  .modal-footer > .confirm-footer,
+  .modal-footer > .form-footer {
+    flex-direction: column-reverse;
+    gap: var(--space-2);
+    width: 100%;
+  }
+
+  .modal-footer .btn,
+  .modal-footer button {
+    width: 100%;
+    min-height: 44px;
+  }
+
+  .modal-actions {
+    justify-content: flex-end;
+  }
+}
+
+@media (max-width: 479px) {
+  .modal-header {
+    padding: var(--space-4);
+  }
+
+  .modal-footer {
+    padding-inline: var(--space-3);
+  }
+}

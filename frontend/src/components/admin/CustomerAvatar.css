@@ -1,0 +1,53 @@
+.customer-avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border-radius: var(--radius-full);
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  line-height: 1;
+}
+
+.customer-avatar-sm {
+  width: 30px;
+  height: 30px;
+  font-size: 10px;
+}
+
+.customer-avatar-md {
+  width: 38px;
+  height: 38px;
+  font-size: var(--text-caption);
+}
+
+.customer-avatar-lg {
+  width: 52px;
+  height: 52px;
+  font-size: var(--text-body-s);
+}
+
+.customer-avatar-tone-0 {
+  background: var(--tomato-100);
+  color: var(--tomato-700);
+}
+
+.customer-avatar-tone-1 {
+  background: var(--saffron-100);
+  color: var(--saffron-700);
+}
+
+.customer-avatar-tone-2 {
+  background: var(--herb-100);
+  color: var(--herb-700);
+}
+
+.customer-avatar-tone-3 {
+  background: var(--info-100);
+  color: var(--info-600);
+}
+
+.customer-avatar-tone-4 {
+  background: var(--ink-200);
+  color: var(--ink-700);
+}

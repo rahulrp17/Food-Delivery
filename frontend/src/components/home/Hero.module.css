@@ -1,0 +1,520 @@
+/* ============================================================
+   Foodie — Home hero
+   A full-bleed masthead. The photograph runs edge to edge, the copy
+   sits over it on the left, and the offer cards sit in a column
+   beside the copy — never positioned against the viewport, so
+   nothing can be clipped or pushed off-screen.
+   Colours come exclusively from src/styles/tokens.css.
+   ============================================================ */
+
+.hero {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  padding-block: clamp(2.5rem, 5.5vw, 4.5rem) clamp(5rem, 9vw, 8rem);
+  background: var(--ink-950);
+  margin-top: -25px;
+}
+
+.heroImage {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  transform: scale(1.04);
+  animation: heroDrift 22s ease-in-out infinite alternate;
+}
+
+@keyframes heroDrift {
+  from { transform: scale(1.04) translate3d(0, 0, 0); }
+  to { transform: scale(1.1) translate3d(-1.5%, -1%, 0); }
+}
+
+.heroScrim {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background:
+    linear-gradient(90deg, rgb(18 14 11 / 0.92) 0%, rgb(18 14 11 / 0.68) 40%, rgb(18 14 11 / 0.16) 76%),
+    linear-gradient(180deg, rgb(18 14 11 / 0.32) 0%, transparent 24%, rgb(18 14 11 / 0.74) 100%),
+    radial-gradient(105% 85% at 4% 14%, rgb(228 72 46 / 0.3) 0%, transparent 56%);
+}
+
+/* ---------- Layout ---------- */
+.layout {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+  align-items: center;
+  gap: clamp(2rem, 5vw, 4.5rem);
+}
+
+.copy {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-4);
+  max-width: 34rem;
+  min-width: 0;
+}
+
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-4);
+  border: 1px solid rgb(255 255 255 / 0.28);
+  border-radius: var(--radius-full);
+  background: rgb(255 255 255 / 0.1);
+  backdrop-filter: blur(10px);
+  color: var(--cream-50);
+  font-size: var(--text-overline);
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.title {
+  max-width: 15ch;
+  color: var(--cream-50);
+  font-size: clamp(2.25rem, 5vw, 4.25rem);
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.045em;
+  text-wrap: balance;
+  text-shadow: 0 2px 30px rgb(0 0 0 / 0.4);
+}
+
+.title em {
+  color: var(--tomato-400);
+  font-style: italic;
+  font-weight: 700;
+}
+
+.promise {
+  max-width: 44ch;
+  color: rgb(253 249 243 / 0.86);
+  font-size: var(--text-body);
+  line-height: 1.65;
+  text-shadow: 0 1px 14px rgb(0 0 0 / 0.45);
+}
+
+.ctaRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.primaryCta {
+  border-radius: var(--radius-full);
+  padding-inline: var(--space-6);
+  box-shadow: var(--shadow-md);
+}
+
+.primaryCta:hover {
+  box-shadow: var(--shadow-lg);
+}
+
+/* ---------- Social proof ---------- */
+.reviews {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.avatars {
+  display: flex;
+  align-items: center;
+}
+
+.avatar {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  margin-left: -10px;
+  border: 2px solid rgb(18 14 11 / 0.65);
+  border-radius: var(--radius-full);
+  color: var(--white);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.avatar:first-child {
+  margin-left: 0;
+}
+
+.tone_a {
+  background: linear-gradient(135deg, var(--tomato-500), var(--tomato-700));
+}
+
+.tone_b {
+  background: linear-gradient(135deg, var(--saffron-400), var(--saffron-600));
+}
+
+.tone_c {
+  background: linear-gradient(135deg, var(--herb-500), var(--herb-700));
+}
+
+.tone_d {
+  background: linear-gradient(135deg, var(--ink-500), var(--ink-700));
+}
+
+.moreCount {
+  background: rgb(255 255 255 / 0.16);
+  border-color: rgb(255 255 255 / 0.28);
+  backdrop-filter: blur(8px);
+  color: var(--cream-50);
+  font-size: 10px;
+}
+
+.reviewMeta {
+  display: grid;
+  gap: 2px;
+}
+
+.stars {
+  display: inline-flex;
+  gap: 2px;
+  color: var(--saffron-400);
+}
+
+.reviewText {
+  color: rgb(253 249 243 / 0.82);
+  font-size: var(--text-body-s);
+}
+
+/* ---------- Offer rail ---------- */
+.rail {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: center;
+  gap: var(--space-4);
+  min-width: 0;
+}
+
+/* The dish, framed like a plated cover shot. */
+.heroPlate {
+  position: relative;
+  margin: 0;
+  overflow: hidden;
+  border-radius: var(--radius-xl);
+  border: 1px solid rgb(255 255 255 / 0.22);
+  background: var(--color-surface-2);
+  box-shadow: var(--shadow-xl);
+}
+
+.heroPlateImage {
+  display: block;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  object-position: center;
+  transform: scale(1.03);
+  transition: transform var(--duration-slow) var(--ease-standard);
+}
+
+.heroPlate:hover .heroPlateImage {
+  transform: scale(1.07);
+}
+
+.heroPlateCaption {
+  position: absolute;
+  left: var(--space-3);
+  bottom: var(--space-3);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 6px 12px;
+  border-radius: var(--radius-full);
+  border: 1px solid rgb(255 255 255 / 0.22);
+  background: rgb(18 14 11 / 0.55);
+  backdrop-filter: blur(12px);
+  color: var(--cream-50);
+  font-size: var(--text-caption);
+  font-weight: 600;
+}
+
+.heroPlateCaption svg {
+  color: var(--saffron-400);
+}
+
+.railCards {
+  display: flex;
+  gap: var(--space-3);
+  align-items: stretch;
+}
+
+.offerCard,
+.pickCard {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  flex: 1 1 0;
+  min-width: 0;
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-lg);
+  border: 1px solid rgb(255 255 255 / 0.2);
+  background: rgb(18 14 11 / 0.52);
+  backdrop-filter: blur(14px);
+  box-shadow: var(--shadow-xl);
+  color: var(--cream-50);
+}
+
+.offerIcon {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+  border-radius: var(--radius-full);
+  background: rgb(228 72 46 / 0.2);
+  color: var(--tomato-400);
+}
+
+.offerText,
+.pickText {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.offerValue {
+  color: var(--cream-50);
+  font-family: var(--font-display);
+  font-size: var(--text-h4);
+  font-weight: 700;
+  line-height: 1.1;
+}
+
+.offerMeta {
+  color: rgb(253 249 243 / 0.72);
+  font-size: var(--text-caption);
+}
+
+.pickIcon {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+  border-radius: var(--radius-full);
+  background: var(--saffron-500);
+  color: var(--ink-950);
+}
+
+.pickLabel {
+  color: var(--saffron-400);
+  font-size: 0.625rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.pickName {
+  overflow: hidden;
+  color: var(--cream-50);
+  font-family: var(--font-display);
+  font-size: var(--text-body-s);
+  font-weight: 700;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.pickPrice {
+  color: rgb(253 249 243 / 0.72);
+  font-size: var(--text-caption);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------- Stat band (a sibling of the hero) ---------- */
+.statBand {
+  position: relative;
+  z-index: 3;
+  margin-top: calc(var(--space-12) * -1);
+}
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-4);
+  margin: 0;
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: var(--space-4) var(--space-5);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-md);
+}
+
+.statValue {
+  color: var(--color-text);
+  font-family: var(--font-display);
+  font-size: var(--text-h3);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  font-variant-numeric: tabular-nums;
+}
+
+.statLabel {
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: var(--text-caption);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.footNote {
+  display: flex;
+  justify-content: center;
+  margin-top: var(--space-5);
+}
+
+.footLink {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: 36px;
+  padding: 0 var(--space-4);
+  border-radius: var(--radius-full);
+  color: var(--color-text-muted);
+  font-size: var(--text-body-s);
+  font-weight: 600;
+  text-decoration: none;
+  transition: color var(--duration-fast) var(--ease-standard);
+}
+
+.footLink:hover {
+  color: var(--color-primary);
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 1023px) {
+  .layout {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-6);
+  }
+
+  .copy {
+    max-width: 40rem;
+  }
+
+  /* The plated dish is a desktop flourish — it is dropped on smaller
+     screens so the copy gets the full width. */
+  .heroPlate {
+    display: none;
+  }
+
+  .rail {
+    flex-direction: row;
+    align-items: stretch;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+  }
+
+  .railCards {
+    width: 100%;
+  }
+
+  .offerCard,
+  .pickCard {
+    flex: 1 1 14rem;
+  }
+
+  .hero {
+    padding-block: clamp(2.25rem, 5vw, 3.5rem) clamp(4rem, 8vw, 6rem);
+  }
+
+  .statBand {
+    margin-top: calc(var(--space-10) * -1);
+  }
+}
+
+@media (max-width: 639px) {
+  .hero {
+    padding-block: 1.75rem 4rem;
+  }
+
+  .title {
+    max-width: 100%;
+    font-size: clamp(1.9rem, 8.5vw, 2.5rem);
+  }
+
+  .promise {
+    font-size: var(--text-body-s);
+  }
+
+  .eyebrow {
+    padding: 5px 12px;
+    font-size: 0.625rem;
+  }
+
+  /* The two calls to action stay on one line on a phone. */
+  .ctaRow {
+    width: 100%;
+    gap: var(--space-2);
+  }
+
+  .ctaRow > * {
+    flex: 1 1 0;
+    min-width: 0;
+    padding-inline: var(--space-4);
+  }
+
+  .reviews {
+    gap: var(--space-3);
+  }
+
+  .railCards {
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+
+  .offerCard,
+  .pickCard {
+    flex: 1 1 auto;
+    width: 100%;
+  }
+
+  .statBand {
+    margin-top: calc(var(--space-8) * -1);
+  }
+
+  .stats {
+    gap: var(--space-2);
+  }
+
+  .stat {
+    padding: var(--space-3);
+    align-items: center;
+    text-align: center;
+  }
+
+  .statValue {
+    font-size: var(--text-body);
+  }
+
+  .statLabel {
+    font-size: 0.5625rem;
+    letter-spacing: 0.02em;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .heroImage {
+    animation: none;
+  }
+}

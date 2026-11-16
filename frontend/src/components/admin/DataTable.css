@@ -1,0 +1,239 @@
+/* ===== Data Table — Premium ===== */
+.datatable {
+  min-width: 0;
+  max-width: 100%;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-xs);
+  transition: box-shadow var(--duration-fast), border-color var(--duration-fast);
+}
+
+.datatable:hover {
+  border-color: var(--color-border-strong);
+  box-shadow: var(--shadow-sm);
+}
+
+.datatable-scroll {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+}
+
+.datatable-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--text-body-s);
+}
+
+.datatable-table th,
+.datatable-table td {
+  padding: var(--space-3) var(--space-4);
+  text-align: left;
+  vertical-align: middle;
+  border-bottom: 1px solid var(--color-border-subtle);
+}
+
+.datatable-table thead {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: var(--color-surface-2);
+  box-shadow: inset 0 -1px 0 var(--color-border);
+}
+
+.datatable-table th {
+  font-weight: 700;
+  color: var(--color-text-muted);
+  font-size: var(--text-caption);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+  user-select: none;
+}
+
+.th-content {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.sort-btn {
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  border: none;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  transition: background var(--duration-fast), color var(--duration-fast);
+}
+
+.sort-btn:hover {
+  background: var(--color-surface-3);
+  color: var(--color-text);
+}
+
+.sort-btn:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+}
+
+.datatable-row {
+  transition: background 0.1s;
+}
+
+.datatable-row:hover {
+  background: var(--color-surface-3);
+}
+
+.datatable-row:last-child td {
+  border-bottom: none;
+}
+
+.datatable-cell {
+  color: var(--color-text);
+}
+
+/* States */
+.datatable-state {
+  padding: var(--space-6) var(--space-4);
+  background: var(--color-surface);
+}
+
+.datatable-error,
+.datatable-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-3);
+  padding: var(--space-10) var(--space-4);
+  text-align: center;
+}
+
+.datatable-error {
+  color: var(--danger-600);
+}
+
+.datatable-error p {
+  margin-bottom: var(--space-3);
+}
+
+.datatable-empty p {
+  color: var(--color-text-muted);
+  margin: 0;
+}
+
+/* ---- Shared skeleton placeholder ----
+   The loading state reuses the app-wide skeleton system so it matches the
+   placeholders on every other admin route. */
+.datatable-loading .ld-table {
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  background: transparent;
+}
+
+/* ---- Mobile stacked cards ---- */
+@media (max-width: 1099px) {
+  .datatable {
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    border-radius: 0;
+  }
+
+  .datatable:hover {
+    box-shadow: none;
+    border-color: transparent;
+  }
+
+  .datatable-state {
+    background: transparent;
+  }
+
+  .datatable-loading .ld-table {
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    background: var(--color-surface);
+  }
+
+  .datatable-table {
+    display: block;
+  }
+
+  .datatable-table thead {
+    display: none;
+  }
+
+  .datatable-table tbody {
+    display: block;
+  }
+
+  .datatable-row {
+    display: block;
+    padding: var(--space-4);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    background: var(--color-surface);
+    margin: var(--space-3) 0;
+    box-shadow: var(--shadow-xs);
+    transition: box-shadow var(--duration-fast), border-color var(--duration-fast), transform var(--duration-fast);
+  }
+
+  .datatable-row:hover {
+    background: var(--color-surface);
+    border-color: var(--color-border-strong);
+    box-shadow: var(--shadow-md);
+    transform: translateY(-1px);
+  }
+
+  .datatable-cell {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--space-4);
+    padding: var(--space-2) 0;
+    border-bottom: 1px solid var(--color-border-subtle);
+  }
+
+  .datatable-cell:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+  }
+
+  .datatable-cell::before {
+    content: attr(data-label);
+    font-weight: 700;
+    color: var(--color-text-muted);
+    font-size: var(--text-caption);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    flex-shrink: 0;
+  }
+
+  .datatable-cell > * {
+    text-align: right;
+    min-width: 0;
+  }
+}
+
+@media (max-width: 639px) {
+  .datatable-row {
+    padding: var(--space-3) var(--space-4);
+  }
+
+  .datatable-cell {
+    gap: var(--space-3);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .datatable-row { transition: none; }
+  .datatable-row:hover { transform: none; }
+}

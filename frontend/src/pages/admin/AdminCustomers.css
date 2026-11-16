@@ -1,0 +1,564 @@
+/* ============================================================
+   Admin — Customers (shared) + Customer Detail
+   ------------------------------------------------------------
+   The customers *directory* owns its own stylesheet
+   (CustomersDirectory.css). This file therefore only carries:
+     · the shared `.customers-page` / `.customer-cell` rules,
+     · the customer detail page,
+     · a couple of small utilities used across admin surfaces.
+   ============================================================ */
+
+/* ---------- Shared: customers page shell ---------- */
+.customers-page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+  min-width: 0;
+  min-height: 0;
+}
+
+/* ---------- Shared: customer cell ---------- */
+.customer-cell {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-width: 0;
+}
+
+.customer-cell-text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  line-height: 1.35;
+}
+
+.customer-cell-text strong,
+.customer-cell-text span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.customer-cell-text strong {
+  font-size: var(--text-body-s);
+  color: var(--color-text);
+}
+
+.customer-cell-text span {
+  max-width: 280px;
+  color: var(--color-text-muted);
+  font-size: var(--text-caption);
+  font-weight: 500;
+}
+
+/* ---------- Shared: muted state ---------- */
+.muted-cell {
+  color: var(--color-text-muted);
+}
+
+/* ============================================================
+   Customer detail page
+   ============================================================ */
+.customer-detail-page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+  min-width: 0;
+  min-height: 0;
+}
+
+/* ---------- Header ---------- */
+.customer-detail-page .detail-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+  padding-bottom: var(--space-4);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.customer-detail-page .detail-header-identity {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-4);
+  min-width: 0;
+}
+
+.customer-detail-page .detail-person {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-width: 0;
+}
+
+.customer-detail-page .detail-person > div {
+  min-width: 0;
+}
+
+.customer-detail-page .detail-header h1 {
+  margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-family: var(--font-display);
+  font-size: var(--text-h1);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--color-text);
+}
+
+.customer-detail-page .detail-person p {
+  margin: var(--space-1) 0 0;
+  color: var(--color-text-muted);
+  font-size: var(--text-body-s);
+  overflow-wrap: anywhere;
+}
+
+.customer-detail-page .detail-header-badges {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
+
+.customer-detail-page .detail-header-badges > * {
+  min-height: 32px;
+}
+
+/* ---------- Grid & cards ---------- */
+.customer-detail-page .detail-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 320px) minmax(0, 1fr);
+  gap: var(--space-5);
+  min-width: 0;
+}
+
+.customer-detail-page .detail-card {
+  min-width: 0;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-5);
+  box-shadow: var(--shadow-xs);
+  transition: transform var(--duration-fast), box-shadow var(--duration-fast),
+    border-color var(--duration-fast);
+}
+
+.customer-detail-page .detail-card:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-sm);
+  border-color: var(--color-border-strong);
+}
+
+.customer-detail-page .detail-card-full {
+  grid-column: 2;
+}
+
+.customer-detail-page .detail-card h2 {
+  margin: 0 0 var(--space-4);
+  padding-bottom: var(--space-3);
+  border-bottom: 1px solid var(--color-border);
+  font-family: var(--font-display);
+  font-size: var(--text-h3);
+  font-weight: 700;
+  color: var(--color-text);
+  letter-spacing: -0.01em;
+}
+
+.customer-detail-page .detail-card .section-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+  margin-bottom: var(--space-4);
+}
+
+.customer-detail-page .detail-card .section-header h2 {
+  margin: 0;
+  padding: 0;
+  border-bottom: 0;
+}
+
+.customer-detail-page .detail-card .section-header p {
+  margin: var(--space-1) 0 0;
+  color: var(--color-text-muted);
+  font-size: var(--text-body-s);
+}
+
+/* ---------- Definition rows ---------- */
+.customer-detail-page .detail-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: var(--space-1) var(--space-3);
+  padding: var(--space-2) 0;
+  color: var(--color-text);
+  overflow-wrap: anywhere;
+}
+
+.customer-detail-page .detail-row strong {
+  min-width: 110px;
+  color: var(--color-text-muted);
+  font-size: var(--text-body-s);
+  font-weight: 600;
+}
+
+/* ---------- Order history table ---------- */
+.customer-detail-page .detail-table-scroll {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.customer-detail-page .orders-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--text-body-s);
+  background: var(--color-surface);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.customer-detail-page .orders-table th,
+.customer-detail-page .orders-table td {
+  padding: var(--space-3) var(--space-4);
+  border-bottom: 1px solid var(--color-border);
+  vertical-align: middle;
+  color: var(--color-text);
+}
+
+.customer-detail-page .orders-table th {
+  text-align: left;
+  font-weight: 600;
+  color: var(--color-text);
+  background: var(--color-surface-2);
+  white-space: nowrap;
+}
+
+.customer-detail-page .orders-table td {
+  color: var(--color-text-muted);
+}
+
+/* The "view order" affordance lives in the admin orders stylesheet, which is
+   not loaded on this route — so it is restyled here. */
+.customer-detail-page .row-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  color: var(--color-text-muted);
+  transition: background var(--duration-fast), color var(--duration-fast),
+    box-shadow var(--duration-fast);
+}
+
+.customer-detail-page .row-action:hover,
+.customer-detail-page .row-action:focus-visible {
+  background: var(--color-surface-2);
+  color: var(--color-primary);
+  box-shadow: var(--shadow-xs);
+}
+
+.customer-detail-page .row-action:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+}
+
+/* ---------- Empty & error states ---------- */
+.customer-detail-page .detail-empty {
+  margin: 0;
+  padding: var(--space-8) var(--space-2);
+  color: var(--color-text-muted);
+  text-align: center;
+  font-size: var(--text-body-s);
+  background: var(--color-surface);
+  border: 1px dashed var(--color-border);
+  border-radius: var(--radius-md);
+}
+
+.customer-detail-page .detail-error-panel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-4);
+  padding: var(--space-6) var(--space-4);
+}
+
+.customer-detail-page .detail-skeleton {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.customer-detail-page .detail-skeleton .skeleton {
+  border-radius: var(--radius-md);
+}
+
+/* ---------- Customer type badge ---------- */
+.customer-type-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0 var(--space-2);
+  min-height: 24px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-full);
+  background: var(--color-surface-2);
+  color: var(--color-text-muted);
+  font-size: var(--text-caption);
+  font-weight: 600;
+  white-space: nowrap;
+  transition: background var(--duration-fast), color var(--duration-fast),
+    border-color var(--duration-fast);
+}
+
+.customer-type-badge.is-returning {
+  border-color: transparent;
+  background: color-mix(in srgb, var(--herb-500) 12%, transparent);
+  color: var(--herb-700);
+}
+
+.customer-type-badge:hover {
+  border-color: var(--color-primary);
+  background: var(--color-primary-soft);
+  color: var(--color-primary);
+}
+
+/* ---------- Account access (role change) ---------- */
+.customer-detail-page .role-change {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.customer-detail-page .role-option {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.customer-detail-page .role-radio {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  cursor: pointer;
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  transition: background var(--duration-fast), color var(--duration-fast),
+    border-color var(--duration-fast);
+}
+
+.customer-detail-page .role-radio:hover {
+  border-color: var(--color-primary);
+  background: var(--color-primary-soft);
+  color: var(--color-primary);
+}
+
+.customer-detail-page .role-radio:has(input:checked) {
+  border-color: var(--color-primary);
+  background: var(--color-primary-soft);
+  color: var(--color-primary);
+}
+
+.customer-detail-page .role-radio input {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--color-primary);
+  flex: 0 0 auto;
+}
+
+.customer-detail-page .role-hint {
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: var(--text-body-s);
+}
+
+.customer-detail-page .role-hint.warning {
+  color: var(--color-danger);
+}
+
+/* ---------- Favourites ---------- */
+.customer-detail-page .favourites-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.customer-detail-page .favourite-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-2) 0;
+  border-bottom: 1px solid var(--color-border);
+  color: var(--color-text);
+}
+
+.customer-detail-page .favourite-row:last-child {
+  border-bottom: 0;
+}
+
+.customer-detail-page .favourite-main {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  line-height: 1.35;
+}
+
+.customer-detail-page .favourite-main strong {
+  font-size: var(--text-body-s);
+  color: var(--color-text);
+  overflow-wrap: anywhere;
+}
+
+.customer-detail-page .favourite-main span {
+  color: var(--color-text-muted);
+  font-size: var(--text-caption);
+}
+
+.customer-detail-page .favourite-revenue {
+  flex-shrink: 0;
+  font-size: var(--text-body-s);
+  font-weight: 600;
+  color: var(--color-primary);
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 1023px) {
+  .customer-detail-page .detail-grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-4);
+  }
+
+  .customer-detail-page .detail-card-full {
+    grid-column: auto;
+  }
+
+  .customer-detail-page .detail-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .customer-detail-page .detail-header-badges {
+    width: 100%;
+  }
+}
+
+@media (max-width: 767px) {
+  .customer-detail-page {
+    gap: var(--space-4);
+  }
+
+  .customer-detail-page .detail-card {
+    padding: var(--space-4);
+  }
+
+  .customer-detail-page .detail-row {
+    flex-direction: column;
+    gap: var(--space-1);
+    align-items: flex-start;
+  }
+
+  .customer-detail-page .detail-row strong {
+    min-width: 0;
+  }
+
+  .customer-detail-page .orders-table {
+    font-size: var(--text-caption);
+  }
+
+  .customer-detail-page .orders-table th,
+  .customer-detail-page .orders-table td {
+    padding: var(--space-2) var(--space-3);
+  }
+}
+
+@media (max-width: 639px) {
+  .customer-detail-page .detail-table-scroll {
+    overflow-x: visible;
+  }
+
+  .customer-detail-page .orders-table,
+  .customer-detail-page .orders-table tbody,
+  .customer-detail-page .orders-table tr,
+  .customer-detail-page .orders-table td {
+    display: block;
+    width: 100%;
+  }
+
+  .customer-detail-page .orders-table thead {
+    display: none;
+  }
+
+  .customer-detail-page .orders-table tr {
+    padding: var(--space-3) 0;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .customer-detail-page .orders-table tr:last-child {
+    border-bottom: none;
+  }
+
+  .customer-detail-page .orders-table td {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3);
+    padding: var(--space-2) 0;
+    border-bottom: none;
+    text-align: left !important;
+  }
+
+  .customer-detail-page .orders-table td::before {
+    content: attr(data-label);
+    flex-shrink: 0;
+    font-size: var(--text-caption);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--color-text-muted);
+  }
+
+  .customer-detail-page .row-action {
+    width: 44px;
+    height: 44px;
+  }
+
+  .customer-detail-page .detail-header-badges > button,
+  .customer-detail-page .detail-header-badges > a,
+  .customer-detail-page .detail-header-identity > button,
+  .customer-detail-page .detail-card .section-header > button,
+  .customer-detail-page .detail-card .section-header > a {
+    min-height: 44px;
+  }
+}
+
+@media (max-width: 479px) {
+  .customer-detail-page .detail-person {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .customer-detail-page .detail-header-badges {
+    gap: var(--space-2);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .customer-type-badge,
+  .customer-detail-page .detail-card,
+  .customer-detail-page .role-radio,
+  .customer-detail-page .row-action {
+    transition: none;
+  }
+
+  .customer-detail-page .detail-card:hover {
+    transform: none;
+  }
+}

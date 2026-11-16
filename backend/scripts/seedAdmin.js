@@ -1,6 +1,6 @@
 import "dotenv/config";
 import mongoose from "mongoose";
-import { createAdminUser } from "../utils/createAdmin.js";
+import { createAdminUser } from "../src/utils/createAdmin.js";
 
 const run = async () => {
   if (!process.env.MONGO_URI) {
@@ -16,3 +16,4 @@ run().catch((error) => {
   console.error("Admin seed failed:", error.message);
   process.exit(1);
 });
+

@@ -1,0 +1,522 @@
+/* ============================================================
+   Foodie — Loading / Skeleton system
+   Warm neutral placeholders that mirror the real component
+   geometry. Used by both the admin and customer surfaces.
+   ============================================================ */
+
+.skeleton {
+  display: block;
+  border-radius: var(--radius-sm);
+  background: linear-gradient(
+    100deg,
+    var(--color-surface-2) 30%,
+    var(--color-surface-3) 50%,
+    var(--color-surface-2) 70%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.6s linear infinite;
+}
+
+/* ---------- Text lines ---------- */
+.ld-text {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.ld-line {
+  height: 0.75rem;
+  border-radius: var(--radius-full);
+}
+
+.ld-line-lg {
+  height: 1.375rem;
+  border-radius: var(--radius-sm);
+}
+
+.ld-line-sm {
+  height: 0.5625rem;
+}
+
+/* ---------- Generic block ---------- */
+.ld-block {
+  border-radius: var(--radius-lg);
+}
+
+.ld-circle {
+  border-radius: var(--radius-full);
+}
+
+.ld-pill {
+  height: 1.75rem;
+  border-radius: var(--radius-full);
+}
+
+/* ---------- Page shell ---------- */
+.ld-page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+.ld-page-head {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.ld-page-head-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+}
+
+.ld-page-body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.ld-grid-2 {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-4);
+}
+
+.ld-grid-3 {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-4);
+}
+
+.ld-grid-4 {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--space-4);
+}
+
+/* ---------- KPI / stat card ---------- */
+.ld-kpi {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-5);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+}
+
+.ld-kpi-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.ld-kpi-icon {
+  width: 42px;
+  height: 42px;
+  border-radius: var(--radius-md);
+}
+
+.ld-kpi-value {
+  height: 1.75rem;
+  width: 55%;
+  border-radius: var(--radius-sm);
+}
+
+.ld-kpi-foot {
+  width: 38%;
+  height: 0.875rem;
+  border-radius: var(--radius-full);
+}
+
+/* ---------- Chart ---------- */
+.ld-chart {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  padding: var(--space-5);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+}
+
+.ld-chart-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-4);
+}
+
+.ld-chart-plot {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--space-2);
+  height: 180px;
+  padding-top: var(--space-4);
+}
+
+.ld-chart-bar {
+  flex: 1;
+  border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+  background: var(--color-surface-2);
+}
+
+.ld-chart-legend {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.ld-chart-legend-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.ld-chart-legend-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: var(--radius-full);
+  flex-shrink: 0;
+}
+
+/* ---------- Table ---------- */
+.ld-table {
+  overflow: hidden;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+}
+
+.ld-table-head {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  padding: var(--space-3) var(--space-4);
+  background: var(--color-surface-2);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.ld-table-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  padding: var(--space-4);
+  border-bottom: 1px solid var(--color-border-subtle);
+}
+
+.ld-table-row:last-child {
+  border-bottom: none;
+}
+
+.ld-table-thumb {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-md);
+  flex-shrink: 0;
+}
+
+.ld-table-cell {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  min-width: 0;
+}
+
+.ld-table-actions {
+  margin-left: auto;
+  display: flex;
+  gap: var(--space-2);
+  flex-shrink: 0;
+}
+
+.ld-table-btn {
+  width: 2rem;
+  height: 2rem;
+  border-radius: var(--radius-md);
+}
+
+/* ---------- Product card ---------- */
+.ld-product-card {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+}
+
+.ld-product-media {
+  aspect-ratio: 4 / 3;
+  width: 100%;
+  border-radius: 0;
+}
+
+.ld-product-body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-4);
+}
+
+.ld-product-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  margin-top: var(--space-1);
+}
+
+.ld-price {
+  width: 4.5rem;
+  height: 1.125rem;
+  border-radius: var(--radius-sm);
+}
+
+.ld-btn {
+  width: 6.5rem;
+  height: 2.25rem;
+  border-radius: var(--radius-md);
+}
+
+/* ---------- Order card ---------- */
+.ld-order-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  padding: var(--space-4) var(--space-5);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+}
+
+.ld-order-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+}
+
+.ld-order-thumbs {
+  display: flex;
+  gap: var(--space-2);
+}
+
+.ld-order-thumb {
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-md);
+}
+
+.ld-order-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--color-border-subtle);
+}
+
+/* ---------- Category card ---------- */
+.ld-category-card {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+}
+
+.ld-category-media {
+  aspect-ratio: 16 / 9;
+  width: 100%;
+  border-radius: 0;
+}
+
+.ld-category-body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-4);
+}
+
+/* ---------- Customer card ---------- */
+.ld-customer-card {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  padding: var(--space-4);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+}
+
+.ld-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-full);
+  flex-shrink: 0;
+}
+
+/* ---------- Form ---------- */
+.ld-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+.ld-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.ld-field-label {
+  width: 7rem;
+  height: 0.625rem;
+  border-radius: var(--radius-full);
+}
+
+.ld-input {
+  width: 100%;
+  height: 2.75rem;
+  border-radius: var(--radius-md);
+}
+
+.ld-textarea {
+  width: 100%;
+  height: 6rem;
+  border-radius: var(--radius-md);
+}
+
+.ld-field-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-4);
+}
+
+/* ---------- Profile ---------- */
+.ld-profile {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+.ld-profile-head {
+  display: flex;
+  align-items: center;
+  gap: var(--space-5);
+}
+
+.ld-profile-avatar {
+  width: 88px;
+  height: 88px;
+  border-radius: var(--radius-full);
+  flex-shrink: 0;
+}
+
+/* ---------- Sidebar (admin nav) ---------- */
+.ld-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+  padding: var(--space-4);
+}
+
+.ld-sidebar-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.ld-sidebar-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  height: 2.5rem;
+  padding: 0 var(--space-3);
+  border-radius: var(--radius-md);
+}
+
+.ld-sidebar-icon {
+  width: 1.125rem;
+  height: 1.125rem;
+  border-radius: var(--radius-xs);
+  flex-shrink: 0;
+}
+
+/* ---------- Settings ---------- */
+.ld-settings {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+.ld-settings-nav {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.ld-settings-nav-item {
+  height: 2.25rem;
+  border-radius: var(--radius-md);
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 1099px) {
+  .ld-grid-4 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 767px) {
+  .ld-grid-3 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .ld-chart-plot {
+    height: 140px;
+  }
+}
+
+@media (max-width: 639px) {
+  .ld-grid-2,
+  .ld-grid-3,
+  .ld-grid-4 {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .ld-field-row {
+    grid-template-columns: 1fr;
+  }
+
+  .ld-table-row {
+    flex-wrap: wrap;
+    gap: var(--space-3);
+  }
+
+  .ld-table-actions {
+    margin-left: 0;
+    width: 100%;
+  }
+
+  .ld-profile-head {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-4);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skeleton {
+    animation: none;
+    background: var(--color-surface-2);
+  }
+}

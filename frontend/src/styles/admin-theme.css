@@ -1,0 +1,29 @@
+/* ============================================================
+   Foodie — Admin theme scope
+   The admin surface deliberately shares the global token system
+   (styles/tokens.css) so that a component looks identical in
+   the admin and on the customer site. Only admin-specific
+   surfaces (the dark sidebar) are themed here.
+   ============================================================ */
+
+:is(.admin-shell, .admin-login-page, .admin-theme) {
+  /* Dark sidebar surface */
+  --admin-sidebar-bg: #17120f;
+  --admin-sidebar-raised: #241d18;
+  --admin-sidebar-border: #30251d;
+  --admin-sidebar-text: #cfc3b8;
+  --admin-sidebar-text-strong: #f8f1e8;
+  --admin-sidebar-muted: #8f8175;
+
+  /* The admin workspace is a data-dense tool: slightly tighter
+     elevation and a warmer focus ring than the marketing surface. */
+  --shadow-focus: 0 0 0 3px rgb(245 158 11 / 0.28);
+
+  font-family: var(--font-body);
+}
+
+/* Headings use the display face everywhere in the admin. */
+.admin-shell :where(h1, h2, h3, h4, h5, h6),
+.admin-login-page :where(h1, h2, h3, h4, h5, h6) {
+  font-family: var(--font-display);
+}

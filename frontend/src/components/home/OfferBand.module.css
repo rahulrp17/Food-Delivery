@@ -1,0 +1,114 @@
+.band {
+  padding-block: var(--space-6);
+}
+
+.inner {
+  display: grid;
+  overflow: hidden;
+  border-radius: var(--radius-xl);
+  background: var(--color-dark-bg);
+  color: var(--color-dark-text);
+  box-shadow: var(--shadow-lg);
+}
+
+.copy {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-4);
+  padding: clamp(1.75rem, 5vw, 3.5rem);
+}
+
+.copy .eyebrow {
+  color: var(--saffron-400);
+}
+
+.title {
+  max-width: 18ch;
+  font-size: var(--text-h1);
+  line-height: 1.05;
+}
+
+.description {
+  max-width: 46ch;
+  color: var(--color-dark-muted);
+  font-size: var(--text-body-l);
+  line-height: 1.6;
+}
+
+.visual {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 220px;
+  padding: var(--space-8);
+  background:
+    radial-gradient(circle at 30% 20%, var(--color-accent-soft), transparent 45%),
+    linear-gradient(145deg, var(--saffron-500), var(--tomato-600));
+}
+
+.ticket {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  width: min(100%, 330px);
+  padding: var(--space-5);
+  border-radius: var(--radius-lg);
+  background: var(--cream-50);
+  color: var(--ink-900);
+  box-shadow: var(--shadow-xl);
+  transform: rotate(-3deg);
+}
+
+.ticketIcon {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  flex-shrink: 0;
+  border-radius: var(--radius-full);
+  background: var(--color-success-soft);
+  color: var(--color-success);
+}
+
+.ticketLabel {
+  display: block;
+  color: var(--ink-600);
+  font-size: var(--text-caption);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.ticketValue {
+  display: block;
+  font-family: var(--font-display);
+  font-size: var(--text-h3);
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+}
+
+.ticketMeta {
+  display: block;
+  margin-top: var(--space-1);
+  color: var(--ink-500);
+  font-size: var(--text-caption);
+}
+
+@media (min-width: 800px) {
+  .inner {
+    grid-template-columns: minmax(0, 1.15fr) minmax(320px, 0.85fr);
+  }
+
+  .visual {
+    min-height: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ticket {
+    transform: none;
+  }
+}

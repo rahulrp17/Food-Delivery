@@ -1,0 +1,144 @@
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.label {
+  color: var(--color-text);
+  font-size: var(--text-body-s);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.control {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input {
+  width: 100%;
+  min-height: 52px;
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid #e2e4e8;
+  border-radius: var(--radius-sm);
+  background: #f4f4f7;
+  color: var(--color-text);
+  font-size: var(--text-body-s);
+  transition:
+    border-color var(--duration-fast) var(--ease-standard),
+    box-shadow var(--duration-fast) var(--ease-standard),
+    background-color var(--duration-fast) var(--ease-standard);
+}
+
+.input::placeholder {
+  color: var(--color-text-subtle);
+}
+
+.input::-webkit-search-cancel-button {
+  display: none;
+}
+
+.input:hover {
+  border-color: var(--ink-400);
+}
+
+.input:focus {
+  outline: none;
+  border-color: var(--color-focus);
+  box-shadow: var(--shadow-focus);
+}
+
+.input[aria-invalid="true"] {
+  border-color: var(--color-danger);
+}
+
+.input[aria-invalid="true"]:focus {
+  box-shadow: 0 0 0 3px rgb(185 28 28 / 0.18);
+}
+
+.withLeading {
+  padding-left: 2.75rem;
+}
+
+.withTrailing {
+  padding-right: 2.75rem;
+}
+
+.leading {
+  position: absolute;
+  left: var(--space-3);
+  top: 50%;
+  transform: translateY(-50%);
+  display: grid;
+  place-items: center;
+  color: var(--color-text-subtle);
+  pointer-events: none;
+}
+
+.trailing {
+  position: absolute;
+  right: var(--space-3);
+  top: 50%;
+  transform: translateY(-50%);
+  display: grid;
+  place-items: center;
+  color: var(--color-text-subtle);
+  pointer-events: none;
+}
+
+.trailingButton {
+  position: absolute;
+  right: var(--space-3);
+  top: 50%;
+  transform: translateY(-50%);
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  min-width: 38px;
+  min-height: 38px;
+  border-radius: var(--radius-full);
+  border: none;
+  background: transparent;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  pointer-events: auto;
+}
+
+.trailingButton:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.trailingButton:hover:not(:disabled) {
+  background: var(--color-surface-2);
+  color: var(--color-text);
+}
+
+.trailingButton:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+}
+
+.hint {
+  color: var(--color-text-muted);
+  font-size: var(--text-body-s);
+}
+
+.error {
+  color: var(--color-danger);
+  font-size: var(--text-body-s);
+  font-weight: 500;
+}
+
+/* Touch-sized screens need a full 44px tap target on inline icon buttons. */
+@media (max-width: 767px) {
+  .trailingButton {
+    width: 44px;
+    height: 44px;
+    min-width: 44px;
+    min-height: 44px;
+  }
+}

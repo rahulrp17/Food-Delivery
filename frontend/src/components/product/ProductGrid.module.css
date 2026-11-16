@@ -1,0 +1,57 @@
+.grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-4);
+}
+
+/* 2-up from the smallest phones upward. */
+@media (min-width: 400px) {
+  .grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 768px) {
+  .grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--space-6);
+  }
+}
+
+@media (min-width: 1200px) {
+  .grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 479px) {
+  .grid {
+    gap: var(--space-3);
+  }
+}
+
+/* ---------- Dense variant ----------
+   Used by the menu, which lists the whole catalogue and benefits from one
+   more column and tighter gutters on wide screens. */
+.dense {
+  gap: var(--space-3);
+}
+
+@media (min-width: 768px) {
+  .dense {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--space-4);
+  }
+}
+
+@media (min-width: 1100px) {
+  .dense {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1400px) {
+  .dense {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+  }
+}

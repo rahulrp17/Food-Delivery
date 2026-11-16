@@ -1,0 +1,256 @@
+/* ============================================================
+   Customer reviews for a dish — social proof, the way a food
+   ordering platform presents it.
+   ============================================================ */
+
+.product-reviews {
+  margin-top: var(--space-10);
+  padding-top: var(--space-8);
+  border-top: 1px solid var(--color-border);
+}
+
+.product-reviews-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+  margin-bottom: var(--space-6);
+}
+
+.product-reviews-head h2 {
+  font-family: var(--font-display);
+  font-size: var(--text-h2);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.product-reviews-total {
+  color: var(--color-text-muted);
+  font-size: var(--text-body-s);
+  font-weight: 600;
+}
+
+.product-reviews-body {
+  display: grid;
+  grid-template-columns: minmax(200px, 260px) minmax(0, 1fr);
+  gap: var(--space-8);
+  align-items: start;
+}
+
+/* ---------- Summary + histogram ---------- */
+.product-reviews-summary {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-5);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-xs);
+}
+
+.product-reviews-average {
+  font-family: var(--font-display);
+  font-size: 3rem;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.04em;
+  font-variant-numeric: tabular-nums;
+}
+
+.product-reviews-based {
+  color: var(--color-text-subtle);
+  font-size: var(--text-caption);
+}
+
+.product-reviews-histogram {
+  display: grid;
+  gap: 5px;
+  margin: var(--space-3) 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.product-reviews-histogram-row {
+  display: grid;
+  grid-template-columns: 34px minmax(0, 1fr) 24px;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--text-caption);
+}
+
+.product-reviews-histogram-label {
+  color: var(--color-text-muted);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.product-reviews-histogram-track {
+  display: block;
+  height: 7px;
+  border-radius: var(--radius-full);
+  background: var(--color-surface-2);
+  overflow: hidden;
+}
+
+.product-reviews-histogram-fill {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--color-accent);
+  transition: width var(--duration-moderate) var(--ease-standard);
+}
+
+.product-reviews-histogram-count {
+  color: var(--color-text-subtle);
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------- Review list ---------- */
+.product-reviews-list {
+  display: grid;
+  gap: var(--space-4);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.product-review {
+  padding: var(--space-4) var(--space-5);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+}
+
+.product-review-head {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.product-review-avatar {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  flex-shrink: 0;
+  border-radius: var(--radius-full);
+  background: var(--color-primary-soft);
+  color: var(--color-primary);
+  font-family: var(--font-display);
+  font-size: var(--text-body-s);
+  font-weight: 700;
+}
+
+.product-review-by {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.25;
+  min-width: 0;
+}
+
+.product-review-by strong {
+  color: var(--color-text);
+  font-size: var(--text-body-s);
+  font-weight: 700;
+}
+
+.product-review-by span {
+  color: var(--color-text-subtle);
+  font-size: var(--text-caption);
+}
+
+.product-review-rating {
+  margin-left: auto;
+  flex-shrink: 0;
+}
+
+.product-review-title {
+  margin-top: var(--space-3);
+  color: var(--color-text);
+  font-family: var(--font-display);
+  font-size: var(--text-h4);
+  font-weight: 700;
+}
+
+.product-review-body {
+  margin-top: var(--space-2);
+  color: var(--color-text-muted);
+  font-size: var(--text-body-s);
+  line-height: 1.65;
+}
+
+.product-review-reply {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin-top: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  border-left: 3px solid var(--color-accent);
+  border-radius: 0 var(--radius-md) var(--radius-md) 0;
+  background: var(--color-accent-soft);
+}
+
+.product-review-reply-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  color: var(--color-accent-strong);
+  font-size: var(--text-caption);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.product-review-reply p {
+  color: var(--color-text);
+  font-size: var(--text-body-s);
+  line-height: 1.6;
+}
+
+/* ---------- Skeleton ---------- */
+.product-reviews-body + .product-review-skeleton {
+  margin-top: var(--space-3);
+}
+
+.product-review-skeleton {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-4);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-lg);
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 767px) {
+  .product-reviews {
+    margin-top: var(--space-8);
+    padding-top: var(--space-6);
+  }
+
+  .product-reviews-body {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-5);
+  }
+
+  .product-reviews-summary {
+    padding: var(--space-4);
+  }
+
+  .product-reviews-average {
+    font-size: 2.5rem;
+  }
+
+  .product-review {
+    padding: var(--space-4);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .product-reviews-histogram-fill {
+    transition: none;
+  }
+}

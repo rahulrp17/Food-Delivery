@@ -1,0 +1,88 @@
+/* ===== Food Thumb — Premium ===== */
+.food-thumb {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  overflow: hidden;
+  border-radius: var(--radius-md);
+  background: var(--color-surface-2);
+  border: 1px solid var(--color-border);
+  color: var(--color-text-muted);
+  transition: transform var(--duration-fast), border-color var(--duration-fast), box-shadow var(--duration-fast);
+}
+
+.food-thumb:hover {
+  transform: scale(1.04);
+  border-color: var(--color-border-strong);
+  box-shadow: 0 4px 12px color-mix(in srgb, var(--color-primary) 10%, transparent);
+}
+
+.food-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Size variants */
+.food-thumb-sm {
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius-sm);
+}
+
+.food-thumb-md {
+  width: 40px;
+  height: 40px;
+}
+
+.food-thumb-lg {
+  width: 52px;
+  height: 52px;
+  border-radius: var(--radius-lg);
+}
+
+/* Badge variant for status */
+.food-thumb.is-success {
+  border-color: var(--color-success);
+  background: color-mix(in srgb, var(--color-success) 10%, var(--color-surface-2));
+}
+
+.food-thumb.is-danger {
+  border-color: var(--color-danger);
+  background: color-mix(in srgb, var(--color-danger) 10%, var(--color-surface-2));
+}
+
+/* Loading state */
+.food-thumb.is-loading {
+  position: relative;
+  overflow: hidden;
+}
+
+.food-thumb.is-loading::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, var(--color-surface-2), transparent);
+  animation: foodThumbShimmer 1.5s infinite;
+}
+
+/* Named uniquely: the global `.skeleton` shimmer in styles/motion.css also
+   animates a "shimmer", and keyframes are global — a shared name made this
+   transform-based version override the background-position one, so every
+   skeleton in the app translated sideways instead of shimmering. */
+@keyframes foodThumbShimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .food-thumb {
+    transition: none;
+  }
+
+  .food-thumb:hover {
+    transform: none;
+  }
+}

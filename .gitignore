@@ -14,8 +14,23 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 
+# Playwright
+test-results/
+playwright-report/
+blob-report/
+
+# Generated uploads and temporary diagnostics
+backend/uploads/
+frontend/_*.mjs
+
 .DS_Store
 Thumbs.db
 .idea/
 .vscode/*
 !.vscode/extensions.json
+
+# Local agent tooling (large, contains local-only credentials)
+.opencode/
+
+# Scratch duplicate files
+*- Copy.*

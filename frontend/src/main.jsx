@@ -1,14 +1,19 @@
+import { StrictMode } from "react";
+import { createRoot } from "react-dom/client";
+import { BrowserRouter } from "react-router-dom";
+import { Providers } from "./providers.jsx";
+import App from "./App.jsx";
+import "./styles/tokens.css";
+import "./styles/admin-theme.css";
+import "./styles/globals.css";
+import "./styles/motion.css";
 
-import { createRoot } from 'react-dom/client'
-import './index.css'
-import App from './App.jsx'
-import { BrowserRouter } from 'react-router-dom'
-import StoreContextProvider from './context/StoreContext.jsx'
-
-createRoot(document.getElementById('root')).render(
-  <BrowserRouter>
-    <StoreContextProvider>
+createRoot(document.getElementById("root")).render(
+  <StrictMode>
+    <BrowserRouter>
+      <Providers>
         <App />
-    </StoreContextProvider>  
-  </BrowserRouter>
-)
+      </Providers>
+    </BrowserRouter>
+  </StrictMode>
+);

@@ -1,0 +1,143 @@
+.footer {
+  background: var(--color-dark-bg);
+  color: var(--color-dark-text);
+}
+
+.top {
+  display: grid;
+  gap: var(--space-10);
+  padding-block: var(--space-16) var(--space-12);
+}
+
+.brand {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  max-width: 34ch;
+}
+
+.promise {
+  color: var(--color-dark-muted);
+  font-size: var(--text-body-s);
+  line-height: 1.65;
+}
+
+.columns {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-8);
+}
+
+.column {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.columnTitle {
+  color: var(--color-dark-text);
+  font-family: var(--font-display);
+  font-size: var(--text-body-s);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.column a,
+.column span {
+  display: inline-flex;
+  align-items: center;
+  min-height: 32px;
+  color: var(--color-dark-muted);
+  font-size: var(--text-body-s);
+  transition: color var(--duration-fast) var(--ease-standard);
+}
+
+.column a:hover {
+  color: var(--saffron-400);
+}
+
+/* Footer links are standalone tap targets — use the full 44px on touch
+   screens and tighten the column gap so the rhythm stays intact. */
+@media (max-width: 767px) {
+  .column {
+    gap: var(--space-1);
+  }
+
+  .column a,
+  .column span {
+    min-height: 44px;
+  }
+}
+
+.contactRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.bottom {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+  padding-block: var(--space-6);
+  border-top: 1px solid var(--color-dark-border);
+}
+
+.legal {
+  color: var(--ink-400);
+  font-size: var(--text-caption);
+}
+
+.payments {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.payment {
+  display: inline-flex;
+  align-items: center;
+  min-height: 26px;
+  padding: 0 var(--space-2);
+  border: 1px solid var(--color-dark-border);
+  border-radius: var(--radius-xs);
+  color: var(--color-dark-muted);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+@media (min-width: 640px) {
+  .columns {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .bottom {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+}
+
+@media (min-width: 900px) and (max-width: 1279px) {
+  .top {
+    grid-template-columns: 1.2fr 2fr;
+    gap: var(--space-16);
+  }
+
+  .columns {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1280px) {
+  .top {
+    grid-template-columns: 1.2fr 2fr;
+    gap: var(--space-16);
+  }
+
+  .columns {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}

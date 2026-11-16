@@ -23,11 +23,21 @@ export default [
     rules: {
       ...js.configs.recommended.rules,
       ...reactHooks.configs.recommended.rules,
-      'no-unused-vars': ['error', { varsIgnorePattern: '^[A-Z_]' }],
+      // `eslint-plugin-react` is not installed, so ESLint cannot see that a
+      // lowercase import such as `motion` is used inside JSX (`<motion.div />`).
+      // Uppercase names are ignored for the same reason (components are only
+      // referenced from JSX).
+      'no-unused-vars': ['error', { varsIgnorePattern: '^[A-Z_]|^motion$' }],
       'react-refresh/only-export-components': [
         'warn',
         { allowConstantExport: true },
       ],
+    },
+  },
+  {
+    files: ['e2e/**/*.js', 'e2e-responsive/**/*.js', 'playwright.config.js', 'playwright.*.config.js'],
+    languageOptions: {
+      globals: globals.node,
     },
   },
 ]

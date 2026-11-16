@@ -1,0 +1,21 @@
+export const queryKeys = {
+  admin: {
+    overview: (params = {}) => ['admin', 'overview', params],
+    products: (params = {}) => ['admin', 'products', params],
+    product: (id) => ['admin', 'product', id],
+    categories: (params = {}) => ['admin', 'categories', params],
+    orders: (params = {}) => ['admin', 'orders', params],
+    order: (id) => ['admin', 'order', id],
+    customers: (params = {}) => ['admin', 'customers', params],
+    customer: (id) => ['admin', 'customer', id],
+    coupons: (params = {}) => ['admin', 'coupons', params],
+    coupon: (id) => ['admin', 'coupon', id],
+    couponRedemptions: (id) => ['admin', 'coupon', id, 'redemptions'],
+    reviews: (params = {}) => ['admin', 'reviews', params],
+    settings: () => ['admin', 'settings'],
+    auditLogs: (params = {}) => ['admin', 'audit-logs', params],
+    notifications: (params = {}) => ['admin', 'notifications', params],
+    inventory: (params = {}) => ['admin', 'inventory', params],
+    staff: (params = {}) => ['admin', 'staff', params],
+  },
+};

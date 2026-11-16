@@ -1,0 +1,112 @@
+/* ===== Order Items Preview — Premium ===== */
+.order-items-preview {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-width: 0;
+}
+
+.order-items-thumbs {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.order-items-thumb {
+  box-shadow: 0 0 0 2px var(--color-surface);
+  margin-left: -8px;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+
+.order-items-thumb:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 0 2px var(--color-surface), 0 4px 12px color-mix(in srgb, var(--color-primary) 12%, transparent);
+}
+
+.order-items-thumb:first-child {
+  margin-left: 0;
+}
+
+.order-items-more {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 28px;
+  height: 28px;
+  padding: 0 var(--space-1);
+  margin-left: -6px;
+  border-radius: var(--radius-sm);
+  background: var(--color-surface-2);
+  border: 1px solid var(--color-border);
+  box-shadow: 0 0 0 2px var(--color-surface);
+  color: var(--color-text-muted);
+  font-size: 10px;
+  font-weight: 700;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+
+.order-items-more:hover {
+  background: var(--color-surface-3);
+  border-color: var(--color-border-strong);
+  color: var(--color-primary);
+}
+
+.order-items-text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  line-height: 1.3;
+}
+
+.order-items-text strong {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: var(--text-body-s);
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.order-items-text span {
+  color: var(--color-text-muted);
+  font-size: var(--text-caption);
+}
+
+.order-items-empty {
+  color: var(--color-text-muted);
+  font-size: var(--text-body-s);
+  padding: var(--space-4);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+}
+
+/* Shows the item name/count column next to the thumbnails */
+.order-items-preview.with-names {
+  align-items: center;
+}
+
+.order-items-preview.with-names .order-items-text {
+  padding-left: var(--space-1);
+}
+
+/* Compact variant for tighter spaces */
+.order-items-preview.compact .order-items-thumb {
+  width: 24px;
+  height: 24px;
+}
+
+.order-items-preview.compact .order-items-more {
+  min-width: 24px;
+  height: 24px;
+  margin-left: -4px;
+  font-size: 9px;
+}
+
+@media (max-width: 1099px) {
+  .order-items-text strong {
+    max-width: 160px;
+  }
+}

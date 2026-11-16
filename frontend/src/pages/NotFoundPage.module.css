@@ -1,0 +1,14 @@
+.page {
+  padding-block: var(--space-20);
+}
+
+.panel {
+  max-width: 640px;
+  margin-inline: auto;
+}
+
+@media (min-width: 768px) {
+  .page {
+    padding-block: var(--space-24);
+  }
+}

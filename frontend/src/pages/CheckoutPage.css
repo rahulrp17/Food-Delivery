@@ -1,0 +1,800 @@
+/* ============================================================
+   Foodie — Checkout
+   A clear three-step flow with a sticky docket on the right.
+   Colours come exclusively from src/styles/tokens.css.
+   ============================================================ */
+
+.checkout-page {
+  padding: var(--space-12) var(--gutter) var(--space-16);
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+/* ---------- Masthead ---------- */
+.checkout-masthead {
+  max-width: 60ch;
+  margin-bottom: var(--space-8);
+}
+
+.checkout-masthead-title {
+  margin-top: var(--space-2);
+  font-size: var(--text-h1);
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+}
+
+.checkout-masthead-text {
+  margin-top: var(--space-3);
+  color: var(--color-text-muted);
+  font-size: var(--text-body-l);
+  line-height: 1.6;
+}
+
+/* ---------- Step flow ---------- */
+.checkout-progress {
+  margin-bottom: var(--space-10);
+  padding: var(--space-5) var(--space-6);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-xs);
+}
+
+.checkout-progress-list {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.progress-step {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-width: 0;
+}
+
+/* The connector rail runs behind the numbered discs. It starts just after
+   this step's disc and stops at the next step's disc. The label carries an
+   opaque background so it masks the rail rather than being struck through. */
+.progress-step:not(:last-child)::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 36px;
+  right: calc(-1 * var(--space-4));
+  height: 2px;
+  border-radius: var(--radius-full);
+  background: var(--color-border);
+  transition: background-color var(--duration-normal) var(--ease-standard);
+}
+
+/* The completed portion of the rail. Motion scales this in from the left as
+   a step is finished, so the progress is animated rather than a colour swap. */
+.step-connector {
+  position: absolute;
+  top: 50%;
+  left: 36px;
+  right: calc(-1 * var(--space-4));
+  height: 2px;
+  border-radius: var(--radius-full);
+  background: var(--color-success);
+  transform-origin: left center;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.step-number {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-full);
+  background: var(--color-surface);
+  color: var(--color-text-muted);
+  font-family: var(--font-display);
+  font-size: var(--text-body-s);
+  font-weight: 700;
+  transition:
+    background-color var(--duration-normal) var(--ease-standard),
+    border-color var(--duration-normal) var(--ease-standard),
+    color var(--duration-normal) var(--ease-standard);
+}
+
+.step-number-inner {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+}
+
+.progress-step.active .step-number {
+  border-color: var(--color-primary);
+  background: var(--color-primary);
+  color: var(--color-primary-contrast);
+  box-shadow: 0 0 0 4px var(--color-primary-soft);
+}
+
+.progress-step.completed .step-number {
+  border-color: var(--color-success);
+  background: var(--color-success);
+  color: var(--color-success-contrast);
+}
+
+.step-label {
+  position: relative;
+  z-index: 2;
+  padding-right: var(--space-3);
+  background: var(--color-surface);
+  font-size: var(--text-body-s);
+  font-weight: 600;
+  color: var(--color-text-subtle);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.progress-step.active .step-label {
+  color: var(--color-text);
+}
+
+.progress-step.completed .step-label {
+  color: var(--color-success);
+}
+
+/* ---------- Layout ---------- */
+.checkout-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 372px;
+  gap: var(--space-10);
+  align-items: start;
+}
+
+.checkout-form {
+  min-width: 0;
+}
+
+.checkout-section {
+  margin-bottom: var(--space-8);
+}
+
+.checkout-section h2 {
+  font-size: var(--text-heading-m);
+  font-weight: 700;
+  margin-bottom: var(--space-1);
+}
+
+.section-hint {
+  color: var(--color-text-muted);
+  font-size: var(--text-body-s);
+  margin-bottom: var(--space-5);
+}
+
+/* ---------- Address cards ---------- */
+.address-options {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  margin-bottom: var(--space-4);
+}
+
+.address-option {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  padding: var(--space-4) var(--space-5);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+  cursor: pointer;
+  transition:
+    border-color var(--duration-fast) var(--ease-standard),
+    background-color var(--duration-fast) var(--ease-standard),
+    box-shadow var(--duration-fast) var(--ease-standard);
+}
+
+.address-option:hover {
+  border-color: var(--color-border-strong);
+  background: var(--color-surface-2);
+}
+
+.address-option.selected {
+  border-color: var(--color-primary);
+  background: var(--color-primary-soft);
+  box-shadow: var(--shadow-md);
+}
+
+.address-option input[type="radio"] {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.address-option:focus-within {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+}
+
+.address-content {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.address-header {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-bottom: var(--space-1);
+}
+
+.address-label {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: var(--text-body);
+  color: var(--color-text);
+}
+
+.default-badge {
+  font-size: var(--text-caption);
+  font-weight: 600;
+  padding: 1px var(--space-2);
+  background: var(--color-primary);
+  color: var(--color-primary-contrast);
+  border-radius: var(--radius-full);
+}
+
+.address-name {
+  font-weight: 500;
+  color: var(--color-text);
+}
+
+.address-phone {
+  font-size: var(--text-body-s);
+  color: var(--color-text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.address-full {
+  display: block;
+  margin-top: var(--space-1);
+  font-size: var(--text-body-s);
+  color: var(--color-text-muted);
+  line-height: 1.6;
+}
+
+.radio-indicator {
+  width: 22px;
+  height: 22px;
+  flex-shrink: 0;
+  margin-top: 2px;
+  border: 2px solid var(--color-border-strong);
+  border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition:
+    border-color var(--duration-fast) var(--ease-standard),
+    background-color var(--duration-fast) var(--ease-standard);
+}
+
+.address-option.selected .radio-indicator {
+  border-color: var(--color-primary);
+  background: var(--color-primary);
+}
+
+.address-option.selected .radio-indicator::after {
+  content: '';
+  width: 8px;
+  height: 8px;
+  border-radius: var(--radius-full);
+  background: var(--color-primary-contrast);
+}
+
+/* ---------- Empty address state ---------- */
+.checkout-address-empty {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  margin-bottom: var(--space-4);
+  padding: var(--space-5);
+  border: 1px dashed var(--color-border-strong);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+  color: var(--color-text-muted);
+  font-size: var(--text-body-s);
+  line-height: 1.55;
+}
+
+.checkout-address-empty-icon {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
+  border-radius: var(--radius-full);
+  background: var(--color-surface-2);
+  color: var(--color-primary);
+}
+
+/* ---------- Add address ---------- */
+.add-address-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  width: 100%;
+  min-height: 48px;
+  padding: var(--space-3) var(--space-4);
+  border: 1px dashed var(--color-border-strong);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+  color: var(--color-text-muted);
+  font-size: var(--text-body);
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    border-color var(--duration-fast) var(--ease-standard),
+    color var(--duration-fast) var(--ease-standard),
+    background-color var(--duration-fast) var(--ease-standard);
+}
+
+.add-address-btn:hover {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+  background: var(--color-primary-soft);
+}
+
+/* ---------- Address form ---------- */
+.address-form {
+  margin-top: var(--space-6);
+  padding: var(--space-6);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+}
+
+.address-form h3 {
+  font-size: var(--text-heading-s);
+  margin-bottom: var(--space-4);
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-4);
+  margin-bottom: var(--space-4);
+}
+
+.form-field {
+  min-width: 0;
+}
+
+.form-field.full-width {
+  grid-column: 1 / -1;
+}
+
+.form-field label {
+  display: block;
+  font-size: var(--text-body-s);
+  font-weight: 500;
+  color: var(--color-text);
+  margin-bottom: var(--space-1);
+}
+
+.form-select {
+  width: 100%;
+  min-height: 44px;
+  padding: 0 var(--space-3);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  color: var(--color-text);
+  font-size: var(--text-body);
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.form-select:focus {
+  outline: none;
+  border-color: var(--color-focus);
+  box-shadow: var(--shadow-focus);
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-3);
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--color-border);
+}
+
+/* ---------- Payment ---------- */
+.payment-note {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-4);
+  background: var(--color-primary-soft);
+  border-radius: var(--radius-md);
+  color: var(--tomato-700);
+  font-size: var(--text-body-s);
+  line-height: 1.5;
+}
+
+.payment-note svg {
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.payment-options {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  margin-bottom: var(--space-4);
+}
+
+.payment-option {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-4) var(--space-5);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+  cursor: pointer;
+  transition:
+    border-color var(--duration-fast) var(--ease-standard),
+    background-color var(--duration-fast) var(--ease-standard);
+}
+
+.payment-option:hover {
+  border-color: var(--color-border-strong);
+  background: var(--color-surface-2);
+}
+
+.payment-option.selected,
+.payment-option:has(input:checked) {
+  border-color: var(--color-primary);
+  background: var(--color-primary-soft);
+}
+
+.payment-option input[type="radio"] {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.payment-option:focus-within {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+}
+
+.payment-option-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.payment-option-content strong {
+  font-size: var(--text-body);
+  color: var(--color-text);
+}
+
+.payment-option-content span {
+  font-size: var(--text-body-s);
+  color: var(--color-text-muted);
+}
+
+.payment-option:has(input:checked) .radio-indicator {
+  border-color: var(--color-primary);
+  background: var(--color-primary);
+}
+
+.payment-option:has(input:checked) .radio-indicator::after {
+  content: '';
+  width: 8px;
+  height: 8px;
+  border-radius: var(--radius-full);
+  background: var(--color-primary-contrast);
+}
+
+/* ---------- Review ---------- */
+.review-address h4,
+.review-items h4 {
+  font-size: var(--text-body);
+  font-weight: 600;
+  margin-bottom: var(--space-2);
+  color: var(--color-text);
+}
+
+.review-address address {
+  font-style: normal;
+  color: var(--color-text-muted);
+  font-size: var(--text-body-s);
+  line-height: 1.6;
+  white-space: pre-line;
+}
+
+.review-items {
+  margin: var(--space-4) 0;
+  padding: var(--space-4) var(--space-5);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+}
+
+.review-item {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding: var(--space-2) 0;
+  font-size: var(--text-body-s);
+  border-bottom: 1px solid var(--color-border-subtle);
+}
+
+.review-item:last-child {
+  border-bottom: none;
+}
+
+.review-total {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-4);
+  font-size: var(--text-heading-s);
+  font-weight: 700;
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--color-border);
+}
+
+/* ---------- Navigation ---------- */
+.checkout-navigation {
+  margin-top: var(--space-6);
+  padding-top: var(--space-5);
+  border-top: 1px solid var(--color-border);
+}
+
+.nav-buttons {
+  display: flex;
+  gap: var(--space-3);
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+
+.nav-buttons button {
+  flex: 1;
+}
+
+.checkout-order-error {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  flex: 1 1 100%;
+  order: 3;
+  margin-top: var(--space-2);
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--color-danger);
+  border-radius: var(--radius-md);
+  background: var(--color-danger-soft);
+  color: var(--color-danger);
+  font-size: var(--text-body-s);
+}
+
+.checkout-order-error svg {
+  flex-shrink: 0;
+}
+
+.checkout-order-error span {
+  flex: 1;
+  min-width: 160px;
+}
+
+/* ---------- Sticky summary ---------- */
+.checkout-summary {
+  position: sticky;
+  top: calc(var(--space-8) + 64px);
+}
+
+.summary-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  padding: var(--space-6);
+  box-shadow: var(--shadow-md);
+}
+
+.summary-card h3 {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  font-size: var(--text-heading-s);
+  font-weight: 700;
+  margin-bottom: var(--space-4);
+  padding-bottom: var(--space-3);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.summary-count {
+  color: var(--color-text-subtle);
+  font-family: var(--font-body);
+  font-size: var(--text-caption);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.summary-items {
+  margin-bottom: var(--space-4);
+}
+
+.summary-item {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-4);
+  font-size: var(--text-body-s);
+  color: var(--color-text-muted);
+  padding: var(--space-2) 0;
+}
+
+.summary-breakdown {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.summary-line {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-4);
+  font-size: var(--text-body);
+  font-variant-numeric: tabular-nums;
+}
+
+.summary-line.discount {
+  color: var(--color-success);
+}
+
+.summary-line.total {
+  font-size: var(--text-heading-s);
+  font-weight: 700;
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--color-border);
+  margin-top: var(--space-2);
+}
+
+.summary-note {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2);
+  margin-top: var(--space-4);
+  padding: var(--space-3);
+  background: var(--color-surface-2);
+  border-radius: var(--radius-md);
+  font-size: var(--text-caption);
+  color: var(--color-text-muted);
+  line-height: 1.5;
+}
+
+.summary-note svg {
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+/* ---------- Inline error ---------- */
+.checkout-inline-error {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  margin-bottom: var(--space-4);
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--color-danger);
+  border-radius: var(--radius-md);
+  background: var(--color-danger-soft);
+  color: var(--color-danger);
+  font-size: var(--text-body-s);
+}
+
+.checkout-inline-error span {
+  flex: 1;
+  min-width: 180px;
+}
+
+.checkout-address-loading {
+  margin-bottom: var(--space-4);
+  color: var(--color-text-muted);
+  font-size: var(--text-body-s);
+}
+
+.field-error {
+  margin-top: var(--space-1);
+  color: var(--color-danger);
+  font-size: var(--text-body-s);
+  font-weight: 500;
+}
+
+.form-select.has-error {
+  border-color: var(--color-danger);
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 1023px) {
+  .checkout-layout {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-8);
+  }
+
+  .checkout-summary {
+    position: static;
+    order: -1;
+  }
+}
+
+@media (max-width: 639px) {
+  .checkout-page {
+    padding: var(--space-8) var(--gutter) var(--space-12);
+  }
+
+  .checkout-progress {
+    padding: var(--space-4);
+  }
+
+  .checkout-progress-list {
+    gap: var(--space-2);
+  }
+
+  .progress-step {
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-2);
+    text-align: center;
+  }
+
+  .progress-step:not(:last-child)::after {
+    top: 15px;
+    left: calc(50% + 15px);
+    right: calc(-50% + 15px);
+  }
+
+  .step-label {
+    padding-right: 0;
+    font-size: var(--text-caption);
+  }
+
+  .step-number {
+    width: 30px;
+    height: 30px;
+    font-size: var(--text-caption);
+  }
+
+  .form-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .nav-buttons {
+    flex-direction: column-reverse;
+  }
+
+  .nav-buttons button {
+    width: 100%;
+  }
+}
