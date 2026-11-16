@@ -1,5 +1,5 @@
 import bcrypt from "bcrypt";
-import userModel from "../models/userModel.js";
+import userModel from "../models/user.model.js";
 
 export const createAdminUser = async () => {
   const email = process.env.ADMIN_EMAIL;

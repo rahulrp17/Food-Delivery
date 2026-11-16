@@ -25,7 +25,6 @@ const envSchema = z.object({
   ADDITIONAL_ORIGINS: z.string().optional().default(""),
   COOKIE_DOMAIN: z.string().optional().default(""),
   TRUST_PROXY: booleanish.default(false),
-  LEGACY_API_ENABLED: booleanish.default(isTest),
 
   ACCESS_TOKEN_TTL: z.string().default("15m"),
   REFRESH_TOKEN_TTL_DAYS: z.coerce.number().int().positive().default(30),

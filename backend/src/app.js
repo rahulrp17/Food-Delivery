@@ -14,15 +14,11 @@ import requestId from "./middleware/requestId.js";
 import sanitizeInput from "./middleware/sanitize.js";
 import { uploadsDir } from "./middleware/upload.js";
 import csrfProtection from "./middleware/csrf.js";
-import { globalLimiter, authLimiter, writeLimiter } from "./middleware/rateLimit.js";
+import { globalLimiter } from "./middleware/rateLimit.js";
 import { notFound } from "./middleware/notFound.js";
 import { errorHandler } from "./middleware/errorHandler.js";
 import { paymentWebhook } from "./controllers/payment.controller.js";
 
-import userRouter from "./routes/userRoute.js";
-import foodRouter from "./routes/foodRoutes.js";
-import cartRouter from "./routes/cartRoutes.js";
-import orderRouter from "./routes/orderRoutes.js";
 import v1Router from "./routes/v1/index.js";
 
 const app = express();
@@ -131,36 +127,24 @@ app.use(
 );
 
 app.use("/api", globalLimiter);
-app.use(["/api/user/login", "/api/user/register"], authLimiter);
-app.use(
-  ["/api/food/add", "/api/food/remove", "/api/orders/placeOrder", "/api/orders/status"],
-  writeLimiter
-);
 
 app.use("/api/v1", csrfProtection, v1Router);
 
-const legacyDisabled = (req, res) => {
-  res.status(410).json({
-    error: {
-      code: "LEGACY_API_DISABLED",
-      message:
-        "This legacy API is disabled. Use the /api/v1 API or set LEGACY_API_ENABLED=true temporarily during migration.",
-      requestId: req.id,
-    },
-  });
-};
-
-if (env.LEGACY_API_ENABLED) {
-  app.use("/api/user", userRouter);
-  app.use("/api/food", foodRouter);
-  app.use("/api/cart", cartRouter);
-  app.use("/api/orders", orderRouter);
-} else {
-  app.use(
-    ["/api/user", "/api/food", "/api/cart", "/api/orders"],
-    legacyDisabled
-  );
-}
+// The pre-v1 API is gone. Old clients get an explicit answer instead of a
+// generic 404, so integrators know which surface to move to.
+app.use(
+  ["/api/user", "/api/food", "/api/cart", "/api/orders"],
+  (req, res) => {
+    res.status(410).json({
+      error: {
+        code: "LEGACY_API_REMOVED",
+        message:
+          "This legacy API has been removed. Use the /api/v1 API — see ARCHITECTURE.md.",
+        requestId: req.id,
+      },
+    });
+  }
+);
 
 app.use(notFound);
 app.use(errorHandler);

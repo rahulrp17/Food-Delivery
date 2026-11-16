@@ -1,7 +1,7 @@
 import User from "../models/user.model.js";
 import Address from "../models/address.model.js";
 import Order from "../models/order.model.js";
-import foodModel from "../models/foodmodel.js";
+import foodModel from "../models/product.model.js";
 import ApiError from "../utils/apiError.js";
 import { toPublicUser, createUser } from "./auth.service.js";
 import { attachMissingItemImages, toOrderResponse } from "./order.service.js";

@@ -40,7 +40,6 @@ Required in `.env`:
 | `JWT_SECRET` | At least 32 characters. Required outside tests. |
 | `CLIENT_URL` | Allowed CORS origin, e.g. `http://localhost:5173`. |
 | `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET` | Required when `NODE_ENV=production`. |
-| `LEGACY_API_ENABLED` | Keep `false`. The deprecated `/api/*` routes are disabled by default. |
 
 Then:
 
@@ -129,4 +128,4 @@ frontend/
 - Zod validation on all bodies, `helmet`, CORS allow-list, rate limits
 - Uploads validated and stored outside the web root; `pino` structured logs
 - Audit log for every privileged mutation
-- Deprecated `/api/*` routes return `410` unless `LEGACY_API_ENABLED=true`
+- Deprecated `/api/*` routes were removed; they answer `410 LEGACY_API_REMOVED`

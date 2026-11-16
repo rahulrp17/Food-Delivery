@@ -5,6 +5,22 @@
 **Scope:** Existing frontend, backend, database models, auth, admin functionality, security, performance, testing, and documentation.  
 **Change policy:** Read-only audit. No application code or database state was changed while producing this document.
 
+> **Resolution status (2026-11-16).** The legacy surfaces this audit flagged as
+> critical/high are now **removed**:
+> - The pre-v1 API (`/api/user`, `/api/food`, `/api/cart`, `/api/orders`) and its
+>   controllers, legacy models (`foodmodel`, `orderModel`, `userModel`) and JWT
+>   middleware are deleted. Retired paths answer `410 LEGACY_API_REMOVED`.
+>   This closes the unauthenticated `POST /api/orders/verify` finding, the
+>   client-trusted legacy amount/price finding and the legacy-`tokenVersion`
+>   finding, and removes the second schema that shared the `orders` collection.
+> - The retired standalone `admin/` app is deleted (it hardcoded an external
+>   backend with no login integration).
+> - `backend/node_modules` is untracked and purged from git history; the
+>   `" - Copy"` files are removed.
+> - `LEGACY_API_ENABLED` is gone from the env schema.
+> The findings below are kept as the historical record; see §15.3 for the
+> current gap list.
+
 ---
 
 ## 1. Executive Summary
@@ -662,7 +678,7 @@ Before implementing Phase 2:
 | Phase 10 Reviews | **Done** | List, star/status filters, approve/reject, admin reply, reported status with reported-by/at metadata and moderation actions |
 | Phase 11 Settings | **Done** | 10 tabs: Store, enforced weekly Business Hours, Delivery & Pricing, Tax & Invoice (branding on printed invoices), Delivery Estimate, Pincodes, read-only Stripe/provider status, notification preferences that gate alerts, Admin Profile, and Security/Sessions (password change, active-session revoke, sign-out-all); **not implemented:** email changes, 2FA |
 | Phase 12 Inventory/Staff/Audit/Notifications | **Done** | Inventory logs + summary + filtered CSV export, staff RBAC management, audit log, notification center |
-| Phase 13 Security | **Mostly done** | HttpOnly cookies, CSRF, refresh rotation, bcrypt, rate limits, Zod validation, backend RBAC (`requirePermission`), frontend permission route guard, audit logging, legacy API gate, safe uploads, session listing/revocation; **no 2FA** |
+| Phase 13 Security | **Mostly done** | HttpOnly cookies, CSRF, refresh rotation, bcrypt, rate limits, Zod validation, backend RBAC (`requirePermission`), frontend permission route guard, audit logging, legacy API **removed** (2026-11-16), safe uploads, session listing/revocation; **no 2FA** |
 | Phase 14 State/performance | **Done** | TanStack Query, Zustand, lazy routes, server pagination, hidden-tab polling pause |
 | Phase 15 Animations | **Partial** | CSS transitions/keyframes + `prefers-reduced-motion`; no Framer Motion/Motion dependency |
 | Phase 16 Responsive | **Done** | Breakpoints at 1199/1023/899/767/639/479px, mobile drawer, table-to-card collapse; full admin UI refresh (see 15.5) — every admin page, popup, form and the admin login page are now premium-styled and responsive down to 360px |

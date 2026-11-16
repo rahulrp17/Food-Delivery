@@ -2,6 +2,17 @@ import request from "supertest";
 import { describe, expect, it } from "vitest";
 import app from "../app.js";
 
+// The v1 API is mounted behind CSRF protection, so any mutating request needs
+// the double-submit token pair (cookie + header) before it reaches a route.
+const issueCsrfToken = async () => {
+  const response = await request(app).get("/api/v1/auth/csrf");
+  const cookies = (response.headers["set-cookie"] || [])
+    .map((cookie) => cookie.split(";")[0])
+    .join("; ");
+
+  return { token: response.body.data.csrfToken, cookies };
+};
+
 describe("API hardening", () => {
   it("serves a health check with a request id", async () => {
     const response = await request(app).get("/healthz");
@@ -21,14 +32,20 @@ describe("API hardening", () => {
   });
 
   it("requires authentication for protected routes", async () => {
-    const response = await request(app).get("/api/user/profile");
+    const response = await request(app).get("/api/v1/orders");
 
     expect(response.status).toBe(401);
     expect(response.body.error.code).toBe("UNAUTHENTICATED");
   });
 
   it("blocks admin-only mutations without a session", async () => {
-    const response = await request(app).post("/api/food/add");
+    const { token, cookies } = await issueCsrfToken();
+
+    const response = await request(app)
+      .post("/api/v1/admin/products")
+      .set("Cookie", cookies)
+      .set("x-csrf-token", token)
+      .send({ name: "Test dish" });
 
     expect(response.status).toBe(401);
     expect(response.body.error.code).toBe("UNAUTHENTICATED");
@@ -55,7 +72,7 @@ describe("API hardening", () => {
 
   it("rejects malformed JSON bodies", async () => {
     const response = await request(app)
-      .post("/api/user/login")
+      .post("/api/v1/auth/login")
       .set("Content-Type", "application/json")
       .send("{bad");
 
@@ -64,8 +81,12 @@ describe("API hardening", () => {
   });
 
   it("strips query operators from request payloads", async () => {
+    const { token, cookies } = await issueCsrfToken();
+
     const response = await request(app)
-      .post("/api/user/login")
+      .post("/api/v1/auth/login")
+      .set("Cookie", cookies)
+      .set("x-csrf-token", token)
       .send({ email: { $gt: "" }, password: { $gt: "" } });
 
     expect(response.status).toBe(400);
@@ -96,12 +117,12 @@ describe("API hardening", () => {
     expect(response.body.error.code).toBe("UNAUTHENTICATED");
   });
 
-  it("permanently rejects unauthenticated legacy order verification", async () => {
+  it("permanently rejects the removed legacy API", async () => {
     const response = await request(app)
       .post("/api/orders/verify")
       .send({ orderId: "64b64b64b64b64b64b64b64b", success: true });
 
     expect(response.status).toBe(410);
-    expect(response.body.error.code).toBe("LEGACY_VERIFICATION_DISABLED");
+    expect(response.body.error.code).toBe("LEGACY_API_REMOVED");
   });
 });

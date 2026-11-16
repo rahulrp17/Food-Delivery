@@ -23,7 +23,7 @@
 | A10 | Data access | Mongoose models + service layer | Controllers stay thin and testable |
 | A11 | Validation | Zod schemas at every boundary | One schema shared conceptually by client and server |
 | A12 | Uploads | Local `uploads/` in dev, Cloudinary adapter in prod | Storage behind one interface |
-| A13 | API version | `/api/v1` | Legacy `/api/*` aliases only during migration window |
+| A13 | API version | `/api/v1` | Legacy `/api/*` removed — retired paths answer `410 LEGACY_API_REMOVED` |
 
 ### 1.1 Topology
 
@@ -984,6 +984,10 @@ CI order: `lint` → `typecheck` (if TS adopted) → unit → integration → bu
 
 ### 12.1 Endpoint mapping
 
+The legacy endpoints below were deleted on 2026-11-16; `/api/user`, `/api/food`,
+`/api/cart` and `/api/orders` now answer `410 LEGACY_API_REMOVED`. The mapping
+is kept as the migration reference for any external client that still calls them.
+
 | Legacy | Target |
 |---|---|
 | `POST /api/user/register` | `POST /api/v1/auth/register` |
@@ -1014,7 +1018,9 @@ CI order: `lint` → `typecheck` (if TS adopted) → unit → integration → bu
 2. Ship new models + auth + catalog behind `/api/v1` while the old routes still run.
 3. Migrate data with `migrateV1.js` on a staging copy; verify counts and totals.
 4. Move the frontend to the new API module by module (catalog → cart → auth → orders → checkout).
-5. Delete legacy routes and the standalone `admin/` app.
+5. ~~Delete legacy routes and the standalone `admin/` app.~~ **Done 2026-11-16:**
+   the pre-v1 routes, controllers, legacy models and JWT middleware are removed,
+   the standalone `admin/` app is deleted, and the retired paths answer `410`.
 6. Run the full verification gate.
 
 ---
