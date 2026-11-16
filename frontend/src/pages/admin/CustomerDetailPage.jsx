@@ -32,6 +32,7 @@ export default function CustomerDetailPage() {
   const showError = useUiStore((state) => state.error);
   const [roleDialogOpen, setRoleDialogOpen] = useState(false);
   const [pendingRole, setPendingRole] = useState('');
+  const [roleChoice, setRoleChoice] = useState('');
   const [statusDialogOpen, setStatusDialogOpen] = useState(false);
   const [pendingStatus, setPendingStatus] = useState('');
 
@@ -54,11 +55,16 @@ export default function CustomerDetailPage() {
     queryClient.invalidateQueries({ queryKey: queryKeys.admin.customers({}) });
   };
 
+  const closeRoleDialog = () => {
+    setRoleDialogOpen(false);
+    setRoleChoice('');
+  };
+
   const roleMutation = useMutation({
     mutationFn: ({ customerId, role }) => adminApi.updateCustomerRole(customerId, role),
     onSuccess: () => {
       invalidateCustomer();
-      setRoleDialogOpen(false);
+      closeRoleDialog();
       showSuccess(`Role changed to ${pendingRole}`);
       setPendingRole('');
     },
@@ -84,6 +90,7 @@ export default function CustomerDetailPage() {
 
   const handleRoleChange = (newRole) => {
     setPendingRole(newRole);
+    setRoleChoice(newRole);
     setRoleDialogOpen(true);
   };
 
@@ -136,8 +143,12 @@ export default function CustomerDetailPage() {
 
   const profile = customer.customer || customer;
   const orders = customer.orders || [];
+  const addresses = customer.addresses || [];
   const isAdmin = profile.role === 'admin';
   const isSuspended = profile.status === 'suspended';
+  // The radio group follows the pending choice while the confirmation dialog is
+  // open, so the control reacts to the click instead of snapping back.
+  const selectedRole = roleChoice || profile.role;
 
   const favouriteProducts = (() => {
     const map = new Map();
@@ -274,6 +285,43 @@ export default function CustomerDetailPage() {
           )}
         </section>
 
+        <section className="detail-card">
+          <h2>Saved addresses</h2>
+          {addresses.length === 0 ? (
+            <EmptyState
+              icon="map-pin"
+              title="No saved addresses"
+              description="This customer has not saved a delivery address yet."
+            />
+          ) : (
+            <ul className="address-list">
+              {addresses.map((address) => (
+                <li key={address.id} className="address-row">
+                  <div className="address-main">
+                    <strong>
+                      {address.label || 'Address'}
+                      {address.isDefault ? (
+                        <span className="address-default">Default</span>
+                      ) : null}
+                    </strong>
+                    <span>
+                      {address.recipientName} · {address.phone}
+                    </span>
+                    <span>
+                      {[address.line1, address.line2, address.landmark]
+                        .filter(Boolean)
+                        .join(', ')}
+                    </span>
+                    <span>
+                      {address.city}, {address.state} {address.pincode}
+                    </span>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          )}
+        </section>
+
         <section className="detail-card detail-card-full">
           <div className="section-header">
             <div>
@@ -360,7 +408,7 @@ export default function CustomerDetailPage() {
                   type="radio"
                   name="role"
                   value="user"
-                  checked={profile.role === 'user'}
+                  checked={selectedRole === 'user'}
                   onChange={() => handleRoleChange('user')}
                 />
                 <span>Customer</span>
@@ -372,7 +420,7 @@ export default function CustomerDetailPage() {
                   type="radio"
                   name="role"
                   value="admin"
-                  checked={profile.role === 'admin'}
+                  checked={selectedRole === 'admin'}
                   onChange={() => handleRoleChange('admin')}
                 />
                 <span>Administrator</span>
@@ -394,7 +442,7 @@ export default function CustomerDetailPage() {
 
       <ConfirmDialog
         isOpen={roleDialogOpen}
-        onClose={() => setRoleDialogOpen(false)}
+        onClose={closeRoleDialog}
         onConfirm={confirmRoleChange}
         title="Change Role"
         message={`Change role to ${pendingRole}?`}

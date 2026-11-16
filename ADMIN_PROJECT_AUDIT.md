@@ -673,7 +673,7 @@ Before implementing Phase 2:
 | Phase 5 Products | **Done** | CRUD, per-row duplicate as inactive draft, multi-image gallery (max 8), stock, filters/sort/pagination, bulk stock/availability/category/delete, **archive workflow** (archived view, `archived=true` list filter, restore endpoint — added 2026-11-16) |
 | Phase 6 Categories | **Done** | CRUD, image, active state, product counts, reorder controls **and drag-and-drop reordering** with keyboard parity (added 2026-11-16 — see §15.7) |
 | Phase 7 Orders | **Done** | Table + Kanban board, status/payment/date/search filters, validated transitions, confirmation dialogs, detail page, slide-over drawer, timeline, cancel with restock, printable invoice, editable staff-only admin notes, 20s visibility-aware polling; **not implemented:** driver assignment/ETA |
-| Phase 8 Customers | **Done** | List + detail, order history, suspend/role controls, per-customer AOV/first/last order, new vs returning + repeat-rate analytics, favourite-products card, CSV export of filtered customers |
+| Phase 8 Customers | **Done** | List + detail, order history, suspend/role controls, per-customer AOV/first/last order, new vs returning + repeat-rate analytics, favourite-products card, CSV export of filtered customers, **saved-address view** (added 2026-11-16 — see §15.10) |
 | Phase 9 Coupons | **Done** | CRUD, usage limits, per-user limits, backend-validated discounts, redeemed-revenue analytics, scheduled/expired/active filters, per-coupon redemption history with filtered CSV export |
 | Phase 10 Reviews | **Done** | List, star/status filters, approve/reject, admin reply, reported status with reported-by/at metadata and moderation actions |
 | Phase 11 Settings | **Done** | 10 tabs: Store, enforced weekly Business Hours, Delivery & Pricing, Tax & Invoice (branding on printed invoices), Delivery Estimate, Pincodes, read-only Stripe/provider status, notification preferences that gate alerts, Admin Profile, and Security/Sessions (password change, active-session revoke, sign-out-all); **not implemented:** email changes, 2FA |
@@ -682,13 +682,14 @@ Before implementing Phase 2:
 | Phase 14 State/performance | **Done** | TanStack Query, Zustand, lazy routes, server pagination, hidden-tab polling pause |
 | Phase 15 Animations | **Partial** | CSS transitions/keyframes + `prefers-reduced-motion`; no Framer Motion/Motion dependency |
 | Phase 16 Responsive | **Done** | Breakpoints at 1199/1023/899/767/639/479px, mobile drawer, table-to-card collapse; full admin UI refresh (see 15.5) — every admin page, popup, form and the admin login page are now premium-styled and responsive down to 360px |
-| Phase 17 Testing | **Done** | 105 backend unit/integration tests + 11 E2E specs / 18 E2E tests (checkout/admin flow, admin modules coupon CRUD + redemption CSV + mobile nav, RBAC limited nav + route guard + API 403 + suspension, products CRUD + bulk update + delete, categories CRUD + reorder + delete, category drag-and-drop + keyboard reorder, product archive + restore, reviews approve/reply, settings store-info save, settings tabs — hours, delivery & pricing, tax & invoice, delivery estimate, pincodes, notifications, profile, security) |
+| Phase 17 Testing | **Done** | 110 backend unit/integration tests + 12 E2E specs / 21 E2E tests (checkout/admin flow, admin modules coupon CRUD + redemption CSV + mobile nav, RBAC limited nav + route guard + API 403 + suspension, products CRUD + bulk update + delete, categories CRUD + reorder + delete, category drag-and-drop + keyboard reorder, product archive + restore, reviews approve/reply, settings store-info save, settings tabs — hours, delivery & pricing, tax & invoice, delivery estimate, pincodes, notifications, profile, security, **customers directory — search, role/status filters, activity, saved addresses, CSV export, suspend/reactivate, role change and the self-protection guards**, added 2026-11-16 — see §15.10) |
 
 ### 15.3 Remaining gaps (prioritized)
 
 1. **Products/Categories: resolved (2026-11-16).** The archive workflow (§15.6) and the drag-and-drop category reordering (§15.7) are both done.
-2. **Testing: resolved (2026-11-16).** Every settings tab now has E2E coverage — see §15.8.
+2. **Testing: resolved (2026-11-16).** Every settings tab now has E2E coverage — see §15.8. The customers directory followed on the same pass — see §15.10.
 3. **Repository hygiene: resolved (2026-11-16).** `backend/node_modules` is no longer tracked (untracked via `git rm --cached`, then purged from all history with `git filter-repo`, so the remote no longer carries dependency blobs); the retired standalone `admin/` app was deleted from the repo and disk (it hardcoded `https://food-del-backend-393c.onrender.com` with no auth and bypassed the new RBAC/CSRF model — see the security blocker in §7); the `" - Copy"` duplicate files were removed and are now blocked by a `*- Copy.*` ignore rule; `.opencode/` (local agent tooling) is ignored.
+4. **Customers CRM: partly closed (2026-11-16).** The saved-address view is now on the customer detail page (§15.10). Still open from the §3.6 list: notes, tags, segments, bulk actions and retention analytics.
 
 ### 15.4 Recommended continuation
 
@@ -846,5 +847,45 @@ Every variable now carries a comment that says what it does and when it matters,
 | `node -e "import('./src/config/env.js')"` | Parses the new `.env` cleanly, all seventeen values resolved |
 | `backend: npm test` | 18 files, **105 tests passed** (`NODE_ENV=test` still selects the test-only database) |
 | `frontend: npm run test:e2e` | The E2E helper still reads `ADMIN_EMAIL`/`ADMIN_PASSWORD` from the rewritten `.env` |
+
+### 15.10 Customers directory coverage (2026-11-16)
+
+The customers module was the last admin area without an end-to-end test. The pass closed the gap and fixed the two real problems it uncovered.
+
+**New E2E spec** — `frontend/e2e/customers.spec.js` (3 tests)
+
+| Test | What it proves |
+| --- | --- |
+| Directory and detail | A customer created through the public API (with a paid order, confirmed by a simulated Stripe webhook) is listed with the right order count, appears in the cards view, and its detail page reports the activity, the order history, the favourite dish and the saved address. The CSV export is downloaded and its contents are checked for the account. |
+| Suspension | Suspending an account flips the badge, the customer can no longer sign in (`403`) and disappears from the `Active` filter; reactivating restores the login and the `Active` badge. |
+| Role and guards | Promoting an account to administrator and demoting it back both work and persist; the admin cannot suspend or demote their own account (`403` from the API, the buttons are not rendered). |
+
+A new helper — `frontend/e2e/helpers/customer.js` — registers a customer, saves an address, fills the cart, places the order and confirms the payment through the public API, so the tests run against real data instead of fixtures. The admin session and the customer session use separate browser contexts, so the two never share a cookie jar.
+
+**Defect found and fixed**
+
+1. **The role radio group did not react to a click.** `CustomerDetailPage.jsx` rendered the radios as `checked={profile.role === 'admin'}`, so the control was bound to the *persisted* role: choosing "Administrator" opened the confirmation dialog but left the radio on "Customer" until the mutation succeeded. A radio that ignores the click reads as broken, and Playwright's `check()` fails on it outright. The radio group now follows the pending choice while the dialog is open and falls back to the persisted role when the dialog is cancelled or the change fails.
+
+**Feature closed**
+
+2. **No saved-address view** (the one §3.6 gap that the admin could not work around). `GET /admin/customers/:id` now returns the customer's own address book and the detail page renders it in a **Saved addresses** card (label, default marker, recipient, phone, street lines and pincode), with an empty state for accounts that have never saved one.
+
+**Backend**
+
+| Change | Detail |
+| --- | --- |
+| `getCustomerAdmin` service | Returns `addresses` alongside the profile and the orders. |
+| `backend/src/tests/customer-admin.test.js` | Five new unit tests: the response shape (profile, orders, addresses), a `404` for an unknown customer, the `tokenVersion` bump that kills the open sessions of a suspended account, the untouched `tokenVersion` on reactivation, and the refusal to suspend an administrator account. |
+
+**Verification**
+
+| Gate | Result |
+| --- | --- |
+| `backend: npm test` | 19 files, **110 tests passed** (5 new) |
+| `frontend: npm run lint` | 0 errors, 0 warnings |
+| `frontend: npm run build` | Passed |
+| E2E `e2e/customers.spec.js` | 3 tests passed |
+| Full E2E suite | 12 specs / **21 tests passed** |
+| Overflow probe (320 / 360 / 390 / 768 / 1440 px) | No horizontal overflow on the customer detail page, one `h1`, the address card renders at every width |
 
 

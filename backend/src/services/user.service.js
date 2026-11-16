@@ -361,14 +361,16 @@ export const getCustomerAdmin = async (customerId) => {
     throw ApiError.notFound("Customer not found");
   }
 
-  const [orders, statsMap] = await Promise.all([
+  const [orders, addresses, statsMap] = await Promise.all([
     Order.find({ userId: user._id }).sort({ createdAt: -1, date: -1 }).limit(20),
+    listAddresses(user._id),
     customerStatsFor([user._id]),
   ]);
 
   return {
     customer: toCustomerListItem(user, statsMap.get(String(user._id))),
     orders: await attachMissingItemImages(orders.map(toOrderResponse)),
+    addresses: addresses.map((address) => address.toJSON()),
   };
 };
 

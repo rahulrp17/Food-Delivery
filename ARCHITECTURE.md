@@ -674,16 +674,20 @@ All `/admin/*` require `authenticate` + `requireRole("admin")` + CSRF, and write
 | GET | `/admin/orders/:id` | full detail + customer + history |
 | PATCH | `/admin/orders/:id/status` | `{ status }` valid transition only |
 | POST | `/admin/orders/:id/cancel` | `{ reason }` + restock |
-| GET | `/admin/customers` | `?q=&role=&page=` |
-| GET | `/admin/customers/:id` | profile + orders |
+| GET | `/admin/customers` | `?q=&role=&status=&sort=&page=` |
+| GET | `/admin/customers/:id` | profile + orders + saved addresses |
 | PATCH | `/admin/customers/:id/role` | promote/demote (cannot self-demote) |
+| GET | `/admin/customers/export` | CSV of the filtered customer list |
 | GET/POST/PATCH/DELETE | `/admin/coupons` | CRUD + usage stats |
 | GET | `/admin/reviews` | `?status=` |
 | PATCH | `/admin/reviews/:id` | approve/reject |
 | GET/PATCH | `/admin/settings` | store config |
 | POST | `/admin/uploads` | multipart image, validated, returns `{ url, publicId, width, height }` |
 
-Every list endpoint returns `meta` pagination. Admin CSV export is out of MVP scope.
+Every list endpoint returns `meta` pagination. Admin CSV export exists for the
+customer directory, the coupon redemptions and the inventory log
+(`/admin/customers/export`, `/admin/coupons/:id/redemptions/export`,
+`/admin/inventory/export`).
 
 ### 5.8 Health
 
