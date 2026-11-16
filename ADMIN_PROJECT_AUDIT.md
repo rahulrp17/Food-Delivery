@@ -682,17 +682,17 @@ Before implementing Phase 2:
 | Phase 14 State/performance | **Done** | TanStack Query, Zustand, lazy routes, server pagination, hidden-tab polling pause |
 | Phase 15 Animations | **Partial** | CSS transitions/keyframes + `prefers-reduced-motion`; no Framer Motion/Motion dependency |
 | Phase 16 Responsive | **Done** | Breakpoints at 1199/1023/899/767/639/479px, mobile drawer, table-to-card collapse; full admin UI refresh (see 15.5) — every admin page, popup, form and the admin login page are now premium-styled and responsive down to 360px |
-| Phase 17 Testing | **Partial** | 105 backend unit/integration tests + 9 E2E specs (checkout/admin flow, admin modules coupon CRUD + redemption CSV + mobile nav, RBAC limited nav + route guard + API 403 + suspension, products CRUD + bulk update + delete, categories CRUD + reorder + delete, category drag-and-drop + keyboard reorder, product archive + restore, reviews approve/reply, settings store-info save); still missing settings tabs beyond store info |
+| Phase 17 Testing | **Done** | 105 backend unit/integration tests + 11 E2E specs / 18 E2E tests (checkout/admin flow, admin modules coupon CRUD + redemption CSV + mobile nav, RBAC limited nav + route guard + API 403 + suspension, products CRUD + bulk update + delete, categories CRUD + reorder + delete, category drag-and-drop + keyboard reorder, product archive + restore, reviews approve/reply, settings store-info save, settings tabs — hours, delivery & pricing, tax & invoice, delivery estimate, pincodes, notifications, profile, security) |
 
 ### 15.3 Remaining gaps (prioritized)
 
 1. **Products/Categories: resolved (2026-11-16).** The archive workflow (§15.6) and the drag-and-drop category reordering (§15.7) are both done.
-2. **Testing:** settings E2E coverage for remaining tabs (hours, delivery, tax, pincodes, notifications, profile, security).
+2. **Testing: resolved (2026-11-16).** Every settings tab now has E2E coverage — see §15.8.
 3. **Repository hygiene: resolved (2026-11-16).** `backend/node_modules` is no longer tracked (untracked via `git rm --cached`, then purged from all history with `git filter-repo`, so the remote no longer carries dependency blobs); the retired standalone `admin/` app was deleted from the repo and disk (it hardcoded `https://food-del-backend-393c.onrender.com` with no auth and bypassed the new RBAC/CSRF model — see the security blocker in §7); the `" - Copy"` duplicate files were removed and are now blocked by a `*- Copy.*` ignore rule; `.opencode/` (local agent tooling) is ignored.
 
 ### 15.4 Recommended continuation
 
-Proceed with **test/a11y hardening** across the remaining gaps, verifying after each change. All new work must remain backend-connected, permission-checked, and must not alter customer-facing contracts.
+Keep hardening the admin surface with test/a11y passes and fix whatever they uncover (the settings tab pass already found a logout bug — see §15.8). All new work must remain backend-connected, permission-checked, and must not alter customer-facing contracts.
 
 ### 15.5 Admin UI premium + responsive refresh
 
@@ -781,4 +781,37 @@ Categories could only be nudged one position at a time with the up/down buttons,
 | `frontend: npm run build` | Passed |
 | E2E `e2e/category-reorder.spec.js` | Drag a card onto another → the persisted order and the DOM order both change; ArrowUp on the focused handle moves a category one step |
 | Full E2E suite | 10 specs / 10 tests passed |
+
+### 15.8 Settings tab coverage (2026-11-16)
+
+Only the store information tab had E2E coverage; the other nine tabs were untested. Every remaining tab now has a test that types into the UI, reads the persisted value back from the API and restores the original value afterwards, so the shared configuration is left exactly as it was found.
+
+| Tab | What the test proves |
+| --- | --- |
+| Business Hours | A day can be reopened and given new open/close times; the saved `businessHours` entry matches. |
+| Delivery & Pricing | Delivery fee, free delivery threshold and minimum order are stored in paise (`45.50` → `4550`). |
+| Tax & Invoice | Tax rate (`7.5` → `750` bps), tax label, legal name and invoice footer persist. |
+| Delivery Estimate | The min/max delivery window persists. |
+| Serviceable Pincodes | A multi-line pincode list is parsed into an array of six-digit strings. |
+| Notifications | Toggling a preference flips the stored flag. |
+| Admin Profile | The profile name is saved, read back through `GET /auth/me`, and the admin stays signed in. |
+| Security & Sessions | The active session list renders with the current device marked, and the password form rejects a mismatched confirmation and a too short password before any request is sent. |
+
+**Defect found and fixed**
+
+1. **Saving the admin profile signed the admin out.** `SettingsPage.jsx` read the response as `response.data.user`, but the api client already unwraps the `data` envelope, so the value was `undefined`. `setUser(undefined)` resets the auth store, which flipped the session to `unauthenticated` and bounced the admin to the login screen right after a successful save. The fix reads `response.user` (the same contract the rest of the app uses), and the profile test now asserts that the admin is still signed in after the save.
+
+**Test hygiene**
+
+- `settings.spec.js` renamed the store on every run and never restored it; it now reads the original values first and writes them back in a `finally` block.
+- The category drag test removes the categories a failed run may have left behind before it starts.
+
+**Verification**
+
+| Gate | Result |
+| --- | --- |
+| `frontend: npm run lint` | 0 errors, 0 warnings |
+| `frontend: npm run build` | Passed |
+| E2E `e2e/settings-tabs.spec.js` | 8 tests passed |
+| Full E2E suite | 11 specs / **18 tests passed** |
 

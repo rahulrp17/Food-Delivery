@@ -279,7 +279,8 @@ export default function SettingsPage() {
   const profileMutation = useMutation({
     mutationFn: (values) => authApi.updateProfile(values),
     onSuccess: (response) => {
-      setStoreUser(response.data.user);
+      // The api client unwraps `data`, so the payload is `{ user }`.
+      setStoreUser(response?.user);
       setProfileErrors({});
       showSuccess('Profile updated');
     },
