@@ -672,7 +672,7 @@ Before implementing Phase 2:
 
 1. **Products/Categories:** product archive workflow; category drag-and-drop.
 2. **Testing:** product archive workflow E2E; settings E2E coverage for remaining tabs (hours, delivery, tax, pincodes, notifications, profile, security).
-3. **Repository hygiene:** tracked `node_modules`, retired `admin/` app, and `" - Copy"` files remain.
+3. **Repository hygiene: resolved (2026-11-16).** `backend/node_modules` is no longer tracked (untracked via `git rm --cached`, then purged from all history with `git filter-repo`, so the remote no longer carries dependency blobs); the retired standalone `admin/` app was deleted from the repo and disk (it hardcoded `https://food-del-backend-393c.onrender.com` with no auth and bypassed the new RBAC/CSRF model — see the security blocker in §7); the `" - Copy"` duplicate files were removed and are now blocked by a `*- Copy.*` ignore rule; `.opencode/` (local agent tooling) is ignored.
 
 ### 15.4 Recommended continuation
 

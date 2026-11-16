@@ -131,6 +131,13 @@ Food Delivery/
 - Stray Git ref `.git/refs/remotes/origin/master - Copy` causes `git log --all` to fail with `fatal: bad object`.
 - No root `README.md`, no `.env.example`, no CI, no tests.
 
+> **Resolution status (2026-11-16):** all of the above are closed.
+> `backend/node_modules` is untracked and purged from history; `backend/.env` is ignored (only `.env.example` is tracked);
+> root and per-app `.gitignore` files exist; the `" - Copy"` files and the duplicate frontend pages were deleted
+> (the frontend was rebuilt under `frontend/src/{components,pages,hooks,lib,stores,api}`); the stray
+> `origin/master - Copy` ref is gone (`git log --all` works); the retired standalone `admin/` app was deleted;
+> `.env.example`, CI-less test suites (94 backend unit tests) and E2E specs now exist.
+
 ---
 
 ## 5. Current Functionality (What Works Today)
