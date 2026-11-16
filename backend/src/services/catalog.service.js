@@ -502,13 +502,60 @@ export const deleteCategory = async (categoryId) => {
   return { id: String(category._id) };
 };
 
-export const reorderCategory = async (categoryId, direction) => {
-  const category = await Category.findOne({ _id: categoryId, deletedAt: null });
+/**
+ * Persists a full ordering of the category list.
+ *
+ * `orderedIds` is the list of category ids in the order they should appear.
+ * Categories the caller did not mention keep their current relative order and
+ * are appended after the ones that were sent, so a partial list never drops
+ * categories out of the menu.
+ */
+export const reorderCategories = async (orderedIds) => {
+  const categories = await Category.find({ deletedAt: null }).sort({
+    sortOrder: 1,
+    name: 1,
+  });
 
-  if (!category) {
-    throw ApiError.notFound("Category not found");
+  const byId = new Map(categories.map((category) => [String(category._id), category]));
+  const seen = new Set();
+  const ordered = [];
+
+  for (const id of orderedIds) {
+    const key = String(id);
+    if (seen.has(key)) continue;
+
+    const category = byId.get(key);
+    if (!category) {
+      throw ApiError.notFound("Category not found");
+    }
+
+    seen.add(key);
+    ordered.push(category);
   }
 
+  if (!ordered.length) {
+    throw ApiError.badRequest("No categories to reorder");
+  }
+
+  const remaining = categories.filter((category) => !seen.has(String(category._id)));
+  const finalOrder = [...ordered, ...remaining];
+
+  await Category.bulkWrite(
+    finalOrder.map((category, index) => ({
+      updateOne: {
+        filter: { _id: category._id },
+        update: { $set: { sortOrder: index } },
+      },
+    }))
+  );
+
+  return finalOrder.map((category, index) => ({
+    ...category.toJSON(),
+    sortOrder: index,
+  }));
+};
+
+export const reorderCategory = async (categoryId, direction) => {
   const categories = await Category.find({ deletedAt: null }).sort({
     sortOrder: 1,
     name: 1,
@@ -521,18 +568,14 @@ export const reorderCategory = async (categoryId, direction) => {
 
   const targetIndex = direction === "up" ? index - 1 : index + 1;
   if (targetIndex < 0 || targetIndex >= categories.length) {
-    return category.toJSON();
+    return categories[index].toJSON();
   }
 
-  const target = categories[targetIndex];
-  const currentOrder = Number(category.sortOrder) || 0;
-  const targetOrder = Number(target.sortOrder) || 0;
+  const next = [...categories];
+  const [moved] = next.splice(index, 1);
+  next.splice(targetIndex, 0, moved);
 
-  category.sortOrder = targetOrder;
-  target.sortOrder = currentOrder;
+  const reordered = await reorderCategories(next.map((category) => String(category._id)));
 
-  await category.save();
-  await target.save();
-
-  return category.toJSON();
+  return reordered.find((category) => String(category.id) === String(categoryId));
 };

@@ -203,6 +203,55 @@
   background: rgb(254 243 199 / 0.92);
 }
 
+/* Drag handle */
+.category-drag-handle {
+  position: absolute;
+  top: var(--space-3);
+  right: var(--space-3);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: rgb(255 255 255 / 0.88);
+  color: var(--color-text-muted);
+  cursor: grab;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  transition: background var(--duration-fast), color var(--duration-fast),
+    border-color var(--duration-fast), box-shadow var(--duration-fast);
+}
+
+.category-drag-handle:hover {
+  background: var(--color-surface);
+  border-color: var(--color-border-strong);
+  color: var(--color-text);
+  box-shadow: var(--shadow-xs);
+}
+
+.category-drag-handle:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+}
+
+.category-drag-handle:active {
+  cursor: grabbing;
+}
+
+.category-card.is-dragging {
+  opacity: 0.55;
+  border-color: var(--color-primary);
+  box-shadow: var(--shadow-md);
+}
+
+.category-card.is-drop-target {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 2px var(--color-primary-soft);
+}
+
 .category-card-body {
   display: flex;
   flex-direction: column;
@@ -393,6 +442,14 @@
 }
 
 /* ---- Responsive ---- */
+/* Native drag and drop needs a pointer. On touch devices the move up/down
+   buttons are the way to reorder. */
+@media (hover: none) {
+  .category-drag-handle {
+    display: none;
+  }
+}
+
 @media (max-width: 767px) {
   .category-grid {
     grid-template-columns: minmax(0, 1fr);

@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { motion, useReducedMotion } from 'motion/react';
 import { useDocumentTitle } from '../../hooks/useDocumentTitle';
@@ -42,6 +42,9 @@ export default function CategoriesPage() {
   const [categoryToDelete, setCategoryToDelete] = useState(null);
   const [form, setForm] = useState(initialCategoryForm);
   const [errors, setErrors] = useState({});
+  const [pendingOrder, setPendingOrder] = useState(null);
+  const [draggingId, setDraggingId] = useState(null);
+  const [dragOverId, setDragOverId] = useState(null);
 
   useDocumentTitle('Categories');
 
@@ -56,12 +59,39 @@ export default function CategoriesPage() {
     queryFn: () => adminApi.categories(),
   });
 
-  const categories = data?.data?.categories || data?.categories || [];
+  const categories = useMemo(
+    () => data?.data?.categories || data?.categories || [],
+    [data]
+  );
   const activeCount = categories.filter((category) => category.isActive !== false).length;
   const productTotal = categories.reduce(
     (sum, category) => sum + (category.productCount || 0),
     0
   );
+
+  // The list is rendered from the server order until a drag is dropped, so the
+  // card follows the pointer immediately instead of waiting for the round trip.
+  const serverOrder = useMemo(() => categories.map((category) => category.id), [categories]);
+  const serverOrderKey = serverOrder.join(',');
+
+  useEffect(() => {
+    setPendingOrder((current) => {
+      if (!current) return current;
+      return current.join(',') === serverOrderKey ? null : current;
+    });
+  }, [serverOrderKey]);
+
+  const displayCategories = useMemo(() => {
+    if (!pendingOrder) return categories;
+
+    const byId = new Map(categories.map((category) => [category.id, category]));
+    const ordered = pendingOrder
+      .map((id) => byId.get(id))
+      .filter(Boolean);
+    const remaining = categories.filter((category) => !pendingOrder.includes(category.id));
+
+    return [...ordered, ...remaining];
+  }, [categories, pendingOrder]);
 
   const createMutation = useMutation({
     mutationFn: adminApi.createCategory,
@@ -120,11 +150,112 @@ export default function CategoriesPage() {
     },
   });
 
+  const reorderListMutation = useMutation({
+    mutationFn: (order) => adminApi.reorderCategories(order),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.admin.categories() });
+      queryClient.invalidateQueries({ queryKey: ['catalog'] });
+      showSuccess('Categories reordered');
+    },
+    onError: (reorderError) => {
+      setPendingOrder(null);
+      showError(getErrorMessage(reorderError, 'Failed to reorder categories'));
+    },
+  });
+
   const handleReorder = useCallback(
     (id, direction) => {
       reorderMutation.mutateAsync({ id, direction });
     },
     [reorderMutation]
+  );
+
+  const applyOrder = useCallback(
+    (order) => {
+      setPendingOrder(order);
+      reorderListMutation.mutate(order);
+    },
+    [reorderListMutation]
+  );
+
+  const moveCategory = useCallback(
+    (sourceId, targetId, placeAfter) => {
+      const ids = displayCategories.map((category) => category.id);
+      const from = ids.indexOf(sourceId);
+      const target = ids.indexOf(targetId);
+
+      if (from === -1 || target === -1 || sourceId === targetId) return ids;
+
+      const next = ids.filter((id) => id !== sourceId);
+      const insertAt = next.indexOf(targetId) + (placeAfter ? 1 : 0);
+      next.splice(insertAt, 0, sourceId);
+
+      return next;
+    },
+    [displayCategories]
+  );
+
+  const handleDragStart = useCallback((event, category) => {
+    setDraggingId(category.id);
+    event.dataTransfer.effectAllowed = 'move';
+    event.dataTransfer.setData('text/plain', category.id);
+
+    const card = event.currentTarget.closest('.category-card');
+    if (card) {
+      event.dataTransfer.setDragImage(card, 24, 24);
+    }
+  }, []);
+
+  const handleDragOver = useCallback((event, category) => {
+    event.preventDefault();
+    event.dataTransfer.dropEffect = 'move';
+    setDragOverId((current) => (current === category.id ? current : category.id));
+  }, []);
+
+  const handleDrop = useCallback(
+    (event, target) => {
+      event.preventDefault();
+
+      const sourceId = event.dataTransfer.getData('text/plain') || draggingId;
+      setDraggingId(null);
+      setDragOverId(null);
+
+      if (!sourceId || sourceId === target.id) return;
+
+      const rect = event.currentTarget.getBoundingClientRect();
+      const offsetX = event.clientX - (rect.left + rect.width / 2);
+      const offsetY = event.clientY - (rect.top + rect.height / 2);
+      // The grid is multi-column, so the pointer decides the axis: a drag
+      // inside the same row compares horizontally, a drag across rows vertically.
+      const placeAfter =
+        Math.abs(offsetX) > Math.abs(offsetY) ? offsetX > 0 : offsetY > 0;
+
+      applyOrder(moveCategory(sourceId, target.id, placeAfter));
+    },
+    [applyOrder, draggingId, moveCategory]
+  );
+
+  const handleDragEnd = useCallback(() => {
+    setDraggingId(null);
+    setDragOverId(null);
+  }, []);
+
+  const handleHandleKeyDown = useCallback(
+    (event, category) => {
+      if (event.key !== 'ArrowUp' && event.key !== 'ArrowDown') return;
+      event.preventDefault();
+
+      const ids = displayCategories.map((item) => item.id);
+      const index = ids.indexOf(category.id);
+      const targetIndex = event.key === 'ArrowUp' ? index - 1 : index + 1;
+
+      if (index === -1 || targetIndex < 0 || targetIndex >= ids.length) return;
+
+      const next = ids.filter((id) => id !== category.id);
+      next.splice(targetIndex, 0, category.id);
+      applyOrder(next);
+    },
+    [applyOrder, displayCategories]
   );
 
   const resetForm = () => {
@@ -205,6 +336,11 @@ export default function CategoriesPage() {
         </div>
       </header>
 
+      <p id="category-reorder-hint" className="visually-hidden">
+        Drag a category by its handle to change the order customers see, or focus the handle
+        and press the up and down arrow keys.
+      </p>
+
       <section className="categories-summary" aria-label="Menu structure summary" aria-busy={isPending}>
         {isPending ? (
           Array.from({ length: 3 }).map((_, index) => <KpiSkeleton key={index} />)
@@ -251,12 +387,22 @@ export default function CategoriesPage() {
           }
         />
       ) : (
-        <ul className="category-grid">
-          {categories.map((category, index) => {
+        <ul className="category-grid" aria-describedby="category-reorder-hint">
+          {displayCategories.map((category, index) => {
             const isFirst = index === 0;
-            const isLast = index === categories.length - 1;
+            const isLast = index === displayCategories.length - 1;
+            const isDragging = draggingId === category.id;
+            const isDropTarget = dragOverId === category.id && !isDragging;
             return (
-              <motion.li key={category.id} className="category-card" {...cardMotion}>
+              <motion.li
+                key={category.id}
+                className={`category-card${isDragging ? ' is-dragging' : ''}${
+                  isDropTarget ? ' is-drop-target' : ''
+                }`}
+                {...cardMotion}
+                onDragOver={(event) => handleDragOver(event, category)}
+                onDrop={(event) => handleDrop(event, category)}
+              >
                 <div className="category-card-media">
                   {category.image ? (
                     <img src={category.image} alt={`${category.name} category`} loading="lazy" />
@@ -270,6 +416,19 @@ export default function CategoriesPage() {
                   >
                     {category.isActive ? 'Active' : 'Inactive'}
                   </span>
+                  <button
+                    type="button"
+                    className="category-drag-handle"
+                    draggable
+                    title="Drag to reorder"
+                    aria-label={`Reorder ${category.name}`}
+                    aria-describedby="category-reorder-hint"
+                    onDragStart={(event) => handleDragStart(event, category)}
+                    onDragEnd={handleDragEnd}
+                    onKeyDown={(event) => handleHandleKeyDown(event, category)}
+                  >
+                    <Icon name="grip" size={16} />
+                  </button>
                 </div>
 
                 <div className="category-card-body">

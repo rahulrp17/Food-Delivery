@@ -47,6 +47,8 @@ export const adminApi = {
   reorderCategory: (id, direction) =>
     apiClient.patch(`/admin/categories/${id}/reorder`, { direction }),
 
+  reorderCategories: (order) => apiClient.patch('/admin/categories/reorder', { order }),
+
   deleteCategory: (id) => apiClient.delete(`/admin/categories/${id}`),
 
   orders: (params = {}) =>

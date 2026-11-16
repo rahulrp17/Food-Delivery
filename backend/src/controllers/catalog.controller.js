@@ -19,6 +19,7 @@ import {
   updateProductStock,
   bulkUpdateProducts,
   reorderCategory,
+  reorderCategories,
 } from "../services/catalog.service.js";
 
 export const getCategories = asyncHandler(async (req, res) => {
@@ -143,4 +144,9 @@ export const adminUploadImage = asyncHandler(async (req, res) => {
 export const adminReorderCategory = asyncHandler(async (req, res) => {
   const category = await reorderCategory(req.params.id, req.body.direction);
   res.json({ data: { category } });
+});
+
+export const adminReorderCategories = asyncHandler(async (req, res) => {
+  const categories = await reorderCategories(req.body.order);
+  res.json({ data: { categories } });
 });

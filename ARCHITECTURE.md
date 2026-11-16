@@ -668,7 +668,8 @@ All `/admin/*` require `authenticate` + `requireRole("admin")` + CSRF, and write
 | DELETE | `/admin/products/:id` | soft delete (archive) |
 | POST | `/admin/products/:id/restore` | restore an archived product to the live catalog |
 | PATCH | `/admin/products/:id/stock` | `{ delta }` or `{ stock }` with reason |
-| GET | `/admin/categories` / POST / PATCH / DELETE | CRUD + reorder |
+| GET | `/admin/categories` / POST / PATCH / DELETE | CRUD + single-step reorder (`PATCH /admin/categories/:id/reorder`) |
+| PATCH | `/admin/categories/reorder` | `{ order: [categoryId, …] }` — persists the full menu order (drag-and-drop); ids that are omitted keep their relative order at the end |
 | GET | `/admin/orders` | `?status=&q=&from=&to=&page=` |
 | GET | `/admin/orders/:id` | full detail + customer + history |
 | PATCH | `/admin/orders/:id/status` | `{ status }` valid transition only |

@@ -175,6 +175,14 @@ export const reorderCategorySchema = z
     direction: z.enum(["up", "down"]),
   })
   .strict();
+export const reorderCategoriesSchema = z
+  .object({
+    order: z
+      .array(objectIdSchema, { message: "Order must be a list of category ids" })
+      .min(1, "Order must contain at least one category")
+      .max(200, "Too many categories in one reorder"),
+  })
+  .strict();
 export const reviewIdParamsSchema = z.object({ id: objectIdSchema }).strict();
 
 export const productReviewsQuerySchema = z.object({

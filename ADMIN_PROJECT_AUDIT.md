@@ -671,7 +671,7 @@ Before implementing Phase 2:
 | Phase 3 Admin shell | **Done** | Dark collapsible sidebar, mobile drawer, breadcrumb/title, global order search, notification center, profile menu |
 | Phase 4 Overview | **Done** | Real KPI/period comparisons, revenue/orders/category/payment charts, date presets + custom range, top products, recent orders/activity, smart alerts, CSV export |
 | Phase 5 Products | **Done** | CRUD, per-row duplicate as inactive draft, multi-image gallery (max 8), stock, filters/sort/pagination, bulk stock/availability/category/delete, **archive workflow** (archived view, `archived=true` list filter, restore endpoint — added 2026-11-16) |
-| Phase 6 Categories | **Mostly done** | CRUD, image, active state, product counts, reorder controls (not drag-and-drop) |
+| Phase 6 Categories | **Done** | CRUD, image, active state, product counts, reorder controls **and drag-and-drop reordering** with keyboard parity (added 2026-11-16 — see §15.7) |
 | Phase 7 Orders | **Done** | Table + Kanban board, status/payment/date/search filters, validated transitions, confirmation dialogs, detail page, slide-over drawer, timeline, cancel with restock, printable invoice, editable staff-only admin notes, 20s visibility-aware polling; **not implemented:** driver assignment/ETA |
 | Phase 8 Customers | **Done** | List + detail, order history, suspend/role controls, per-customer AOV/first/last order, new vs returning + repeat-rate analytics, favourite-products card, CSV export of filtered customers |
 | Phase 9 Coupons | **Done** | CRUD, usage limits, per-user limits, backend-validated discounts, redeemed-revenue analytics, scheduled/expired/active filters, per-coupon redemption history with filtered CSV export |
@@ -682,11 +682,11 @@ Before implementing Phase 2:
 | Phase 14 State/performance | **Done** | TanStack Query, Zustand, lazy routes, server pagination, hidden-tab polling pause |
 | Phase 15 Animations | **Partial** | CSS transitions/keyframes + `prefers-reduced-motion`; no Framer Motion/Motion dependency |
 | Phase 16 Responsive | **Done** | Breakpoints at 1199/1023/899/767/639/479px, mobile drawer, table-to-card collapse; full admin UI refresh (see 15.5) — every admin page, popup, form and the admin login page are now premium-styled and responsive down to 360px |
-| Phase 17 Testing | **Partial** | 94 backend unit/integration tests + 6 E2E specs (checkout/admin flow, admin modules coupon CRUD + redemption CSV + mobile nav, RBAC limited nav + route guard + API 403 + suspension, products CRUD + bulk update + delete, categories CRUD + reorder + delete, settings store-info save); still missing settings tabs beyond store info and product archive E2E |
+| Phase 17 Testing | **Partial** | 105 backend unit/integration tests + 9 E2E specs (checkout/admin flow, admin modules coupon CRUD + redemption CSV + mobile nav, RBAC limited nav + route guard + API 403 + suspension, products CRUD + bulk update + delete, categories CRUD + reorder + delete, category drag-and-drop + keyboard reorder, product archive + restore, reviews approve/reply, settings store-info save); still missing settings tabs beyond store info |
 
 ### 15.3 Remaining gaps (prioritized)
 
-1. **Products/Categories:** category drag-and-drop reorder (the archive workflow is done — see §15.6).
+1. **Products/Categories: resolved (2026-11-16).** The archive workflow (§15.6) and the drag-and-drop category reordering (§15.7) are both done.
 2. **Testing:** settings E2E coverage for remaining tabs (hours, delivery, tax, pincodes, notifications, profile, security).
 3. **Repository hygiene: resolved (2026-11-16).** `backend/node_modules` is no longer tracked (untracked via `git rm --cached`, then purged from all history with `git filter-repo`, so the remote no longer carries dependency blobs); the retired standalone `admin/` app was deleted from the repo and disk (it hardcoded `https://food-del-backend-393c.onrender.com` with no auth and bypassed the new RBAC/CSRF model — see the security blocker in §7); the `" - Copy"` duplicate files were removed and are now blocked by a `*- Copy.*` ignore rule; `.opencode/` (local agent tooling) is ignored.
 
@@ -752,4 +752,33 @@ Deleting a product was already a soft delete (`deletedAt`), but there was no way
 | `frontend: npm run lint` | 0 errors |
 | `frontend: npm run build` | Passed |
 | E2E `e2e/product-archive.spec.js` | Archive → hidden from live catalog → listed as archived → restored → back in the live catalog → removed from the archived view |
+
+### 15.7 Category drag-and-drop reordering (2026-11-16)
+
+Categories could only be nudged one position at a time with the up/down buttons, and that endpoint swapped two `sortOrder` values — which is a no-op when two categories share the same order. The menu order is now a first-class, drag-and-drop flow.
+
+**Backend**
+
+| Change | Detail |
+| --- | --- |
+| `PATCH /admin/categories/reorder` | Persists a full ordering: body `{ order: [categoryId, …] }`. Requires `catalog:write`, is rate limited and is written to the audit log by `auditAdminMutations`. Registered **before** `/categories/:id` so the literal `reorder` segment is not swallowed by the parameterised route. |
+| `reorderCategories` service | Rewrites `sortOrder` to `0…n-1` in one `bulkWrite`, so every category gets a unique, deterministic position. Ids that are not sent keep their relative order and are appended after the ones that were — a partial list never drops a category out of the menu. Unknown ids are rejected with `404 Category not found`. |
+| `reorderCategory` service | The single-step endpoint now delegates to `reorderCategories`, so both paths share one ordering rule (this also fixes the swap no-op described above). |
+
+**Admin UI** (`pages/admin/CategoriesPage.jsx`)
+
+- Every card carries a **drag handle**. Dragging it over another card shows a drop target, and dropping reorders the grid — the card moves optimistically and the persisted order is re-read from the API.
+- The handle is a real control: focusing it and pressing **ArrowUp** / **ArrowDown** moves the category one step, so the flow works without a pointer. A visually hidden hint (`category-reorder-hint`) describes both options to screen readers.
+- The up/down buttons stay for touch devices — native drag and drop needs a pointer, so the handle is hidden under `@media (hover: none)` and the buttons take over.
+- The drop position decides the insertion point from the pointer offset on the dominant axis (horizontal inside a row, vertical across rows), so the multi-column grid behaves as expected.
+
+**Verification**
+
+| Gate | Result |
+| --- | --- |
+| `backend: npm test` | 18 files, **105 tests passed** (7 new reorder unit tests) |
+| `frontend: npm run lint` | 0 errors, 0 warnings |
+| `frontend: npm run build` | Passed |
+| E2E `e2e/category-reorder.spec.js` | Drag a card onto another → the persisted order and the DOM order both change; ArrowUp on the focused handle moves a category one step |
+| Full E2E suite | 10 specs / 10 tests passed |
 

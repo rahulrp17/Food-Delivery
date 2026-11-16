@@ -74,8 +74,8 @@ import {
   staffListQuerySchema,
   staffUpdateSchema,
 } from "../../validators/user.schema.js";
-import { adminBulkUpdateProducts, adminDuplicateProduct, adminGetProduct, adminGetProducts, adminReorderCategory } from "../../controllers/catalog.controller.js";
-import { adminProductListQuerySchema, productIdParamsSchema, bulkUpdateProductSchema, reorderCategorySchema, auditLogQuerySchema, notificationListQuerySchema, notificationIdParamsSchema, inventoryLogQuerySchema } from "../../validators/catalog.schema.js";
+import { adminBulkUpdateProducts, adminDuplicateProduct, adminGetProduct, adminGetProducts, adminReorderCategories, adminReorderCategory } from "../../controllers/catalog.controller.js";
+import { adminProductListQuerySchema, productIdParamsSchema, bulkUpdateProductSchema, reorderCategoriesSchema, reorderCategorySchema, auditLogQuerySchema, notificationListQuerySchema, notificationIdParamsSchema, inventoryLogQuerySchema } from "../../validators/catalog.schema.js";
 import {
   adminGetNotifications,
   adminMarkNotificationRead,
@@ -140,6 +140,15 @@ adminRouter.post(
   writeLimiter,
   validate({ body: categoryCreateSchema }),
   adminCreateCategory
+);
+// Registered before "/categories/:id" so the literal "reorder" segment is not
+// swallowed by the parameterised route.
+adminRouter.patch(
+  "/categories/reorder",
+  requirePermission(CATALOG_WRITE),
+  writeLimiter,
+  validate({ body: reorderCategoriesSchema }),
+  adminReorderCategories
 );
 adminRouter.patch(
   "/categories/:id",
