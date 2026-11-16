@@ -35,6 +35,11 @@ const AVAILABILITY_OPTIONS = [
   { value: 'false', label: 'Unavailable' },
 ];
 
+const CATALOG_VIEW_OPTIONS = [
+  { value: '', label: 'Live catalog' },
+  { value: 'archived', label: 'Archived products' },
+];
+
 const COMPACT_QUERY = '(max-width: 767px)';
 
 const SORT_OPTIONS = [
@@ -71,6 +76,7 @@ export default function ProductsPage() {
   const [category, setCategory] = useState('');
   const [isAvailable, setIsAvailable] = useState('');
   const [stockLow, setStockLow] = useState(false);
+  const [showArchived, setShowArchived] = useState(false);
   const [sort, setSort] = useState({ key: 'name', dir: 'asc' });
   const [page, setPage] = useState(1);
   const [selectedIds, setSelectedIds] = useState([]);
@@ -108,6 +114,7 @@ export default function ProductsPage() {
     category,
     isAvailable: isAvailable || undefined,
     stock: stockLow ? 'low' : undefined,
+    archived: showArchived ? 'true' : undefined,
     page,
   };
 
@@ -164,6 +171,18 @@ export default function ProductsPage() {
     },
     onError: (duplicateError) => {
       showError(getErrorMessage(duplicateError, 'Failed to duplicate product'));
+    },
+  });
+
+  const restoreMutation = useMutation({
+    mutationFn: adminApi.restoreProduct,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.admin.products({}) });
+      queryClient.invalidateQueries({ queryKey: ['products'] });
+      showSuccess('Product restored to the catalog');
+    },
+    onError: (restoreError) => {
+      showError(getErrorMessage(restoreError, 'Failed to restore product'));
     },
   });
 
@@ -253,6 +272,7 @@ export default function ProductsPage() {
     setCategory('');
     setIsAvailable('');
     setStockLow(false);
+    setShowArchived(false);
     setPage(1);
   }, []);
 
@@ -274,19 +294,23 @@ export default function ProductsPage() {
   const lowStockCount = products.filter((row) => row.stock <= 10).length;
 
   const columns = [
-    {
-      key: 'select',
-      header: '',
-      width: '44px',
-      render: (r) => (
-        <input
-          type="checkbox"
-          checked={selectedIds.includes(r.id)}
-          onChange={() => toggleSelect(r.id)}
-          aria-label={`Select ${r.name}`}
-        />
-      ),
-    },
+    ...(showArchived
+      ? []
+      : [
+          {
+            key: 'select',
+            header: '',
+            width: '44px',
+            render: (r) => (
+              <input
+                type="checkbox"
+                checked={selectedIds.includes(r.id)}
+                onChange={() => toggleSelect(r.id)}
+                aria-label={`Select ${r.name}`}
+              />
+            ),
+          },
+        ]),
     {
       key: 'name',
       header: 'Product',
@@ -324,51 +348,70 @@ export default function ProductsPage() {
       key: 'available',
       header: 'Status',
       width: '120px',
-      render: (r) => (
-        <Badge tone={r.isAvailable ? 'success' : 'neutral'} dot>
-          {r.isAvailable ? 'Available' : 'Unavailable'}
-        </Badge>
-      ),
+      render: (r) =>
+        showArchived ? (
+          <Badge tone="warning" dot>
+            Archived
+          </Badge>
+        ) : (
+          <Badge tone={r.isAvailable ? 'success' : 'neutral'} dot>
+            {r.isAvailable ? 'Available' : 'Unavailable'}
+          </Badge>
+        ),
     },
     {
       key: 'actions',
       header: '',
       width: '140px',
-      render: (r) => (
-        <>
+      render: (r) =>
+        showArchived ? (
           <button
             className="icon-btn"
-            title="Edit"
-            aria-label={`Edit ${r.name}`}
-            onClick={() => navigate(`/admin/products/${r.id}`)}
+            title="Restore"
+            aria-label={`Restore ${r.name}`}
+            aria-busy={restoreMutation.isPending && restoreMutation.variables === r.id}
+            disabled={restoreMutation.isPending}
+            onClick={() => restoreMutation.mutate(r.id)}
           >
-            <Icon name="pencil" size={16} />
+            <Icon name="refresh" size={16} />
           </button>
-          <button
-            className="icon-btn"
-            title="Duplicate"
-            aria-label={`Duplicate ${r.name}`}
-            aria-busy={duplicateMutation.isPending && duplicateMutation.variables === r.id}
-            disabled={duplicateMutation.isPending}
-            onClick={() => duplicateMutation.mutate(r.id)}
-          >
-            <Icon name="copy" size={16} />
-          </button>
-          <button
-            className="icon-btn danger"
-            title="Delete"
-            aria-label={`Delete ${r.name}`}
-            onClick={() => handleDelete(r)}
-          >
-            <Icon name="trash" size={16} />
-          </button>
-        </>
-      ),
+        ) : (
+          <>
+            <button
+              className="icon-btn"
+              title="Edit"
+              aria-label={`Edit ${r.name}`}
+              onClick={() => navigate(`/admin/products/${r.id}`)}
+            >
+              <Icon name="pencil" size={16} />
+            </button>
+            <button
+              className="icon-btn"
+              title="Duplicate"
+              aria-label={`Duplicate ${r.name}`}
+              aria-busy={
+                duplicateMutation.isPending && duplicateMutation.variables === r.id
+              }
+              disabled={duplicateMutation.isPending}
+              onClick={() => duplicateMutation.mutate(r.id)}
+            >
+              <Icon name="copy" size={16} />
+            </button>
+            <button
+              className="icon-btn danger"
+              title="Delete"
+              aria-label={`Delete ${r.name}`}
+              onClick={() => handleDelete(r)}
+            >
+              <Icon name="trash" size={16} />
+            </button>
+          </>
+        ),
     },
   ];
 
   const hasSelection = selectedIds.length > 0;
-  const hasFilters = Boolean(search || category || isAvailable || stockLow);
+  const hasFilters = Boolean(search || category || isAvailable || stockLow || showArchived);
   const showCards = isCompact || view === 'cards';
   const sortValue = `${sort.key}-${sort.dir}`;
 
@@ -507,6 +550,17 @@ export default function ProductsPage() {
           }}
           options={STOCK_OPTIONS}
         />
+        <FilterSelect
+          id="products-catalog-view"
+          label="Catalog"
+          value={showArchived ? 'archived' : ''}
+          onChange={(value) => {
+            setShowArchived(value === 'archived');
+            setPage(1);
+            clearSelection();
+          }}
+          options={CATALOG_VIEW_OPTIONS}
+        />
         {showCards ? (
           <FilterSelect
             label="Sort"
@@ -575,11 +629,13 @@ export default function ProductsPage() {
       ) : sortedProducts.length === 0 ? (
         <EmptyState
           icon="package"
-          title="Nothing in the catalog yet"
+          title={showArchived ? 'Nothing is archived' : 'Nothing in the catalog yet'}
           description={
-            hasFilters
-              ? 'Nothing matches the filters you picked. Try a different search term or clear them.'
-              : 'Add your first product to start selling from the admin catalog.'
+            showArchived
+              ? 'Deleted products are kept here so you can bring them back later.'
+              : hasFilters
+                ? 'Nothing matches the filters you picked. Try a different search term or clear them.'
+                : 'Add your first product to start selling from the admin catalog.'
           }
           actions={
             hasFilters ? (
@@ -598,15 +654,17 @@ export default function ProductsPage() {
               <motion.li key={product.id} className="products-card" {...cardMotion}>
                 <div className="products-card-media">
                   <FoodThumb src={product.image?.url} alt={product.name} size="lg" />
-                  <label className="products-card-select">
-                    <input
-                      type="checkbox"
-                      checked={selectedIds.includes(product.id)}
-                      onChange={() => toggleSelect(product.id)}
-                      aria-label={`Select ${product.name}`}
-                    />
-                    <span className="visually-hidden">Select {product.name}</span>
-                  </label>
+                  {!showArchived && (
+                    <label className="products-card-select">
+                      <input
+                        type="checkbox"
+                        checked={selectedIds.includes(product.id)}
+                        onChange={() => toggleSelect(product.id)}
+                        aria-label={`Select ${product.name}`}
+                      />
+                      <span className="visually-hidden">Select {product.name}</span>
+                    </label>
+                  )}
                 </div>
 
                 <div className="products-card-body">
@@ -621,41 +679,64 @@ export default function ProductsPage() {
                     </span>
                   </div>
                   <div className="products-card-badge">
-                    <Badge tone={product.isAvailable ? 'success' : 'neutral'} dot>
-                      {product.isAvailable ? 'Available' : 'Unavailable'}
-                    </Badge>
+                    {showArchived ? (
+                      <Badge tone="warning" dot>
+                        Archived
+                      </Badge>
+                    ) : (
+                      <Badge tone={product.isAvailable ? 'success' : 'neutral'} dot>
+                        {product.isAvailable ? 'Available' : 'Unavailable'}
+                      </Badge>
+                    )}
                   </div>
                 </div>
 
                 <div className="products-card-actions">
-                  <button
-                    className="icon-btn"
-                    title="Edit"
-                    aria-label={`Edit ${product.name}`}
-                    onClick={() => navigate(`/admin/products/${product.id}`)}
-                  >
-                    <Icon name="pencil" size={16} />
-                  </button>
-                  <button
-                    className="icon-btn"
-                    title="Duplicate"
-                    aria-label={`Duplicate ${product.name}`}
-                    aria-busy={
-                      duplicateMutation.isPending && duplicateMutation.variables === product.id
-                    }
-                    disabled={duplicateMutation.isPending}
-                    onClick={() => duplicateMutation.mutate(product.id)}
-                  >
-                    <Icon name="copy" size={16} />
-                  </button>
-                  <button
-                    className="icon-btn danger"
-                    title="Delete"
-                    aria-label={`Delete ${product.name}`}
-                    onClick={() => handleDelete(product)}
-                  >
-                    <Icon name="trash" size={16} />
-                  </button>
+                  {showArchived ? (
+                    <button
+                      className="icon-btn"
+                      title="Restore"
+                      aria-label={`Restore ${product.name}`}
+                      aria-busy={
+                        restoreMutation.isPending && restoreMutation.variables === product.id
+                      }
+                      disabled={restoreMutation.isPending}
+                      onClick={() => restoreMutation.mutate(product.id)}
+                    >
+                      <Icon name="refresh" size={16} />
+                    </button>
+                  ) : (
+                    <>
+                      <button
+                        className="icon-btn"
+                        title="Edit"
+                        aria-label={`Edit ${product.name}`}
+                        onClick={() => navigate(`/admin/products/${product.id}`)}
+                      >
+                        <Icon name="pencil" size={16} />
+                      </button>
+                      <button
+                        className="icon-btn"
+                        title="Duplicate"
+                        aria-label={`Duplicate ${product.name}`}
+                        aria-busy={
+                          duplicateMutation.isPending && duplicateMutation.variables === product.id
+                        }
+                        disabled={duplicateMutation.isPending}
+                        onClick={() => duplicateMutation.mutate(product.id)}
+                      >
+                        <Icon name="copy" size={16} />
+                      </button>
+                      <button
+                        className="icon-btn danger"
+                        title="Delete"
+                        aria-label={`Delete ${product.name}`}
+                        onClick={() => handleDelete(product)}
+                      >
+                        <Icon name="trash" size={16} />
+                      </button>
+                    </>
+                  )}
                 </div>
               </motion.li>
             ))}

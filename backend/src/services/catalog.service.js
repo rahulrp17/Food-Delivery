@@ -109,8 +109,10 @@ export const listCategories = async ({ activeOnly = true } = {}) => {
   });
 };
 
-const buildProductQuery = async (filters) => {
-  const query = { deletedAt: null };
+const buildProductQuery = async (filters, { includeArchived = false } = {}) => {
+  // Archived products are soft-deleted. They are invisible to the storefront
+  // and to the admin list unless the admin explicitly asks for them.
+  const query = includeArchived && filters.archived ? { deletedAt: { $ne: null } } : { deletedAt: null };
 
   if (filters.category) {
     const category = await Category.findOne({ slug: filters.category, deletedAt: null });
@@ -143,11 +145,11 @@ const buildProductQuery = async (filters) => {
   return query;
 };
 
-export const listProducts = async (filters) => {
+export const listProducts = async (filters, options = {}) => {
   const page = filters.page || 1;
   const limit = filters.limit || 20;
 
-  const query = await buildProductQuery(filters);
+  const query = await buildProductQuery(filters, options);
 
   if (!query) {
     return { items: [], meta: { page, limit, total: 0, totalPages: 0 } };
@@ -351,6 +353,20 @@ export const deleteProduct = async (productId) => {
   }
 
   return { id: String(product._id) };
+};
+
+export const restoreProduct = async (productId) => {
+  const product = await Product.findOneAndUpdate(
+    { _id: productId, deletedAt: { $ne: null } },
+    { $set: { deletedAt: null, isAvailable: true } },
+    { new: true }
+  ).populate("categoryId", "name slug");
+
+  if (!product) {
+    throw ApiError.notFound("Archived product not found");
+  }
+
+  return toProductDetail(product);
 };
 
 export const updateProductStock = async (

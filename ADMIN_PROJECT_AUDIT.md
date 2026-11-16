@@ -670,7 +670,7 @@ Before implementing Phase 2:
 | Phase 2 Design system | **Done** | `ADMIN_DESIGN_SYSTEM.md`, `frontend/src/styles/admin-theme.css` |
 | Phase 3 Admin shell | **Done** | Dark collapsible sidebar, mobile drawer, breadcrumb/title, global order search, notification center, profile menu |
 | Phase 4 Overview | **Done** | Real KPI/period comparisons, revenue/orders/category/payment charts, date presets + custom range, top products, recent orders/activity, smart alerts, CSV export |
-| Phase 5 Products | **Mostly done** | CRUD, per-row duplicate as inactive draft, multi-image gallery (max 8), stock, filters/sort/pagination, bulk stock/availability/category/delete; **not implemented:** archive workflow |
+| Phase 5 Products | **Done** | CRUD, per-row duplicate as inactive draft, multi-image gallery (max 8), stock, filters/sort/pagination, bulk stock/availability/category/delete, **archive workflow** (archived view, `archived=true` list filter, restore endpoint — added 2026-11-16) |
 | Phase 6 Categories | **Mostly done** | CRUD, image, active state, product counts, reorder controls (not drag-and-drop) |
 | Phase 7 Orders | **Done** | Table + Kanban board, status/payment/date/search filters, validated transitions, confirmation dialogs, detail page, slide-over drawer, timeline, cancel with restock, printable invoice, editable staff-only admin notes, 20s visibility-aware polling; **not implemented:** driver assignment/ETA |
 | Phase 8 Customers | **Done** | List + detail, order history, suspend/role controls, per-customer AOV/first/last order, new vs returning + repeat-rate analytics, favourite-products card, CSV export of filtered customers |
@@ -686,8 +686,8 @@ Before implementing Phase 2:
 
 ### 15.3 Remaining gaps (prioritized)
 
-1. **Products/Categories:** product archive workflow; category drag-and-drop.
-2. **Testing:** product archive workflow E2E; settings E2E coverage for remaining tabs (hours, delivery, tax, pincodes, notifications, profile, security).
+1. **Products/Categories:** category drag-and-drop reorder (the archive workflow is done — see §15.6).
+2. **Testing:** settings E2E coverage for remaining tabs (hours, delivery, tax, pincodes, notifications, profile, security).
 3. **Repository hygiene: resolved (2026-11-16).** `backend/node_modules` is no longer tracked (untracked via `git rm --cached`, then purged from all history with `git filter-repo`, so the remote no longer carries dependency blobs); the retired standalone `admin/` app was deleted from the repo and disk (it hardcoded `https://food-del-backend-393c.onrender.com` with no auth and bypassed the new RBAC/CSRF model — see the security blocker in §7); the `" - Copy"` duplicate files were removed and are now blocked by a `*- Copy.*` ignore rule; `.opencode/` (local agent tooling) is ignored.
 
 ### 15.4 Recommended continuation
@@ -725,3 +725,31 @@ A dedicated pass upgraded the entire admin surface to a consistent premium visua
 5. Undefined CSS variables replaced with defined equivalents: `--danger-500` → `--color-danger`, `--color-secondary` → `--color-accent`, `--color-surface-alt` / `--color-surface-muted` → `--color-surface-2`, `--font-heading` → `--font-display`, `--herb-600` → `--herb-700`.
 
 **Verification tooling** — two throwaway Node scripts were used to guarantee no silent regressions: one cross-references every `className` in admin JSX against every CSS rule in `frontend/src`, the other verifies every `var(--token)` used in the rewritten admin CSS is defined somewhere in the project. Both now report clean (only template-literal false positives remain). Every file also honours `prefers-reduced-motion`.
+
+### 15.6 Product archive workflow (2026-11-16)
+
+Deleting a product was already a soft delete (`deletedAt`), but there was no way to see or undo it. The workflow is now complete end to end.
+
+**Backend**
+
+| Change | Detail |
+| --- | --- |
+| `GET /admin/products?archived=true` | Lists archived products only. The storefront list can never return them — `includeArchived` is opt-in and only the admin controller passes it. |
+| `POST /admin/products/:id/restore` | Clears `deletedAt` and sets `isAvailable: true`. Requires `catalog:write`, is rate limited and lands in the audit log through `auditAdminMutations`. |
+| `restoreProduct` service | Refuses with `404 Archived product not found` when the product is not archived, so a live product cannot be "restored". |
+
+**Admin UI** (`pages/admin/ProductsPage.jsx`)
+
+- A new **Catalog** filter switches between `Live catalog` and `Archived products`.
+- Archived rows show an `Archived` badge and a single **Restore** action; the edit/duplicate/delete actions are hidden because an archived product cannot be opened or edited.
+- Selection and bulk actions are disabled in the archived view (there is nothing meaningful to bulk-edit on a soft-deleted product), and the empty state explains that deleted products are kept so they can be brought back.
+
+**Verification**
+
+| Gate | Result |
+| --- | --- |
+| `backend: npm test` | 17 files, **98 tests passed** (4 new archive unit tests) |
+| `frontend: npm run lint` | 0 errors |
+| `frontend: npm run build` | Passed |
+| E2E `e2e/product-archive.spec.js` | Archive → hidden from live catalog → listed as archived → restored → back in the live catalog → removed from the archived view |
+

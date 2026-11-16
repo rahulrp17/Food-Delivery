@@ -227,6 +227,7 @@ export const adminProductListQuerySchema = z.object({
   q: z.string().trim().max(100).optional(),
   category: z.string().trim().min(1).max(80).optional(),
   isAvailable: booleanQuery.optional(),
+  archived: booleanQuery.optional(),
   stock: z.literal("low").optional(),
   minPricePaise: z.coerce.number().int().min(0).optional(),
   maxPricePaise: z.coerce.number().int().min(0).optional(),

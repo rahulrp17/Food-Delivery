@@ -662,10 +662,11 @@ All `/admin/*` require `authenticate` + `requireRole("admin")` + CSRF, and write
 | Method | Path | Purpose |
 |---|---|---|
 | GET | `/admin/overview` | KPIs: revenue, orders, AOV, customers, recent orders, 7/30-day series |
-| GET | `/admin/products` | `?q=&category=&isAvailable=&stock=low&page=` |
+| GET | `/admin/products` | `?q=&category=&isAvailable=&stock=low&archived=true&page=` — `archived=true` lists soft-deleted products only |
 | POST | `/admin/products` | create |
 | PATCH | `/admin/products/:id` | update |
-| DELETE | `/admin/products/:id` | soft delete |
+| DELETE | `/admin/products/:id` | soft delete (archive) |
+| POST | `/admin/products/:id/restore` | restore an archived product to the live catalog |
 | PATCH | `/admin/products/:id/stock` | `{ delta }` or `{ stock }` with reason |
 | GET | `/admin/categories` / POST / PATCH / DELETE | CRUD + reorder |
 | GET | `/admin/orders` | `?status=&q=&from=&to=&page=` |

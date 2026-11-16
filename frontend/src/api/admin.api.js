@@ -21,6 +21,8 @@ export const adminApi = {
 
   deleteProduct: (id) => apiClient.delete(`/admin/products/${id}`),
 
+  restoreProduct: (id) => apiClient.post(`/admin/products/${id}/restore`),
+
   duplicateProduct: (id) => apiClient.post(`/admin/products/${id}/duplicate`),
 
   updateProductStock: (id, data) => apiClient.patch(`/admin/products/${id}/stock`, data),

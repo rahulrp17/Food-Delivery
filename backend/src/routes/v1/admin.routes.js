@@ -12,6 +12,7 @@ import {
   adminCreateProduct,
   adminDeleteCategory,
   adminDeleteProduct,
+  adminRestoreProduct,
   adminGetCategories,
   adminUpdateCategory,
   adminUpdateProduct,
@@ -183,6 +184,13 @@ adminRouter.delete(
   writeLimiter,
   validate({ params: productIdParamsSchema }),
   adminDeleteProduct
+);
+adminRouter.post(
+  "/products/:id/restore",
+  requirePermission(CATALOG_WRITE),
+  writeLimiter,
+  validate({ params: productIdParamsSchema }),
+  adminRestoreProduct
 );
 adminRouter.patch(
   "/products/:id/stock",

@@ -13,6 +13,7 @@ import {
   getRelatedProducts,
   listCategories,
   listProducts,
+  restoreProduct,
   updateCategory,
   updateProduct,
   updateProductStock,
@@ -66,7 +67,7 @@ export const adminDeleteCategory = asyncHandler(async (req, res) => {
 });
 
 export const adminGetProducts = asyncHandler(async (req, res) => {
-  const result = await listProducts(req.query);
+  const result = await listProducts(req.query, { includeArchived: true });
   res.json({ data: result });
 });
 
@@ -93,6 +94,11 @@ export const adminDuplicateProduct = asyncHandler(async (req, res) => {
 export const adminDeleteProduct = asyncHandler(async (req, res) => {
   const result = await deleteProduct(req.params.id);
   res.json({ data: result });
+});
+
+export const adminRestoreProduct = asyncHandler(async (req, res) => {
+  const product = await restoreProduct(req.params.id);
+  res.json({ data: { product } });
 });
 
 export const adminUpdateStock = asyncHandler(async (req, res) => {
