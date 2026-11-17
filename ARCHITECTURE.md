@@ -661,7 +661,7 @@ All `/admin/*` require `authenticate` + `requireRole("admin")` + CSRF, and write
 
 | Method | Path | Purpose |
 |---|---|---|
-| GET | `/admin/overview` | KPIs: revenue, orders, AOV, customers, recent orders, 7/30-day series |
+| GET | `/admin/overview` | KPIs: revenue, orders, AOV, customers, recent orders, 7/30-day series; `from`/`to` scope the analysis panels, while `today`/`activeOrderCount`/`pendingOrderCount` stay present-tense |
 | GET | `/admin/products` | `?q=&category=&isAvailable=&stock=low&archived=true&page=` — `archived=true` lists soft-deleted products only |
 | POST | `/admin/products` | create |
 | PATCH | `/admin/products/:id` | update |

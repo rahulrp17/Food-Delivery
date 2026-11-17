@@ -669,7 +669,7 @@ Before implementing Phase 2:
 | Phase 1 Audit | **Done** | This document |
 | Phase 2 Design system | **Done** | `ADMIN_DESIGN_SYSTEM.md`, `frontend/src/styles/admin-theme.css` |
 | Phase 3 Admin shell | **Done** | Dark collapsible sidebar, mobile drawer, breadcrumb/title, global order search, notification center, profile menu |
-| Phase 4 Overview | **Done** | Real KPI/period comparisons, revenue/orders/category/payment charts, date presets + custom range, top products, recent orders/activity, smart alerts, CSV export |
+| Phase 4 Overview | **Done** | Real KPI/period comparisons, revenue/orders/category/payment charts, date presets + custom range, top products, recent orders/activity, smart alerts, CSV export, **live today/active counts kept out of the analysis range** (fixed 2026-11-16 — see §15.11) |
 | Phase 5 Products | **Done** | CRUD, per-row duplicate as inactive draft, multi-image gallery (max 8), stock, filters/sort/pagination, bulk stock/availability/category/delete, **archive workflow** (archived view, `archived=true` list filter, restore endpoint — added 2026-11-16) |
 | Phase 6 Categories | **Done** | CRUD, image, active state, product counts, reorder controls **and drag-and-drop reordering** with keyboard parity (added 2026-11-16 — see §15.7) |
 | Phase 7 Orders | **Done** | Table + Kanban board, status/payment/date/search filters, validated transitions, confirmation dialogs, detail page, slide-over drawer, timeline, cancel with restock, printable invoice, editable staff-only admin notes, 20s visibility-aware polling; **not implemented:** driver assignment/ETA |
@@ -682,12 +682,12 @@ Before implementing Phase 2:
 | Phase 14 State/performance | **Done** | TanStack Query, Zustand, lazy routes, server pagination, hidden-tab polling pause |
 | Phase 15 Animations | **Partial** | CSS transitions/keyframes + `prefers-reduced-motion`; no Framer Motion/Motion dependency |
 | Phase 16 Responsive | **Done** | Breakpoints at 1199/1023/899/767/639/479px, mobile drawer, table-to-card collapse; full admin UI refresh (see 15.5) — every admin page, popup, form and the admin login page are now premium-styled and responsive down to 360px |
-| Phase 17 Testing | **Done** | 110 backend unit/integration tests + 12 E2E specs / 21 E2E tests (checkout/admin flow, admin modules coupon CRUD + redemption CSV + mobile nav, RBAC limited nav + route guard + API 403 + suspension, products CRUD + bulk update + delete, categories CRUD + reorder + delete, category drag-and-drop + keyboard reorder, product archive + restore, reviews approve/reply, settings store-info save, settings tabs — hours, delivery & pricing, tax & invoice, delivery estimate, pincodes, notifications, profile, security, **customers directory — search, role/status filters, activity, saved addresses, CSV export, suspend/reactivate, role change and the self-protection guards**, added 2026-11-16 — see §15.10) |
+| Phase 17 Testing | **Done** | 113 backend unit/integration tests + 13 E2E specs / 23 E2E tests (checkout/admin flow, admin modules coupon CRUD + redemption CSV + mobile nav, RBAC limited nav + route guard + API 403 + suspension, products CRUD + bulk update + delete, categories CRUD + reorder + delete, category drag-and-drop + keyboard reorder, product archive + restore, reviews approve/reply, settings store-info save, settings tabs — hours, delivery & pricing, tax & invoice, delivery estimate, pincodes, notifications, profile, security, **customers directory — search, role/status filters, activity, saved addresses, CSV export, suspend/reactivate, role change and the self-protection guards** (2026-11-16, §15.10), **overview dashboard — KPIs, series table, distribution panels, CSV export, 7/30-day switch and range scoping** (2026-11-16, §15.11) |
 
 ### 15.3 Remaining gaps (prioritized)
 
 1. **Products/Categories: resolved (2026-11-16).** The archive workflow (§15.6) and the drag-and-drop category reordering (§15.7) are both done.
-2. **Testing: resolved (2026-11-16).** Every settings tab now has E2E coverage — see §15.8. The customers directory followed on the same pass — see §15.10.
+2. **Testing: resolved (2026-11-16).** Every settings tab now has E2E coverage — see §15.8. The customers directory and the overview dashboard followed on the next two passes — see §15.10 and §15.11.
 3. **Repository hygiene: resolved (2026-11-16).** `backend/node_modules` is no longer tracked (untracked via `git rm --cached`, then purged from all history with `git filter-repo`, so the remote no longer carries dependency blobs); the retired standalone `admin/` app was deleted from the repo and disk (it hardcoded `https://food-del-backend-393c.onrender.com` with no auth and bypassed the new RBAC/CSRF model — see the security blocker in §7); the `" - Copy"` duplicate files were removed and are now blocked by a `*- Copy.*` ignore rule; `.opencode/` (local agent tooling) is ignored.
 4. **Customers CRM: partly closed (2026-11-16).** The saved-address view is now on the customer detail page (§15.10). Still open from the §3.6 list: notes, tags, segments, bulk actions and retention analytics.
 
@@ -889,3 +889,47 @@ A new helper — `frontend/e2e/helpers/customer.js` — registers a customer, sa
 | Overflow probe (320 / 360 / 390 / 768 / 1440 px) | No horizontal overflow on the customer detail page, one `h1`, the address card renders at every width |
 
 
+
+### 15.11 Overview dashboard coverage (2026-11-16)
+
+The dashboard was the last admin page with no automated coverage. The pass added two E2E flows and fixed the two defects they exposed.
+
+**New E2E spec** — `frontend/e2e/overview.spec.js` (2 tests)
+
+| Test | What it proves |
+| --- | --- |
+| A new paid order shows up | A customer pays for an order (public API + simulated Stripe webhook) and the dashboard reflects it: the last-seven-day revenue/orders KPIs, the live header, the revenue series and its accessible table view, the status donut, the best-seller and category panels, the recent-orders table, the activity feed and the revenue CSV export (8 lines: header + seven days). Switching to the 30-day view relabels the range and re-renders the chart. |
+| A custom range scopes the analysis only | A `from`/`to` window with no orders zeroes the range KPIs, empties the recent-orders table and the best-seller/category panels, yet the live header keeps showing today's real revenue, order count and active-orders count. Clearing the range restores the seven-day window. |
+
+**Defect 1 — the chart controls escaped the panel (fixed)**
+
+`.chart-actions` was `flex-shrink: 0` with no cap, and `.chart-controls` never wrapped, so below 1366px the control row (date inputs + export + range tabs) overflowed the revenue panel and slid underneath the order-status panel. Because the next grid cell paints on top, the **7/30-day tabs were unreachable** at 1280px and the entire control row sat outside the panel at 1200px and below (no scrollbar, so the previous responsive sweep did not catch it). `.chart-controls` now wraps, and `.chart-actions` is capped at `max-width: 100%` so the row drops to its own line and wraps its children instead of leaving the card. Verified reachable at 1920, 1600, 1440, 1366, 1280, 1200, 1024, 900, 768, 480 and 375px.
+
+**Defect 2 — a date filter blanked the "live operations" header (fixed)**
+
+`todayMatch` was built from the analysis range, so filtering the chart to a past window also zeroed the hero ("₹0 today / 0 orders today / 0 active now") and the "Active orders"/"Awaiting payment" KPI cards, even while those orders existed. The dashboard now separates the two scopes:
+
+| Scope | Data |
+| --- | --- |
+| Selected range (`from`/`to`) | revenue, orders, AOV, revenue series, status donut, payment mix, best sellers, category revenue, recent orders, CSV export |
+| Present tense | `today` (revenue, orders, active count), `activeOrderCount`, `pendingOrderCount`, customer count |
+
+`getAdminOverview` no longer merges the range into `todayMatch`, and a dedicated unscoped status aggregation feeds the live counts (normalised through `normalizeOrderStatus`, so legacy aliases such as `food_processing` still count as active). The hero reads `today.activeOrderCount`, so it and the KPI grid always agree.
+
+**Backend**
+
+| Change | Detail |
+| --- | --- |
+| `getAdminOverview` service | Range-scoped panels unchanged; `today` and the live order counts are computed without the range. |
+| `backend/src/tests/overview.service.test.js` | Three unit tests: live counts survive an empty analysis range, every legacy alias of an active status is counted, and the daily series is filled (and ordered) from `from` to `to`. |
+
+**Verification**
+
+| Gate | Result |
+| --- | --- |
+| `backend: npm test` | 20 files, **113 tests passed** (3 new) |
+| `frontend: npm run lint` | 0 errors, 0 warnings |
+| `frontend: npm run build` | Passed |
+| E2E `e2e/overview.spec.js` | 2 tests passed |
+| Full E2E suite | 13 specs / **23 tests passed** |
+| Control-row reachability probe (1920 → 375px) | The date inputs, export button and range tabs are hit-testable inside the panel at every width |

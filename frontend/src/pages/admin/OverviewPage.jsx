@@ -92,7 +92,7 @@ export default function OverviewPage() {
   const activeOrderCount = overview.activeOrderCount || 0;
   const pendingOrderCount = overview.pendingOrderCount || 0;
   const customerCount = overview.customerCount || 0;
-  const today = overview.today || { revenuePaise: 0, orderCount: 0 };
+  const today = overview.today || { revenuePaise: 0, orderCount: 0, activeOrderCount: 0 };
 
   const chartData =
     seriesView === '7d' ? series.slice(-7) : seriesView === '30d' ? series.slice(-30) : series;
@@ -297,7 +297,7 @@ export default function OverviewPage() {
             </span>
             <span>
               <Icon name="truck" size={16} label="" />
-              <strong>{activeOrderCount}</strong> active now
+              <strong>{today.activeOrderCount || 0}</strong> active now
             </span>
           </div>
         </div>

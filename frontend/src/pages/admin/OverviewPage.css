@@ -239,6 +239,7 @@
   justify-content: space-between;
   gap: var(--space-4);
   min-width: 0;
+  flex-wrap: wrap;
 }
 
 .chart-controls h2,
@@ -263,6 +264,10 @@
   flex-shrink: 0;
   flex-wrap: wrap;
   justify-content: flex-end;
+  /* Stay inside the panel: below 1366px the control row used to slide under
+     the neighbouring grid cell, which made the range tabs unreachable. The
+     row now drops to its own line and wraps its children instead. */
+  max-width: 100%;
 }
 
 .chart-tabs {

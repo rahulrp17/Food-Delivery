@@ -445,11 +445,10 @@ export const getAdminOverview = async ({ from: fromRaw, to: toRaw } = {}) => {
   const todayStart = new Date();
   todayStart.setUTCHours(0, 0, 0, 0);
 
-  const todayMatch = { ...baseMatch };
-  todayMatch.createdAt = { $gte: todayStart };
-  if (baseMatch.createdAt) {
-    todayMatch.createdAt = { ...baseMatch.createdAt, $gte: todayStart };
-  }
+  // "Today" and "active now" describe the present, so they are deliberately
+  // not scoped by the analysis date range (filtering the chart to last month
+  // used to zero the live header).
+  const todayMatch = { createdAt: { $gte: todayStart } };
 
   const [totalsRow] = await Order.aggregate([
     { $match: baseMatch },
@@ -472,6 +471,7 @@ export const getAdminOverview = async ({ from: fromRaw, to: toRaw } = {}) => {
     seriesRows,
     statusRows,
     todayRows,
+    liveStatusRows,
     topProductRows,
     paymentRows,
     categoryRows,
@@ -502,6 +502,7 @@ export const getAdminOverview = async ({ from: fromRaw, to: toRaw } = {}) => {
         },
       },
     ]),
+    Order.aggregate([{ $group: { _id: "$status", count: { $sum: 1 } } }]),
     Order.aggregate([
       { $match: { paymentStatus: PAYMENT_STATUS.PAID, ...baseMatch } },
       { $unwind: "$items" },
@@ -611,10 +612,19 @@ export const getAdminOverview = async ({ from: fromRaw, to: toRaw } = {}) => {
   const statusBreakdown = [...normalizedStatusCounts]
     .map(([status, count]) => ({ status, count }))
     .sort((a, b) => b.count - a.count);
-  const activeOrderCount = statusBreakdown
-    .filter((entry) => ACTIVE_ORDER_STATUSES.includes(entry.status))
-    .reduce((total, entry) => total + entry.count, 0);
-  const pendingOrderCount = normalizedStatusCounts.get(ORDER_STATUS.PENDING_PAYMENT) || 0;
+
+  // Present-tense counts: the donut follows the selected range, but "active
+  // now" and "awaiting payment" must stay true regardless of that range.
+  const liveStatusCounts = new Map();
+  for (const row of liveStatusRows) {
+    const status = normalizeOrderStatus(row._id);
+    liveStatusCounts.set(status, (liveStatusCounts.get(status) || 0) + row.count);
+  }
+  const activeOrderCount = ACTIVE_ORDER_STATUSES.reduce(
+    (total, status) => total + (liveStatusCounts.get(status) || 0),
+    0
+  );
+  const pendingOrderCount = liveStatusCounts.get(ORDER_STATUS.PENDING_PAYMENT) || 0;
 
   return {
     revenuePaise,
@@ -627,6 +637,7 @@ export const getAdminOverview = async ({ from: fromRaw, to: toRaw } = {}) => {
     today: {
       revenuePaise: todayRows[0]?.revenuePaise || 0,
       orderCount: todayRows[0]?.orderCount || 0,
+      activeOrderCount,
     },
     statusBreakdown,
     paymentBreakdown: paymentRows.map((row) => ({
