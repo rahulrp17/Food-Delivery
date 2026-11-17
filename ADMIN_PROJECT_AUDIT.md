@@ -656,10 +656,10 @@ Before implementing Phase 2:
 
 | Gate | Command | Result |
 |---|---|---|
-| Backend tests | `backend: npm test` | 20 files, **114 tests passed** |
+| Backend tests | `backend: npm test` | 21 files, **120 tests passed** |
 | Frontend lint | `frontend: npm run lint` | **0 errors**, 0 warnings |
 | Frontend build | `frontend: npm run build` | Passed |
-| E2E | `frontend: npm run test:e2e` | 14 Playwright specs / **24 tests passed**: the extended checkout/webhook + admin flow (status update, Orders board, detail drawer, internal-notes save, Settings tabs/payment status, Inventory CSV download, Staff, Activity Log, notification panel), an admin modules flow (coupon create, redemption history with CSV download, delete, mobile drawer navigation), an RBAC flow (support staff creation, limited navigation, route guard, API 403, suspension), products/categories/archive, settings tabs, reviews, customers directory, overview dashboard, and order cancellation with refund + restock |
+| E2E | `frontend: npm run test:e2e` | 15 Playwright specs / **26 tests passed**: the extended checkout/webhook + admin flow (status update, Orders board, detail drawer, internal-notes save, Settings tabs/payment status, Inventory CSV download, Staff, Activity Log, notification panel), an admin modules flow (coupon create, redemption history with CSV download, delete, mobile drawer navigation), an RBAC flow (support staff creation, limited navigation, route guard, API 403, suspension), products/categories/archive, settings tabs, reviews, customers directory, overview dashboard, order cancellation with refund + restock, and coupons (edit, date filters, limits, analytics) |
 | Live API smoke | Admin session against `localhost:4000` | `/admin/notifications`, `/admin/staff`, `/admin/inventory/logs`, `/admin/audit-logs`, `read-all`, `PATCH /admin/orders/:id/notes`, `PATCH /admin/settings`, `PATCH /auth/profile`, `GET/DELETE /auth/sessions`, `GET /admin/customers/export`, `GET /admin/inventory/export`, `GET /admin/coupons/:id/redemptions`, `PATCH /admin/reviews/:id/report`, `GET /admin/coupons/:id/redemptions/export` (correct headers and filename, invalid date range rejected with 400), and `POST /admin/products/:id/duplicate` (copy created as inactive draft, then deleted) all behave as expected |
 
 ### 15.2 Status against the master prompt
@@ -674,7 +674,7 @@ Before implementing Phase 2:
 | Phase 6 Categories | **Done** | CRUD, image, active state, product counts, reorder controls **and drag-and-drop reordering** with keyboard parity (added 2026-11-16 — see §15.7) |
 | Phase 7 Orders | **Done** | Table + Kanban board, status/payment/date/search filters, validated transitions, confirmation dialogs, detail page, slide-over drawer, timeline, cancel with refund + restock, printable invoice, editable staff-only admin notes, 20s visibility-aware polling; **cancel path verified end-to-end and the timeline now carries its note/at/actor** (2026-11-16 — see §15.12); **not implemented:** driver assignment/ETA |
 | Phase 8 Customers | **Done** | List + detail, order history, suspend/role controls, per-customer AOV/first/last order, new vs returning + repeat-rate analytics, favourite-products card, CSV export of filtered customers, **saved-address view** (added 2026-11-16 — see §15.10) |
-| Phase 9 Coupons | **Done** | CRUD, usage limits, per-user limits, backend-validated discounts, redeemed-revenue analytics, scheduled/expired/active filters, per-coupon redemption history with filtered CSV export |
+| Phase 9 Coupons | **Done** | CRUD, usage limits, per-user limits, backend-validated discounts, redeemed-revenue analytics, scheduled/expired/active filters, per-coupon redemption history with filtered CSV export; **filters now match the badge, redeemed money is read from `pricing`, cancelled redemptions release their slot and leave the history** (2026-11-16 — see §15.13) |
 | Phase 10 Reviews | **Done** | List, star/status filters, approve/reject, admin reply, reported status with reported-by/at metadata and moderation actions |
 | Phase 11 Settings | **Done** | 10 tabs: Store, enforced weekly Business Hours, Delivery & Pricing, Tax & Invoice (branding on printed invoices), Delivery Estimate, Pincodes, read-only Stripe/provider status, notification preferences that gate alerts, Admin Profile, and Security/Sessions (password change, active-session revoke, sign-out-all); **not implemented:** email changes, 2FA |
 | Phase 12 Inventory/Staff/Audit/Notifications | **Done** | Inventory logs + summary + filtered CSV export, staff RBAC management, audit log, notification center |
@@ -682,7 +682,7 @@ Before implementing Phase 2:
 | Phase 14 State/performance | **Done** | TanStack Query, Zustand, lazy routes, server pagination, hidden-tab polling pause |
 | Phase 15 Animations | **Partial** | CSS transitions/keyframes + `prefers-reduced-motion`; no Framer Motion/Motion dependency |
 | Phase 16 Responsive | **Done** | Breakpoints at 1199/1023/899/767/639/479px, mobile drawer, table-to-card collapse; full admin UI refresh (see 15.5) — every admin page, popup, form and the admin login page are now premium-styled and responsive down to 360px |
-| Phase 17 Testing | **Done** | 114 backend unit/integration tests + 14 E2E specs / 24 E2E tests (checkout/admin flow, admin modules coupon CRUD + redemption CSV + mobile nav, RBAC limited nav + route guard + API 403 + suspension, products CRUD + bulk update + delete, categories CRUD + reorder + delete, category drag-and-drop + keyboard reorder, product archive + restore, reviews approve/reply, settings store-info save, settings tabs — hours, delivery & pricing, tax & invoice, delivery estimate, pincodes, notifications, profile, security, **customers directory — search, role/status filters, activity, saved addresses, CSV export, suspend/reactivate, role change and the self-protection guards** (2026-11-16, §15.10), **overview dashboard — KPIs, series table, distribution panels, CSV export, 7/30-day switch and range scoping** (2026-11-16, §15.11), **order cancellation — reason validation, refund badge, restock, inventory log, 409 guards and the customer timeline** (2026-11-16, §15.12) |
+| Phase 17 Testing | **Done** | 120 backend unit/integration tests + 15 E2E specs / 26 E2E tests (checkout/admin flow, admin modules coupon CRUD + redemption CSV + mobile nav, RBAC limited nav + route guard + API 403 + suspension, products CRUD + bulk update + delete, categories CRUD + reorder + delete, category drag-and-drop + keyboard reorder, product archive + restore, reviews approve/reply, settings store-info save, settings tabs — hours, delivery & pricing, tax & invoice, delivery estimate, pincodes, notifications, profile, security, **customers directory — search, role/status filters, activity, saved addresses, CSV export, suspend/reactivate, role change and the self-protection guards** (2026-11-16, §15.10), **overview dashboard — KPIs, series table, distribution panels, CSV export, 7/30-day switch and range scoping** (2026-11-16, §15.11), **order cancellation — reason validation, refund badge, restock, inventory log, 409 guards and the customer timeline** (2026-11-16, §15.12), **coupons — create, edit, date-based filters, server-side limits, redemption history and analytics that survive a cancellation** (2026-11-16, §15.13) |
 
 ### 15.3 Remaining gaps (prioritized)
 
@@ -974,3 +974,44 @@ The dialog textarea was labelled only by a placeholder, so screen readers announ
 | Full E2E suite | 14 specs / **24 tests passed** |
 
 The suite still leaves E2E orders and customers in the database, as before; keep using a non-production database for the run.
+
+### 15.13 Coupon coverage (2026-11-16)
+
+The coupon page had a create/delete smoke test. This pass covered editing, the status filters, the redemption limits and the analytics, and the tests found four defects: three of them meant the numbers on the card did not describe what the customer experienced.
+
+**Defect 1 - the status filter disagreed with the badge (fixed)**
+
+The badge is date based ("Scheduled" while `startsAt` is in the future, "Expired" once `expiresAt` has passed) but the filter also required `isActive: false`. A coupon created with a future start or a past expiry keeps `isActive: true` by default, so it showed a Scheduled/Expired badge yet did not appear under those filters, and it *did* appear under Active (for the scheduled case). `listCoupons` now filters on the dates only (Active additionally requires `isActive`), matching the badge exactly.
+
+**Defect 2 - "redeemed" money was always 0 (fixed)**
+
+The analytics aggregated `$discountPaise`, but the discount is stored at `pricing.discountPaise`, so every card read "0 uses / ₹0 redeemed". The aggregate now sums the nested field.
+
+**Defect 3 - cancelled redemptions stayed in the numbers (fixed)**
+
+`usedCount` is incremented on payment confirmation and was never decremented, so a cancelled order kept burning a slot of the `usageLimit`; meanwhile the analytics summed every order that ever carried the code, cancelled ones included, and the redemption history/CSV listed them too. Cancelling a paid order now hands the slot back (`usedCount` decremented with a `> 0` guard), and the analytics, history and CSV only count orders that are neither cancelled nor payment-failed. All four surfaces now agree with `usedCount`.
+
+**E2E `frontend/e2e/coupons.spec.js` (2 tests)**
+
+1. *Create, edit and filter* - a percentage coupon with every limit renders its value, badge and terms; the form refuses a 0% value; coupons that start in the future or expired yesterday render as Scheduled/Expired and each filter returns exactly those; a duplicate code answers **409 `COUPON_EXISTS`** and an inverted date window **400 `VALIDATION_ERROR`** on `expiresAt`; editing value/description updates the card; deleting removes it.
+2. *Limits and analytics* - three customers share a fixed coupon with `usageLimit: 2` and `perUserLimit: 1`: the first pays (card: "1 uses / ₹10 redeemed"), her second attempt is refused per user, the second customer pays ("2 uses / ₹20 redeemed"), the third is refused by the global limit. Cancelling the second order returns the card to "1 use / ₹10 redeemed" and frees the slot for the third customer. The redemption dialog lists only the live order, the CSV export mirrors it, and the cancelled order is absent from both.
+
+**Backend**
+
+| Change | Detail |
+| --- | --- |
+| `coupon.service.js` | Date-based list filters; live-redemption analytics reading `pricing.discountPaise`; redemption history/CSV exclude cancelled and failed orders. |
+| `order.service.js` | `cancelOrder` releases one `usedCount` unit for a paid order that carried a coupon. |
+| `backend/src/tests/coupon.service.test.js` | Six unit tests: the three list filters, the analytics pipeline (status exclusion + nested discount field), and cancellation releasing (or not touching) the coupon slot. |
+| `frontend/e2e/helpers/customer.js` | `placePaidOrder` accepts `couponCode` and `minPricePaise`; new `addFirstProductToCart` / `applyCouponToCart` helpers. |
+| `frontend/e2e/helpers/admin.js` | `adminAttempt` returns the raw response for expected 4xx assertions (also used by the cancellation spec). |
+
+**Verification**
+
+| Gate | Result |
+| --- | --- |
+| `backend: npm test` | 21 files, **120 tests passed** (6 new) |
+| `frontend: npm run lint` | 0 errors, 0 warnings |
+| `frontend: npm run build` | Passed |
+| E2E `e2e/coupons.spec.js` | 2 tests passed |
+| Full E2E suite | 15 specs / **26 tests passed** |

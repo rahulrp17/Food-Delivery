@@ -136,13 +136,23 @@ export const deleteCoupon = async (couponId) => {
 
 export const listCoupons = async ({ page = 1, limit = 20, status }) => {
   const now = new Date();
+  // The status filter must agree with the badge the page renders (which is
+  // date based), not with the stored isActive flag: a coupon that has not
+  // started yet is "Scheduled" and one past its expiry is "Expired" even
+  // while they remain enabled.
   let statusFilter = {};
   if (status === "active") {
-    statusFilter = { isActive: true, $or: [{ expiresAt: null }, { expiresAt: { $gt: now } }] };
+    statusFilter = {
+      isActive: true,
+      $and: [
+        { $or: [{ startsAt: null }, { startsAt: { $lte: now } }] },
+        { $or: [{ expiresAt: null }, { expiresAt: { $gt: now } }] },
+      ],
+    };
   } else if (status === "expired") {
-    statusFilter = { isActive: false, expiresAt: { $lt: now } };
+    statusFilter = { expiresAt: { $ne: null, $lte: now } };
   } else if (status === "scheduled") {
-    statusFilter = { isActive: false, startsAt: { $gt: now } };
+    statusFilter = { startsAt: { $ne: null, $gt: now } };
   }
 
   const query = { deletedAt: null, ...statusFilter };
@@ -154,9 +164,17 @@ export const listCoupons = async ({ page = 1, limit = 20, status }) => {
     Coupon.countDocuments(query),
   ]);
 
+  // Redeemed money mirrors `usedCount`: cancelled and failed orders are not
+  // redemptions, so their discount must not inflate the analytics. The amount
+  // lives under `pricing`, not at the root of the order.
   const discountByCode = await Order.aggregate([
-    { $match: { couponCode: { $ne: "", $ne: null } } },
-    { $group: { _id: "$couponCode", totalDiscount: { $sum: "$discountPaise" }, uses: { $sum: 1 } } },
+    {
+      $match: {
+        couponCode: { $nin: ["", null] },
+        status: { $nin: ignoredStatuses },
+      },
+    },
+    { $group: { _id: "$couponCode", totalDiscount: { $sum: "$pricing.discountPaise" } } },
   ]);
   const discountMap = new Map(discountByCode.map((row) => [row._id, row]));
 
@@ -173,7 +191,9 @@ export const listCoupons = async ({ page = 1, limit = 20, status }) => {
 };
 
 const buildRedemptionFilter = (couponCode, { startDate, endDate } = {}) => {
-  const filter = { couponCode };
+  // Only live redemptions count: a cancelled or failed order gave the slot
+  // back, so it must not appear in the coupon's history or its CSV.
+  const filter = { couponCode, status: { $nin: ignoredStatuses } };
   if (startDate || endDate) {
     filter.createdAt = {};
     if (startDate) filter.createdAt.$gte = new Date(startDate);

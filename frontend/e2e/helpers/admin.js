@@ -26,18 +26,7 @@ export async function loginAsAdmin(page, credentials = {}) {
  * shares the context's cookie jar, so the session cookie travels with it.
  */
 export async function adminApi(page, { method = "GET", path, data } = {}) {
-  const cookies = await page.context().cookies();
-  const csrf = cookies.find((cookie) => cookie.name === "fd_csrf")?.value || "";
-
-  const response = await page.request.fetch(path, {
-    method,
-    data,
-    headers: {
-      "x-csrf-token": csrf,
-      origin: new URL(page.url()).origin,
-    },
-  });
-
+  const response = await adminAttempt(page, { method, path, data });
   const body = await response.json().catch(() => null);
 
   if (!response.ok()) {
@@ -47,4 +36,23 @@ export async function adminApi(page, { method = "GET", path, data } = {}) {
   }
 
   return body;
+}
+
+/** Same as `adminApi` but returns the raw response, for expected 4xx answers. */
+export function adminAttempt(page, { method = "GET", path, data } = {}) {
+  return page
+    .context()
+    .cookies()
+    .then((cookies) => {
+      const csrf = cookies.find((cookie) => cookie.name === "fd_csrf")?.value || "";
+
+      return page.request.fetch(path, {
+        method,
+        data,
+        headers: {
+          "x-csrf-token": csrf,
+          origin: new URL(page.url()).origin,
+        },
+      });
+    });
 }

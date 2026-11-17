@@ -2,6 +2,7 @@ import crypto from "node:crypto";
 import mongoose from "mongoose";
 import Address from "../models/address.model.js";
 import Cart from "../models/cart.model.js";
+import Coupon from "../models/coupon.model.js";
 import Order from "../models/order.model.js";
 import Product from "../models/product.model.js";
 import User from "../models/user.model.js";
@@ -351,6 +352,16 @@ const cancelOrder = async (order, { reason, actorUserId, restock = true }) => {
   if (wasPaid) {
     await refundOrderPayment(order);
     if (restock) await restockOrder(order, { reason: "cancel", actorUserId });
+
+    // Confirming the payment took a slot from the coupon's usage limit; a
+    // cancelled redemption must hand it back, otherwise a cancelled order
+    // keeps burning the limit forever.
+    if (order.couponCode) {
+      await Coupon.updateOne(
+        { code: order.couponCode, deletedAt: null, usedCount: { $gt: 0 } },
+        { $inc: { usedCount: -1 } }
+      );
+    }
   }
 
   const now = new Date();

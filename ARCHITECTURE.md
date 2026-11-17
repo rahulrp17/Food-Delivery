@@ -373,6 +373,14 @@ Indexes: `{ userId: 1, createdAt: -1 }`; `{ status: 1, createdAt: -1 }`; `{ user
 }
 ```
 
+`usedCount` counts live redemptions: it is incremented when a payment is
+confirmed and decremented when a paid order is cancelled, so a cancelled
+order hands its usage slot back. The admin status filter is date based
+(`scheduled` = `startsAt` in the future, `expired` = `expiresAt` in the past,
+`active` = enabled plus started and not expired) to match the badge the page
+renders, and the redeemed-revenue analytics sum `pricing.discountPaise` over
+orders that are neither cancelled nor payment-failed.
+
 ### 3.9 Review
 
 ```js

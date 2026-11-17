@@ -36,17 +36,16 @@ export async function registerCustomer(context, overrides = {}) {
   return { ...customer, id: body.data.user.id };
 }
 
-/**
- * Adds an order to a customer account and confirms the payment with a
- * simulated Stripe webhook, so the admin directory has a paid order to report.
- */
-export async function placePaidOrder(context, customer, { webhookSecret, quantity = 2 } = {}) {
+export async function addFirstProductToCart(context, { quantity = 1, minPricePaise = 0 } = {}) {
   const api = context.request;
   const headers = await csrfHeaders(context);
 
   const productsResponse = await api.get(`${API_URL}/api/v1/products?limit=20`);
   const products = (await productsResponse.json()).data.items;
-  const product = products.find((item) => item.isOrderable && (item.stock ?? 0) >= quantity);
+  const product = products.find(
+    (item) =>
+      item.isOrderable && (item.stock ?? 0) >= quantity && (item.pricePaise ?? 0) >= minPricePaise
+  );
 
   if (!product) {
     throw new Error("No product with enough stock is available for the E2E order");
@@ -59,6 +58,40 @@ export async function placePaidOrder(context, customer, { webhookSecret, quantit
 
   if (!cartResponse.ok()) {
     throw new Error(`Adding to the cart failed (${cartResponse.status()})`);
+  }
+
+  return product;
+}
+
+/** Applies a coupon to the signed-in customer's cart and returns the raw response. */
+export function applyCouponToCart(context, code) {
+  return csrfHeaders(context).then((headers) =>
+    context.request.post(`${API_URL}/api/v1/cart/coupon`, { headers, data: { code } })
+  );
+}
+
+/**
+ * Adds an order to a customer account and confirms the payment with a
+ * simulated Stripe webhook, so the admin directory has a paid order to report.
+ * Pass `couponCode` to redeem a coupon on the order.
+ */
+export async function placePaidOrder(
+  context,
+  customer,
+  { webhookSecret, quantity = 2, couponCode, minPricePaise = 0 } = {}
+) {
+  const api = context.request;
+  const headers = await csrfHeaders(context);
+  const product = await addFirstProductToCart(context, { quantity, minPricePaise });
+
+  if (couponCode) {
+    const couponResponse = await applyCouponToCart(context, couponCode);
+
+    if (!couponResponse.ok()) {
+      throw new Error(
+        `Applying the coupon failed (${couponResponse.status()}): ${await couponResponse.text()}`
+      );
+    }
   }
 
   const addressResponse = await api.post(`${API_URL}/api/v1/users/me/addresses`, {
@@ -113,3 +146,4 @@ export async function csrfHeaders(context) {
 }
 
 export { API_URL, PASSWORD };
+

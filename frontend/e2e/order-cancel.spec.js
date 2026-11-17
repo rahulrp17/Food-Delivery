@@ -1,5 +1,5 @@
 import { test, expect } from "@playwright/test";
-import { adminApi, loginAsAdmin } from "./helpers/admin.js";
+import { adminApi, adminAttempt, loginAsAdmin } from "./helpers/admin.js";
 import { backendEnv } from "./helpers/env.js";
 import { placePaidOrder, registerCustomer } from "./helpers/customer.js";
 
@@ -13,21 +13,6 @@ import { placePaidOrder, registerCustomer } from "./helpers/customer.js";
 const stockOf = async (page, productId) => {
   const body = await adminApi(page, { path: `/api/v1/admin/products/${productId}` });
   return body.data.product.stock;
-};
-
-/** Admin API call that is allowed to fail (used to assert 4xx responses). */
-const rawAdminRequest = async (page, { method = "GET", path, data }) => {
-  const cookies = await page.context().cookies();
-  const csrf = cookies.find((cookie) => cookie.name === "fd_csrf")?.value || "";
-
-  return page.request.fetch(path, {
-    method,
-    data,
-    headers: {
-      "x-csrf-token": csrf,
-      origin: new URL(page.url()).origin,
-    },
-  });
 };
 
 test("admin can cancel a paid order, restock it and keep the record", async ({ browser }) => {
@@ -109,7 +94,7 @@ test("admin can cancel a paid order, restock it and keep the record", async ({ b
     expect(restock.product.name).toBe(product.name);
 
     // Both cancel attempts and invalid transitions are refused from the API.
-    const secondCancel = await rawAdminRequest(page, {
+    const secondCancel = await adminAttempt(page, {
       method: "POST",
       path: `/api/v1/admin/orders/${order.id}/cancel`,
       data: { reason: "Cancelling twice" },
@@ -117,7 +102,7 @@ test("admin can cancel a paid order, restock it and keep the record", async ({ b
     expect(secondCancel.status()).toBe(409);
     expect((await secondCancel.json()).error.code).toBe("INVALID_TRANSITION");
 
-    const invalidTransition = await rawAdminRequest(page, {
+    const invalidTransition = await adminAttempt(page, {
       method: "PATCH",
       path: `/api/v1/admin/orders/${order.id}/status`,
       data: { status: "delivered" },
