@@ -659,7 +659,7 @@ Before implementing Phase 2:
 | Backend tests | `backend: npm test` | 21 files, **120 tests passed** |
 | Frontend lint | `frontend: npm run lint` | **0 errors**, 0 warnings |
 | Frontend build | `frontend: npm run build` | Passed |
-| E2E | `frontend: npm run test:e2e` | 15 Playwright specs / **26 tests passed**: the extended checkout/webhook + admin flow (status update, Orders board, detail drawer, internal-notes save, Settings tabs/payment status, Inventory CSV download, Staff, Activity Log, notification panel), an admin modules flow (coupon create, redemption history with CSV download, delete, mobile drawer navigation), an RBAC flow (support staff creation, limited navigation, route guard, API 403, suspension), products/categories/archive, settings tabs, reviews, customers directory, overview dashboard, order cancellation with refund + restock, and coupons (edit, date filters, limits, analytics) |
+| E2E | `frontend: npm run test:e2e` | 16 Playwright specs / **27 tests passed**: the extended checkout/webhook + admin flow (status update, Orders board, detail drawer, internal-notes save, Settings tabs/payment status, Inventory CSV download, Staff, Activity Log, notification panel), an admin modules flow (coupon create, redemption history with CSV download, delete, mobile drawer navigation), an RBAC flow (support staff creation, limited navigation, route guard, API 403, suspension), products/categories/archive, settings tabs, reviews, customers directory, overview dashboard, order cancellation with refund + restock, coupons (edit, date filters, limits, analytics), and the inventory ledger (stock correction, filters, summary, CSV) |
 | Live API smoke | Admin session against `localhost:4000` | `/admin/notifications`, `/admin/staff`, `/admin/inventory/logs`, `/admin/audit-logs`, `read-all`, `PATCH /admin/orders/:id/notes`, `PATCH /admin/settings`, `PATCH /auth/profile`, `GET/DELETE /auth/sessions`, `GET /admin/customers/export`, `GET /admin/inventory/export`, `GET /admin/coupons/:id/redemptions`, `PATCH /admin/reviews/:id/report`, `GET /admin/coupons/:id/redemptions/export` (correct headers and filename, invalid date range rejected with 400), and `POST /admin/products/:id/duplicate` (copy created as inactive draft, then deleted) all behave as expected |
 
 ### 15.2 Status against the master prompt
@@ -674,20 +674,20 @@ Before implementing Phase 2:
 | Phase 6 Categories | **Done** | CRUD, image, active state, product counts, reorder controls **and drag-and-drop reordering** with keyboard parity (added 2026-11-16 — see §15.7) |
 | Phase 7 Orders | **Done** | Table + Kanban board, status/payment/date/search filters, validated transitions, confirmation dialogs, detail page, slide-over drawer, timeline, cancel with refund + restock, printable invoice, editable staff-only admin notes, 20s visibility-aware polling; **cancel path verified end-to-end and the timeline now carries its note/at/actor** (2026-11-16 — see §15.12); **not implemented:** driver assignment/ETA |
 | Phase 8 Customers | **Done** | List + detail, order history, suspend/role controls, per-customer AOV/first/last order, new vs returning + repeat-rate analytics, favourite-products card, CSV export of filtered customers, **saved-address view** (added 2026-11-16 — see §15.10) |
-| Phase 9 Coupons | **Done** | CRUD, usage limits, per-user limits, backend-validated discounts, redeemed-revenue analytics, scheduled/expired/active filters, per-coupon redemption history with filtered CSV export; **filters now match the badge, redeemed money is read from `pricing`, cancelled redemptions release their slot and leave the history** (2026-11-16 — see §15.13) |
+| Phase 9 Coupons | **Done** | CRUD, usage limits, per-user limits, backend-validated discounts, redeemed-revenue analytics, scheduled/expired/active filters, per-coupon redemption history with filtered CSV export; **filters now match the badge, redeemed money is read from `pricing`, cancelled redemptions release their slot and leave the history** (2026-11-16 — see §15.13), **inventory ledger - stock correction and adjustment, validation and OUT_OF_STOCK guards, movement table with summary cards, reason filter and CSV export** (2026-11-17, §15.14) |
 | Phase 10 Reviews | **Done** | List, star/status filters, approve/reject, admin reply, reported status with reported-by/at metadata and moderation actions |
 | Phase 11 Settings | **Done** | 10 tabs: Store, enforced weekly Business Hours, Delivery & Pricing, Tax & Invoice (branding on printed invoices), Delivery Estimate, Pincodes, read-only Stripe/provider status, notification preferences that gate alerts, Admin Profile, and Security/Sessions (password change, active-session revoke, sign-out-all); **not implemented:** email changes, 2FA |
-| Phase 12 Inventory/Staff/Audit/Notifications | **Done** | Inventory logs + summary + filtered CSV export, staff RBAC management, audit log, notification center |
+| Phase 12 Inventory/Staff/Audit/Notifications | **Done** | Inventory logs + summary + filtered CSV export (E2E: §15.14), staff RBAC management, audit log, notification center |
 | Phase 13 Security | **Mostly done** | HttpOnly cookies, CSRF, refresh rotation, bcrypt, rate limits, Zod validation, backend RBAC (`requirePermission`), frontend permission route guard, audit logging, legacy API **removed** (2026-11-16), safe uploads, session listing/revocation; **no 2FA** |
 | Phase 14 State/performance | **Done** | TanStack Query, Zustand, lazy routes, server pagination, hidden-tab polling pause |
 | Phase 15 Animations | **Partial** | CSS transitions/keyframes + `prefers-reduced-motion`; no Framer Motion/Motion dependency |
 | Phase 16 Responsive | **Done** | Breakpoints at 1199/1023/899/767/639/479px, mobile drawer, table-to-card collapse; full admin UI refresh (see 15.5) — every admin page, popup, form and the admin login page are now premium-styled and responsive down to 360px |
-| Phase 17 Testing | **Done** | 120 backend unit/integration tests + 15 E2E specs / 26 E2E tests (checkout/admin flow, admin modules coupon CRUD + redemption CSV + mobile nav, RBAC limited nav + route guard + API 403 + suspension, products CRUD + bulk update + delete, categories CRUD + reorder + delete, category drag-and-drop + keyboard reorder, product archive + restore, reviews approve/reply, settings store-info save, settings tabs — hours, delivery & pricing, tax & invoice, delivery estimate, pincodes, notifications, profile, security, **customers directory — search, role/status filters, activity, saved addresses, CSV export, suspend/reactivate, role change and the self-protection guards** (2026-11-16, §15.10), **overview dashboard — KPIs, series table, distribution panels, CSV export, 7/30-day switch and range scoping** (2026-11-16, §15.11), **order cancellation — reason validation, refund badge, restock, inventory log, 409 guards and the customer timeline** (2026-11-16, §15.12), **coupons — create, edit, date-based filters, server-side limits, redemption history and analytics that survive a cancellation** (2026-11-16, §15.13) |
+| Phase 17 Testing | **Done** | 120 backend unit/integration tests + 16 E2E specs / 27 E2E tests (checkout/admin flow, admin modules coupon CRUD + redemption CSV + mobile nav, RBAC limited nav + route guard + API 403 + suspension, products CRUD + bulk update + delete, categories CRUD + reorder + delete, category drag-and-drop + keyboard reorder, product archive + restore, reviews approve/reply, settings store-info save, settings tabs — hours, delivery & pricing, tax & invoice, delivery estimate, pincodes, notifications, profile, security, **customers directory — search, role/status filters, activity, saved addresses, CSV export, suspend/reactivate, role change and the self-protection guards** (2026-11-16, §15.10), **overview dashboard — KPIs, series table, distribution panels, CSV export, 7/30-day switch and range scoping** (2026-11-16, §15.11), **order cancellation — reason validation, refund badge, restock, inventory log, 409 guards and the customer timeline** (2026-11-16, §15.12), **coupons — create, edit, date-based filters, server-side limits, redemption history and analytics that survive a cancellation** (2026-11-16, §15.13), **inventory ledger - stock correction and adjustment, validation and OUT_OF_STOCK guards, movement table with summary cards, reason filter and CSV export** (2026-11-17, §15.14) |
 
 ### 15.3 Remaining gaps (prioritized)
 
 1. **Products/Categories: resolved (2026-11-16).** The archive workflow (§15.6) and the drag-and-drop category reordering (§15.7) are both done.
-2. **Testing: resolved (2026-11-16).** Every settings tab now has E2E coverage — see §15.8. The customers directory and the overview dashboard followed on the next two passes — see §15.10 and §15.11.
+2. **Testing: resolved (2026-11-16).** Every settings tab now has E2E coverage — see §15.8. The customers directory and the overview dashboard followed on the next two passes — see §15.10 and §15.11; cancellation, coupons and the inventory ledger are covered in §15.12-§15.14.
 3. **Repository hygiene: resolved (2026-11-16).** `backend/node_modules` is no longer tracked (untracked via `git rm --cached`, then purged from all history with `git filter-repo`, so the remote no longer carries dependency blobs); the retired standalone `admin/` app was deleted from the repo and disk (it hardcoded `https://food-del-backend-393c.onrender.com` with no auth and bypassed the new RBAC/CSRF model — see the security blocker in §7); the `" - Copy"` duplicate files were removed and are now blocked by a `*- Copy.*` ignore rule; `.opencode/` (local agent tooling) is ignored.
 4. **Customers CRM: partly closed (2026-11-16).** The saved-address view is now on the customer detail page (§15.10). Still open from the §3.6 list: notes, tags, segments, bulk actions and retention analytics.
 
@@ -1015,3 +1015,25 @@ The analytics aggregated `$discountPaise`, but the discount is stored at `pricin
 | `frontend: npm run build` | Passed |
 | E2E `e2e/coupons.spec.js` | 2 tests passed |
 | Full E2E suite | 15 specs / **26 tests passed** |
+
+### 15.14 Inventory ledger covered by E2E (`frontend/e2e/inventory.spec.js`)
+
+**What the spec proves**
+
+- A product is created through `POST /admin/products` (with a real `categoryId` from `GET /admin/categories`), then `PATCH /admin/products/:id/stock` is driven three ways: `{ delta: 5 }` (restock), `{ stock: 12 }` (manual adjustment), and `{ stock: 12 }` again, which is a no-op and must not write a ledger entry.
+- Validation is enforced server-side: `stock: -5` and a body containing both `stock` and `delta` return `400 VALIDATION_ERROR`, and `delta: -50` against 12 units returns `409 OUT_OF_STOCK`.
+- `/admin/inventory` is scoped with the product search, and the movement table shows exactly the two expected entries (`+5` Restock, `-3` Adjustment) while the summary cards read `Stock in +5`, `Stock out -3`, `Net change +2` and `Movements 2`.
+- The reason filter (`#inventory-reason`) narrows the table, and `reason=cancel` produces the `No stock movements yet` empty state for this product.
+- `Export CSV` downloads `inventory-YYYY-MM-DD.csv` whose header is `"Date","Product","Change","Reason","Order ID","Actor"` and whose rows carry the product name for both movements; the toast confirms `Inventory report exported`.
+
+**Outcome**: the inventory module passed on the first run, so this pass found no defects - it locks the behaviour in place instead.
+
+**Verification**
+
+| Gate | Result |
+| --- | --- |
+| `backend: npm test` | 21 files, **120 tests passed** (unchanged) |
+| `frontend: npm run lint` | 0 errors, 0 warnings |
+| `frontend: npm run build` | Passed |
+| E2E `e2e/inventory.spec.js` | 1 test passed |
+| Full E2E suite | 16 specs / **27 tests passed** |
