@@ -5,14 +5,14 @@
 /* ---------- Grid composition ---------- */
 .grid {
   display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  gap: var(--space-4);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-3);
 }
 
 .skeletonGrid {
   display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  gap: var(--space-4);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-3);
 }
 
 .skeletonCard {
@@ -212,18 +212,11 @@
 }
 
 /* ---------- Responsive ---------- */
-@media (min-width: 400px) {
-  .grid,
-  .skeletonGrid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
-
 @media (min-width: 768px) {
   .grid,
   .skeletonGrid {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: var(--space-6);
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: var(--space-4);
   }
 
   .row {
@@ -250,7 +243,8 @@
 @media (min-width: 1200px) {
   .grid,
   .skeletonGrid {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: var(--space-5);
   }
 }
 

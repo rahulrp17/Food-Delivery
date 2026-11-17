@@ -3,6 +3,9 @@
   display: flex;
   flex-direction: column;
   min-width: 0;
+  /* Query the card itself: the grid decides the width, and the compact rules
+     below adapt the internals to whatever column size results. */
+  container-type: inline-size;
   overflow: hidden;
   border: 1px solid var(--color-border);
   border-radius: var(--radius-lg);
@@ -421,6 +424,90 @@
   .addToCart {
     flex: 1;
     padding: 0 var(--space-3);
+  }
+}
+
+/* ---------- Compact cards ----------
+   The storefront grid runs 2 / 4 / 5 columns (mobile / tablet / desktop), so a
+   card is often only 160-250px wide. Below 250px the editorial footer can no
+   longer sit on one line - switch to the tighter, app-style composition and
+   drop the optional copy so the name, price and action stay legible. */
+@container (max-width: 250px) {
+  .body {
+    gap: var(--space-1);
+    padding: var(--space-3);
+  }
+
+  .meta {
+    flex-wrap: wrap;
+    gap: var(--space-1);
+  }
+
+  .delivery {
+    font-size: var(--text-overline);
+  }
+
+  .title {
+    font-size: var(--text-body-l);
+  }
+
+  .description {
+    display: none;
+  }
+
+  .footer {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--space-2);
+    padding-top: var(--space-2);
+  }
+
+  .actions {
+    justify-content: space-between;
+  }
+
+  .addToCart {
+    flex: 1;
+    padding: 0 var(--space-3);
+  }
+
+  .view {
+    display: none;
+  }
+
+  .badges {
+    left: var(--space-2);
+    top: var(--space-2);
+    max-width: calc(100% - var(--space-5));
+  }
+
+  .discount {
+    right: var(--space-2);
+    top: var(--space-2);
+    min-height: 22px;
+    padding: 0 7px;
+    font-size: var(--text-overline);
+  }
+
+  .dietMark {
+    left: var(--space-2);
+    bottom: var(--space-2);
+    width: 16px;
+    height: 16px;
+  }
+
+  .dietDot {
+    width: 7px;
+    height: 7px;
+  }
+
+  .ratingPill {
+    right: var(--space-2);
+    bottom: var(--space-2);
+    min-height: 22px;
+    padding: 0 7px;
+    gap: 3px;
+    font-size: var(--text-overline);
   }
 }
 

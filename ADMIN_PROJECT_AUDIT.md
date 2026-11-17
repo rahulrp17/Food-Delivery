@@ -1,4 +1,4 @@
-# Foodie Admin Pro — Phase 1 Project Audit
+; storefront food cards use a fixed 2 / 4 / 5 column grid with container-query density (§15.16)# Foodie Admin Pro — Phase 1 Project Audit
 
 **Repository:** `C:\Users\Rahul\Documents\New folder\Mission 1\MERN\Food Delivery`  
 **Audit date:** 2026-11-09  
@@ -659,7 +659,7 @@ Before implementing Phase 2:
 | Backend tests | `backend: npm test` | 21 files, **120 tests passed** |
 | Frontend lint | `frontend: npm run lint` | **0 errors**, 0 warnings |
 | Frontend build | `frontend: npm run build` | Passed |
-| E2E | `frontend: npm run test:e2e` | 17 Playwright specs / **28 tests passed**: the extended checkout/webhook + admin flow (status update, Orders board, detail drawer, internal-notes save, Settings tabs/payment status, Inventory CSV download, Staff, Activity Log, notification panel), an admin modules flow (coupon create, redemption history with CSV download, delete, mobile drawer navigation), an RBAC flow (support staff creation, limited navigation, route guard, API 403, suspension), products/categories/archive, settings tabs, reviews, customers directory, overview dashboard, order cancellation with refund + restock, coupons (edit, date filters, limits, analytics), the inventory ledger (stock correction, filters, summary, CSV) and staff permission overrides with a suspension lockout |
+| E2E | `frontend: npm run test:e2e` | 18 Playwright specs / **34 tests passed**: the extended checkout/webhook + admin flow (status update, Orders board, detail drawer, internal-notes save, Settings tabs/payment status, Inventory CSV download, Staff, Activity Log, notification panel), an admin modules flow (coupon create, redemption history with CSV download, delete, mobile drawer navigation), an RBAC flow (support staff creation, limited navigation, route guard, API 403, suspension), products/categories/archive, settings tabs, reviews, customers directory, overview dashboard, order cancellation with refund + restock, coupons (edit, date filters, limits, analytics), the inventory ledger (stock correction, filters, summary, CSV), staff permission overrides with a suspension lockout, and the food-card grid (2/4/5 columns, container-query density, no overflow) |
 | Live API smoke | Admin session against `localhost:4000` | `/admin/notifications`, `/admin/staff`, `/admin/inventory/logs`, `/admin/audit-logs`, `read-all`, `PATCH /admin/orders/:id/notes`, `PATCH /admin/settings`, `PATCH /auth/profile`, `GET/DELETE /auth/sessions`, `GET /admin/customers/export`, `GET /admin/inventory/export`, `GET /admin/coupons/:id/redemptions`, `PATCH /admin/reviews/:id/report`, `GET /admin/coupons/:id/redemptions/export` (correct headers and filename, invalid date range rejected with 400), and `POST /admin/products/:id/duplicate` (copy created as inactive draft, then deleted) all behave as expected |
 
 ### 15.2 Status against the master prompt
@@ -681,8 +681,8 @@ Before implementing Phase 2:
 | Phase 13 Security | **Mostly done** | HttpOnly cookies, CSRF, refresh rotation, bcrypt, rate limits, Zod validation, backend RBAC (`requirePermission`), frontend permission route guard, audit logging, legacy API **removed** (2026-11-16), safe uploads, session listing/revocation; **no 2FA** |
 | Phase 14 State/performance | **Done** | TanStack Query, Zustand, lazy routes, server pagination, hidden-tab polling pause |
 | Phase 15 Animations | **Partial** | CSS transitions/keyframes + `prefers-reduced-motion`; no Framer Motion/Motion dependency |
-| Phase 16 Responsive | **Done** | Breakpoints at 1199/1023/899/767/639/479px, mobile drawer, table-to-card collapse; full admin UI refresh (see 15.5) — every admin page, popup, form and the admin login page are now premium-styled and responsive down to 360px |
-| Phase 17 Testing | **Done** | 120 backend unit/integration tests + 17 E2E specs / 28 E2E tests (checkout/admin flow, admin modules coupon CRUD + redemption CSV + mobile nav, RBAC limited nav + route guard + API 403 + suspension, products CRUD + bulk update + delete, categories CRUD + reorder + delete, category drag-and-drop + keyboard reorder, product archive + restore, reviews approve/reply, settings store-info save, settings tabs — hours, delivery & pricing, tax & invoice, delivery estimate, pincodes, notifications, profile, security, **customers directory — search, role/status filters, activity, saved addresses, CSV export, suspend/reactivate, role change and the self-protection guards** (2026-11-16, §15.10), **overview dashboard — KPIs, series table, distribution panels, CSV export, 7/30-day switch and range scoping** (2026-11-16, §15.11), **order cancellation — reason validation, refund badge, restock, inventory log, 409 guards and the customer timeline** (2026-11-16, §15.12), **coupons — create, edit, date-based filters, server-side limits, redemption history and analytics that survive a cancellation** (2026-11-16, §15.13), **inventory ledger - stock correction and adjustment, validation and OUT_OF_STOCK guards, movement table with summary cards, reason filter and CSV export** (2026-11-17, §15.14), **staff administration - explicit permission overrides that replace role defaults, nav and route gating, API 403s, suspension lockout with the inline login error, and reactivation back to role defaults** (2026-11-17, §15.15) |
+| Phase 16 Responsive | **Done** | Breakpoints at 1199/1023/899/767/639/479px, mobile drawer, table-to-card collapse; full admin UI refresh (see 15.5); every admin page, popup, form and the admin login page are premium-styled and responsive down to 360px; storefront food cards use a fixed 2 / 4 / 5 column grid with container-query density (§15.16) |
+| Phase 17 Testing | **Done** | 120 backend unit/integration tests + 18 E2E specs / 34 E2E tests (checkout/admin flow, admin modules coupon CRUD + redemption CSV + mobile nav, RBAC limited nav + route guard + API 403 + suspension, products CRUD + bulk update + delete, categories CRUD + reorder + delete, category drag-and-drop + keyboard reorder, product archive + restore, reviews approve/reply, settings store-info save, settings tabs — hours, delivery & pricing, tax & invoice, delivery estimate, pincodes, notifications, profile, security, **customers directory — search, role/status filters, activity, saved addresses, CSV export, suspend/reactivate, role change and the self-protection guards** (2026-11-16, §15.10), **overview dashboard — KPIs, series table, distribution panels, CSV export, 7/30-day switch and range scoping** (2026-11-16, §15.11), **order cancellation — reason validation, refund badge, restock, inventory log, 409 guards and the customer timeline** (2026-11-16, §15.12), **coupons — create, edit, date-based filters, server-side limits, redemption history and analytics that survive a cancellation** (2026-11-16, §15.13), **inventory ledger - stock correction and adjustment, validation and OUT_OF_STOCK guards, movement table with summary cards, reason filter and CSV export** (2026-11-17, §15.14), **staff administration - explicit permission overrides that replace role defaults, nav and route gating, API 403s, suspension lockout with the inline login error, and reactivation back to role defaults** (2026-11-17, §15.15), **food-card grid - 2 / 4 / 5 columns on mobile / tablet / desktop, container-query card density and no horizontal overflow** (2026-11-17, §15.16) |
 
 ### 15.3 Remaining gaps (prioritized)
 
@@ -1069,3 +1069,46 @@ The analytics aggregated `$discountPaise`, but the discount is stored at `pricin
 | `frontend: npm run build` | Passed |
 | E2E `e2e/staff.spec.js` + `e2e/rbac.spec.js` | 2 tests passed |
 | Full E2E suite | 17 specs / **28 tests passed** |
+### 15.16 Food card grid: 2 / 4 / 5 columns
+
+**What changed**
+
+The storefront previously used a fluid column plan (1 column under 400px, 2 at 400px, 3 at 768px, 4 at 1200px) with a separate dense variant for the menu (3 / 4 / 5). That left phone cards full-width and desktop cards uneven between the menu, search and the home rails. Cards are now on one fixed plan across the whole storefront:
+
+| Viewport | Cards across | Where |
+| --- | --- | --- |
+| mobile (`< 768px`, including 360-430px phones) | 2 | menu, search, home rails |
+| tablet (`768px` - `1199px`) | 4 | menu, search, home rails |
+| desktop (`>= 1200px`) | 5 | menu, search, home rails |
+
+`ProductGrid.module.css` owns the plan and the `dense` menu variant only tightens the gutters (`--space-2` -> `--space-4`); `ProductRail.module.css` uses the same numbers for the home rails and their skeletons, so the two never drift. Loading skeletons reuse the same classes and therefore the same columns, so nothing reflows when data lands.
+
+**Card density is now a container query, not a guess**
+
+A 2-up phone card is ~150px wide while a 4-up tablet card is ~170px and a 5-up desktop card ~220px, so a single padding scheme cannot look right everywhere. `.card` declares `container-type: inline-size`, and `@container (max-width: 250px)` applies the compact composition:
+
+- the footer stacks (price above a full-width action) instead of wrapping unpredictably;
+- the optional description and the redundant view arrow are dropped;
+- the category/time meta wraps, and the discount, diet, rating and bestseller overlays shrink and pull in to 8px so they never collide;
+- the add/stepper controls keep their 44px minimum touch target.
+
+No JS measuring, no resize listeners, and no duplicate DOM per breakpoint. The viewport `@media (max-width: 639px)` block that used to emulate this is gone - the container query is the single source of truth.
+
+**Verification**
+
+| Gate | Result |
+| --- | --- |
+| `frontend: npm run lint` | 0 errors, 0 warnings |
+| `frontend: npm run build` | Passed |
+| E2E `e2e/product-grid.spec.js` | 6 tests passed (2 / 4 / 5 columns at 390, 430, 768, 1280 and 1600px, home rails, card width floor, no horizontal overflow) |
+| `frontend: npm run test:responsive` | 4 specs passed (overflow sweep and tap targets across the breakpoint matrix) |
+| Full E2E suite | 18 specs / **34 tests passed** |
+
+**Files**
+
+| File | Change |
+| --- | --- |
+| `frontend/src/components/product/ProductGrid.module.css` | Column plan 2 / 4 / 5, dense gutters only. |
+| `frontend/src/components/home/ProductRail.module.css` | Home rail + skeleton grids follow the same plan. |
+| `frontend/src/components/product/ProductCard.module.css` | `container-type` + `@container (max-width: 250px)` compact composition. |
+| `frontend/e2e/product-grid.spec.js` | New spec pinning the plan and guarding overflow. |
