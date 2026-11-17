@@ -659,7 +659,7 @@ Before implementing Phase 2:
 | Backend tests | `backend: npm test` | 21 files, **120 tests passed** |
 | Frontend lint | `frontend: npm run lint` | **0 errors**, 0 warnings |
 | Frontend build | `frontend: npm run build` | Passed |
-| E2E | `frontend: npm run test:e2e` | 16 Playwright specs / **27 tests passed**: the extended checkout/webhook + admin flow (status update, Orders board, detail drawer, internal-notes save, Settings tabs/payment status, Inventory CSV download, Staff, Activity Log, notification panel), an admin modules flow (coupon create, redemption history with CSV download, delete, mobile drawer navigation), an RBAC flow (support staff creation, limited navigation, route guard, API 403, suspension), products/categories/archive, settings tabs, reviews, customers directory, overview dashboard, order cancellation with refund + restock, coupons (edit, date filters, limits, analytics), and the inventory ledger (stock correction, filters, summary, CSV) |
+| E2E | `frontend: npm run test:e2e` | 17 Playwright specs / **28 tests passed**: the extended checkout/webhook + admin flow (status update, Orders board, detail drawer, internal-notes save, Settings tabs/payment status, Inventory CSV download, Staff, Activity Log, notification panel), an admin modules flow (coupon create, redemption history with CSV download, delete, mobile drawer navigation), an RBAC flow (support staff creation, limited navigation, route guard, API 403, suspension), products/categories/archive, settings tabs, reviews, customers directory, overview dashboard, order cancellation with refund + restock, coupons (edit, date filters, limits, analytics), the inventory ledger (stock correction, filters, summary, CSV) and staff permission overrides with a suspension lockout |
 | Live API smoke | Admin session against `localhost:4000` | `/admin/notifications`, `/admin/staff`, `/admin/inventory/logs`, `/admin/audit-logs`, `read-all`, `PATCH /admin/orders/:id/notes`, `PATCH /admin/settings`, `PATCH /auth/profile`, `GET/DELETE /auth/sessions`, `GET /admin/customers/export`, `GET /admin/inventory/export`, `GET /admin/coupons/:id/redemptions`, `PATCH /admin/reviews/:id/report`, `GET /admin/coupons/:id/redemptions/export` (correct headers and filename, invalid date range rejected with 400), and `POST /admin/products/:id/duplicate` (copy created as inactive draft, then deleted) all behave as expected |
 
 ### 15.2 Status against the master prompt
@@ -674,20 +674,20 @@ Before implementing Phase 2:
 | Phase 6 Categories | **Done** | CRUD, image, active state, product counts, reorder controls **and drag-and-drop reordering** with keyboard parity (added 2026-11-16 — see §15.7) |
 | Phase 7 Orders | **Done** | Table + Kanban board, status/payment/date/search filters, validated transitions, confirmation dialogs, detail page, slide-over drawer, timeline, cancel with refund + restock, printable invoice, editable staff-only admin notes, 20s visibility-aware polling; **cancel path verified end-to-end and the timeline now carries its note/at/actor** (2026-11-16 — see §15.12); **not implemented:** driver assignment/ETA |
 | Phase 8 Customers | **Done** | List + detail, order history, suspend/role controls, per-customer AOV/first/last order, new vs returning + repeat-rate analytics, favourite-products card, CSV export of filtered customers, **saved-address view** (added 2026-11-16 — see §15.10) |
-| Phase 9 Coupons | **Done** | CRUD, usage limits, per-user limits, backend-validated discounts, redeemed-revenue analytics, scheduled/expired/active filters, per-coupon redemption history with filtered CSV export; **filters now match the badge, redeemed money is read from `pricing`, cancelled redemptions release their slot and leave the history** (2026-11-16 — see §15.13), **inventory ledger - stock correction and adjustment, validation and OUT_OF_STOCK guards, movement table with summary cards, reason filter and CSV export** (2026-11-17, §15.14) |
+| Phase 9 Coupons | **Done** | CRUD, usage limits, per-user limits, backend-validated discounts, redeemed-revenue analytics, scheduled/expired/active filters, per-coupon redemption history with filtered CSV export; **filters now match the badge, redeemed money is read from `pricing`, cancelled redemptions release their slot and leave the history** (2026-11-16 — see §15.13) |
 | Phase 10 Reviews | **Done** | List, star/status filters, approve/reject, admin reply, reported status with reported-by/at metadata and moderation actions |
 | Phase 11 Settings | **Done** | 10 tabs: Store, enforced weekly Business Hours, Delivery & Pricing, Tax & Invoice (branding on printed invoices), Delivery Estimate, Pincodes, read-only Stripe/provider status, notification preferences that gate alerts, Admin Profile, and Security/Sessions (password change, active-session revoke, sign-out-all); **not implemented:** email changes, 2FA |
-| Phase 12 Inventory/Staff/Audit/Notifications | **Done** | Inventory logs + summary + filtered CSV export (E2E: §15.14), staff RBAC management, audit log, notification center |
+| Phase 12 Inventory/Staff/Audit/Notifications | **Done** | Inventory logs + summary + filtered CSV export (E2E: §15.14), staff RBAC management with explicit permission overrides, suspension lockout and nav/route gating (E2E: §15.15), audit log, notification center |
 | Phase 13 Security | **Mostly done** | HttpOnly cookies, CSRF, refresh rotation, bcrypt, rate limits, Zod validation, backend RBAC (`requirePermission`), frontend permission route guard, audit logging, legacy API **removed** (2026-11-16), safe uploads, session listing/revocation; **no 2FA** |
 | Phase 14 State/performance | **Done** | TanStack Query, Zustand, lazy routes, server pagination, hidden-tab polling pause |
 | Phase 15 Animations | **Partial** | CSS transitions/keyframes + `prefers-reduced-motion`; no Framer Motion/Motion dependency |
 | Phase 16 Responsive | **Done** | Breakpoints at 1199/1023/899/767/639/479px, mobile drawer, table-to-card collapse; full admin UI refresh (see 15.5) — every admin page, popup, form and the admin login page are now premium-styled and responsive down to 360px |
-| Phase 17 Testing | **Done** | 120 backend unit/integration tests + 16 E2E specs / 27 E2E tests (checkout/admin flow, admin modules coupon CRUD + redemption CSV + mobile nav, RBAC limited nav + route guard + API 403 + suspension, products CRUD + bulk update + delete, categories CRUD + reorder + delete, category drag-and-drop + keyboard reorder, product archive + restore, reviews approve/reply, settings store-info save, settings tabs — hours, delivery & pricing, tax & invoice, delivery estimate, pincodes, notifications, profile, security, **customers directory — search, role/status filters, activity, saved addresses, CSV export, suspend/reactivate, role change and the self-protection guards** (2026-11-16, §15.10), **overview dashboard — KPIs, series table, distribution panels, CSV export, 7/30-day switch and range scoping** (2026-11-16, §15.11), **order cancellation — reason validation, refund badge, restock, inventory log, 409 guards and the customer timeline** (2026-11-16, §15.12), **coupons — create, edit, date-based filters, server-side limits, redemption history and analytics that survive a cancellation** (2026-11-16, §15.13), **inventory ledger - stock correction and adjustment, validation and OUT_OF_STOCK guards, movement table with summary cards, reason filter and CSV export** (2026-11-17, §15.14) |
+| Phase 17 Testing | **Done** | 120 backend unit/integration tests + 17 E2E specs / 28 E2E tests (checkout/admin flow, admin modules coupon CRUD + redemption CSV + mobile nav, RBAC limited nav + route guard + API 403 + suspension, products CRUD + bulk update + delete, categories CRUD + reorder + delete, category drag-and-drop + keyboard reorder, product archive + restore, reviews approve/reply, settings store-info save, settings tabs — hours, delivery & pricing, tax & invoice, delivery estimate, pincodes, notifications, profile, security, **customers directory — search, role/status filters, activity, saved addresses, CSV export, suspend/reactivate, role change and the self-protection guards** (2026-11-16, §15.10), **overview dashboard — KPIs, series table, distribution panels, CSV export, 7/30-day switch and range scoping** (2026-11-16, §15.11), **order cancellation — reason validation, refund badge, restock, inventory log, 409 guards and the customer timeline** (2026-11-16, §15.12), **coupons — create, edit, date-based filters, server-side limits, redemption history and analytics that survive a cancellation** (2026-11-16, §15.13), **inventory ledger - stock correction and adjustment, validation and OUT_OF_STOCK guards, movement table with summary cards, reason filter and CSV export** (2026-11-17, §15.14), **staff administration - explicit permission overrides that replace role defaults, nav and route gating, API 403s, suspension lockout with the inline login error, and reactivation back to role defaults** (2026-11-17, §15.15) |
 
 ### 15.3 Remaining gaps (prioritized)
 
 1. **Products/Categories: resolved (2026-11-16).** The archive workflow (§15.6) and the drag-and-drop category reordering (§15.7) are both done.
-2. **Testing: resolved (2026-11-16).** Every settings tab now has E2E coverage — see §15.8. The customers directory and the overview dashboard followed on the next two passes — see §15.10 and §15.11; cancellation, coupons and the inventory ledger are covered in §15.12-§15.14.
+2. **Testing: resolved (2026-11-16).** Every settings tab now has E2E coverage — see §15.8. The customers directory and the overview dashboard followed on the next two passes — see §15.10 and §15.11; cancellation, coupons, the inventory ledger and staff permissions are covered in §15.12-§15.15.
 3. **Repository hygiene: resolved (2026-11-16).** `backend/node_modules` is no longer tracked (untracked via `git rm --cached`, then purged from all history with `git filter-repo`, so the remote no longer carries dependency blobs); the retired standalone `admin/` app was deleted from the repo and disk (it hardcoded `https://food-del-backend-393c.onrender.com` with no auth and bypassed the new RBAC/CSRF model — see the security blocker in §7); the `" - Copy"` duplicate files were removed and are now blocked by a `*- Copy.*` ignore rule; `.opencode/` (local agent tooling) is ignored.
 4. **Customers CRM: partly closed (2026-11-16).** The saved-address view is now on the customer detail page (§15.10). Still open from the §3.6 list: notes, tags, segments, bulk actions and retention analytics.
 
@@ -1037,3 +1037,35 @@ The analytics aggregated `$discountPaise`, but the discount is stored at `pricin
 | `frontend: npm run build` | Passed |
 | E2E `e2e/inventory.spec.js` | 1 test passed |
 | Full E2E suite | 16 specs / **27 tests passed** |
+### 15.15 Staff permission overrides and suspension covered by E2E (`frontend/e2e/staff.spec.js`)
+
+**What the spec proves**
+
+- A support account is created with an explicit `permissions` override (`overview:read` + `coupons:read`) through the staff form; the card immediately reports `Support`, `Custom permissions` and both keys, and confirms the role default `orders:read`/`coupons:write` are **not** granted.
+- Signing in as that account shows the short sidebar: Coupons is visible while Orders, Customers, Products and Staff are hidden. `/admin/coupons` loads and `GET /admin/coupons` returns 200, but `POST /admin/coupons` returns `403 FORBIDDEN`, and `/admin/orders` renders the `Access restricted` route guard.
+- Suspending the account from the edit dialog (`status: "suspended"`) makes the next sign-in fail: the admin login page keeps the typed credentials and renders the inline `role="alert"` message "This account has been suspended".
+- Reactivating it, switching the role to `manager` and clearing the override flips the card back to `Manager` + `Role default` (no `Custom permissions`).
+- A wrong password on the same page shows `Invalid email or password` inline, keeps the email value and stays on `/admin/login`.
+
+**Defect fixed: the admin login form was unmounted on every failed submit**
+
+`AdminLoginGuard` rendered a skeleton whenever `status === "loading"`, and `useAuth.login` sets that status while the request is in flight. The guard therefore unmounted `AdminLoginPage`, so when a suspended (or wrong-password) sign-in failed the page remounted with empty state - the typed credentials were gone and the `.admin-login-error` alert (fed by `getErrorMessage(result)`) never appeared. The 403 did reach the browser (as a toast), but the page told the user nothing. The store now records `bootstrapped` once the initial `useAuth.bootstrap` settles, and the guard suppresses the form only before that first check - a submit keeps the page mounted, so the inline server message and the form values survive.
+
+**Files**
+
+| File | Change |
+| --- | --- |
+| `frontend/e2e/staff.spec.js` | New spec: permission override, nav/route/API gating, suspension lockout, wrong-password inline error, reactivation. |
+| `frontend/src/stores/auth.store.js` | `bootstrapped` flag with `setBootstrapped`. |
+| `frontend/src/hooks/useAuth.js` | `bootstrap` marks `bootstrapped` in a `finally` block. |
+| `frontend/src/components/layout/AdminRoute.jsx` | `AdminLoginGuard` shows its skeleton only while the initial session check runs. |
+
+**Verification**
+
+| Gate | Result |
+| --- | --- |
+| `backend: npm test` | 21 files, **120 tests passed** (unchanged) |
+| `frontend: npm run lint` | 0 errors, 0 warnings |
+| `frontend: npm run build` | Passed |
+| E2E `e2e/staff.spec.js` + `e2e/rbac.spec.js` | 2 tests passed |
+| Full E2E suite | 17 specs / **28 tests passed** |

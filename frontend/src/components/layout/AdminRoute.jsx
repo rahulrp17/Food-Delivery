@@ -127,9 +127,14 @@ export function AdminForbiddenPage({
 export function AdminLoginGuard({ children }) {
   const status = useAuthStore((s) => s.status);
   const user = useAuthStore((s) => s.user);
+  const bootstrapped = useAuthStore((s) => s.bootstrapped);
   const location = useLocation();
 
-  if (status === 'loading') {
+  // Only the initial session check (before bootstrap settles) hides the form.
+  // A submit also flips the status to "loading"; unmounting the page then used
+  // to wipe the typed credentials and the inline server error, so a suspended
+  // account saw the form reset instead of "This account has been suspended".
+  if (!bootstrapped && status === 'loading') {
     return (
       <div
         style={{

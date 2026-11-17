@@ -17,6 +17,7 @@ export const useAuthStore = create(
       user: initialUser,
       status: 'loading',
       hydrated: false,
+      bootstrapped: false,
 
       setUser: (user) =>
         set({
@@ -27,6 +28,8 @@ export const useAuthStore = create(
       setStatus: (status) => set({ status }),
 
       setHydrated: (hydrated) => set({ hydrated }),
+
+      setBootstrapped: (bootstrapped) => set({ bootstrapped }),
 
       logout: () =>
         set({

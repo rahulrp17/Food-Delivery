@@ -506,6 +506,13 @@ The API client fetches `GET /auth/csrf` when it is missing and retries once on `
 
 ---
 
+### 4.7 Admin permissions and suspension
+
+- Role defaults live in `backend/src/config/permissions.js` (`ROLE_PERMISSIONS`); `GET /admin/staff/roles` exposes the catalogue so the UI and the API never drift.
+- A staff account may carry an explicit `permissions[]` override. `resolvePermissions(user)` **replaces** the role defaults entirely (it does not merge), so a support account granted `overview:read` + `coupons:read` loses `orders:read` until it is granted back. The frontend mirrors this: `PermissionRoute` gates routes and the sidebar hides nav items the session cannot use.
+- `POST /admin/staff` and `PATCH /admin/staff/:id` accept `staffRole`, `permissions` and `status`; `status: "suspended"` is enforced in `auth.service.js` (`403 FORBIDDEN`, "This account has been suspended") on every sign-in, so suspension is a real lockout rather than a UI-only flag.
+- The customer app bootstraps the session once (`useAuth.bootstrap`) and records `bootstrapped` in `auth.store.js`. `AdminLoginGuard` only replaces the form with a skeleton **before** that first check settles: the guard used to unmount `AdminLoginPage` whenever `status` became `loading`, which also happened during a submit, wiping the typed credentials and the inline server error (a suspended account saw an empty form instead of the 403 message).
+
 ## 5. API Contract
 
 ### 5.1 Conventions

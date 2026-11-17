@@ -11,6 +11,7 @@ export function useAuth() {
   const navigate = useNavigate();
   const setUser = useAuthStore((s) => s.setUser);
   const setStatus = useAuthStore((s) => s.setStatus);
+  const setBootstrapped = useAuthStore((s) => s.setBootstrapped);
   const logout = useAuthStore((s) => s.logout);
   const updateProfile = useAuthStore((s) => s.updateProfile);
   const status = useAuthStore(selectAuthStatus);
@@ -31,8 +32,10 @@ export function useAuth() {
     } catch {
       setUser(null);
       setStatus('unauthenticated');
+    } finally {
+      setBootstrapped(true);
     }
-  }, [setUser, setStatus]);
+  }, [setUser, setStatus, setBootstrapped]);
 
   const login = async (email, password) => {
     setStatus('loading');
