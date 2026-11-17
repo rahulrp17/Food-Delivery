@@ -107,9 +107,14 @@ export const toOrderResponse = (order, { admin = false } = {}) => {
       method: payment.method || "",
       paidAt: payment.paidAt || null,
     },
+    // Built field by field: spreading a Mongoose subdocument keeps the
+    // internal document keys, not the values, which used to strip the note,
+    // the timestamp and the actor from the timeline.
     statusHistory: (order.statusHistory || []).map((entry) => ({
-      ...entry,
       status: normalizeOrderStatus(entry.status),
+      at: entry.at || null,
+      byUserId: entry.byUserId ? String(entry.byUserId) : null,
+      note: entry.note || "",
     })),
     notes: order.notes || "",
     ...(admin ? { adminNotes: order.adminNotes || "" } : {}),

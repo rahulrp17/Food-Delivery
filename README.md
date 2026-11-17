@@ -79,7 +79,7 @@ npm run seed:admin   # create the ADMIN_EMAIL / ADMIN_PASSWORD admin account
 ### Backend tests
 
 ```bash
-cd backend && npm test      # 20 files, 113 tests
+cd backend && npm test      # 20 files, 114 tests
 ```
 
 ## 3. Frontend setup

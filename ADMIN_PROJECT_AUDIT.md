@@ -656,10 +656,10 @@ Before implementing Phase 2:
 
 | Gate | Command | Result |
 |---|---|---|
-| Backend tests | `backend: npm test` | 16 files, **94 tests passed** |
-| Frontend lint | `frontend: npm run lint` | **0 errors**, 7 pre-existing warnings (StoreContext, MyOrders, ProductsPage ×3, Orders, Verify) |
+| Backend tests | `backend: npm test` | 20 files, **114 tests passed** |
+| Frontend lint | `frontend: npm run lint` | **0 errors**, 0 warnings |
 | Frontend build | `frontend: npm run build` | Passed |
-| E2E | `frontend: npm run test:e2e` | 3 Playwright flows passed: the extended checkout/webhook + admin flow (status update, Orders board, detail drawer, internal-notes save, Settings tabs/payment status, Inventory CSV download, Staff, Activity Log, notification panel), an admin modules flow (coupon create, redemption history with CSV download, delete, mobile drawer navigation), and an RBAC flow (support staff creation, limited navigation, route guard, API 403, suspension) |
+| E2E | `frontend: npm run test:e2e` | 14 Playwright specs / **24 tests passed**: the extended checkout/webhook + admin flow (status update, Orders board, detail drawer, internal-notes save, Settings tabs/payment status, Inventory CSV download, Staff, Activity Log, notification panel), an admin modules flow (coupon create, redemption history with CSV download, delete, mobile drawer navigation), an RBAC flow (support staff creation, limited navigation, route guard, API 403, suspension), products/categories/archive, settings tabs, reviews, customers directory, overview dashboard, and order cancellation with refund + restock |
 | Live API smoke | Admin session against `localhost:4000` | `/admin/notifications`, `/admin/staff`, `/admin/inventory/logs`, `/admin/audit-logs`, `read-all`, `PATCH /admin/orders/:id/notes`, `PATCH /admin/settings`, `PATCH /auth/profile`, `GET/DELETE /auth/sessions`, `GET /admin/customers/export`, `GET /admin/inventory/export`, `GET /admin/coupons/:id/redemptions`, `PATCH /admin/reviews/:id/report`, `GET /admin/coupons/:id/redemptions/export` (correct headers and filename, invalid date range rejected with 400), and `POST /admin/products/:id/duplicate` (copy created as inactive draft, then deleted) all behave as expected |
 
 ### 15.2 Status against the master prompt
@@ -672,7 +672,7 @@ Before implementing Phase 2:
 | Phase 4 Overview | **Done** | Real KPI/period comparisons, revenue/orders/category/payment charts, date presets + custom range, top products, recent orders/activity, smart alerts, CSV export, **live today/active counts kept out of the analysis range** (fixed 2026-11-16 — see §15.11) |
 | Phase 5 Products | **Done** | CRUD, per-row duplicate as inactive draft, multi-image gallery (max 8), stock, filters/sort/pagination, bulk stock/availability/category/delete, **archive workflow** (archived view, `archived=true` list filter, restore endpoint — added 2026-11-16) |
 | Phase 6 Categories | **Done** | CRUD, image, active state, product counts, reorder controls **and drag-and-drop reordering** with keyboard parity (added 2026-11-16 — see §15.7) |
-| Phase 7 Orders | **Done** | Table + Kanban board, status/payment/date/search filters, validated transitions, confirmation dialogs, detail page, slide-over drawer, timeline, cancel with restock, printable invoice, editable staff-only admin notes, 20s visibility-aware polling; **not implemented:** driver assignment/ETA |
+| Phase 7 Orders | **Done** | Table + Kanban board, status/payment/date/search filters, validated transitions, confirmation dialogs, detail page, slide-over drawer, timeline, cancel with refund + restock, printable invoice, editable staff-only admin notes, 20s visibility-aware polling; **cancel path verified end-to-end and the timeline now carries its note/at/actor** (2026-11-16 — see §15.12); **not implemented:** driver assignment/ETA |
 | Phase 8 Customers | **Done** | List + detail, order history, suspend/role controls, per-customer AOV/first/last order, new vs returning + repeat-rate analytics, favourite-products card, CSV export of filtered customers, **saved-address view** (added 2026-11-16 — see §15.10) |
 | Phase 9 Coupons | **Done** | CRUD, usage limits, per-user limits, backend-validated discounts, redeemed-revenue analytics, scheduled/expired/active filters, per-coupon redemption history with filtered CSV export |
 | Phase 10 Reviews | **Done** | List, star/status filters, approve/reject, admin reply, reported status with reported-by/at metadata and moderation actions |
@@ -682,7 +682,7 @@ Before implementing Phase 2:
 | Phase 14 State/performance | **Done** | TanStack Query, Zustand, lazy routes, server pagination, hidden-tab polling pause |
 | Phase 15 Animations | **Partial** | CSS transitions/keyframes + `prefers-reduced-motion`; no Framer Motion/Motion dependency |
 | Phase 16 Responsive | **Done** | Breakpoints at 1199/1023/899/767/639/479px, mobile drawer, table-to-card collapse; full admin UI refresh (see 15.5) — every admin page, popup, form and the admin login page are now premium-styled and responsive down to 360px |
-| Phase 17 Testing | **Done** | 113 backend unit/integration tests + 13 E2E specs / 23 E2E tests (checkout/admin flow, admin modules coupon CRUD + redemption CSV + mobile nav, RBAC limited nav + route guard + API 403 + suspension, products CRUD + bulk update + delete, categories CRUD + reorder + delete, category drag-and-drop + keyboard reorder, product archive + restore, reviews approve/reply, settings store-info save, settings tabs — hours, delivery & pricing, tax & invoice, delivery estimate, pincodes, notifications, profile, security, **customers directory — search, role/status filters, activity, saved addresses, CSV export, suspend/reactivate, role change and the self-protection guards** (2026-11-16, §15.10), **overview dashboard — KPIs, series table, distribution panels, CSV export, 7/30-day switch and range scoping** (2026-11-16, §15.11) |
+| Phase 17 Testing | **Done** | 114 backend unit/integration tests + 14 E2E specs / 24 E2E tests (checkout/admin flow, admin modules coupon CRUD + redemption CSV + mobile nav, RBAC limited nav + route guard + API 403 + suspension, products CRUD + bulk update + delete, categories CRUD + reorder + delete, category drag-and-drop + keyboard reorder, product archive + restore, reviews approve/reply, settings store-info save, settings tabs — hours, delivery & pricing, tax & invoice, delivery estimate, pincodes, notifications, profile, security, **customers directory — search, role/status filters, activity, saved addresses, CSV export, suspend/reactivate, role change and the self-protection guards** (2026-11-16, §15.10), **overview dashboard — KPIs, series table, distribution panels, CSV export, 7/30-day switch and range scoping** (2026-11-16, §15.11), **order cancellation — reason validation, refund badge, restock, inventory log, 409 guards and the customer timeline** (2026-11-16, §15.12) |
 
 ### 15.3 Remaining gaps (prioritized)
 
@@ -933,3 +933,44 @@ The dashboard was the last admin page with no automated coverage. The pass added
 | E2E `e2e/overview.spec.js` | 2 tests passed |
 | Full E2E suite | 13 specs / **23 tests passed** |
 | Control-row reachability probe (1920 → 375px) | The date inputs, export button and range tabs are hit-testable inside the panel at every width |
+
+### 15.12 Order cancellation and restock coverage (2026-11-16)
+
+Cancelling a paid order is the only admin action that moves money and stock at the same time: it refunds the Stripe payment, returns every unit to the inventory and writes an `InventoryLog` entry. That path had no test, so it is now covered end-to-end and the pass uncovered two defects.
+
+**Defect 1 - the order timeline lost its note, time and actor (fixed)**
+
+`toOrderResponse` built each history entry with `{ ...entry }`. Spreading a Mongoose subdocument copies the internal document keys (`$__`, `_doc`, …) instead of the field values, so every entry reaching the API contained only `status`. Both timelines - the admin detail page and the customer order page - therefore showed bare status badges: no dates, no "Order placed"/"Payment confirmed" notes and no staff attribution, even though `ARCHITECTURE.md` documents the entry as `{ status, at, byUserId, note }`. The mapper now builds the four fields explicitly (normalising the status and stringifying the actor id), which restores the timestamps, the cancellation reason and the "Updated by" line on both pages.
+
+**Defect 2 - the cancellation reason field had no accessible name (fixed)**
+
+The dialog textarea was labelled only by a placeholder, so screen readers announced it as an unlabelled edit field and the validation error was described by no element. It now has a visible `<label for="cancel-reason">`, `maxLength={300}` to match `cancelOrderSchema`, and `aria-invalid`/`aria-describedby` wired to the error text (`role="alert"`, `id="cancel-reason-error"`).
+
+**E2E `frontend/e2e/order-cancel.spec.js` (1 test)**
+
+1. A fresh customer registers and pays for two units of a fresh product through the real checkout + Stripe webhook, which takes the units out of stock.
+2. The admin opens `/admin/orders/:id` and confirms the header (`Confirmed`, `Paid`).
+3. "Cancel Order" opens the dialog; submitting with an empty reason shows "Please add a short reason", marks the field `aria-invalid` and links it to the alert; filling the reason clears the alert.
+4. Confirming shows the "Order cancelled" toast, closes the dialog, flips the header to `Cancelled`/`Refunded`, renders the reason in the timeline, and removes the cancel group plus every forward status button ("No forward status change is available.").
+5. The side effects are asserted through the API: stock is back to its pre-payment level, and `/admin/inventory/logs?productId=&reason=cancel` holds the entry with `delta: 2` and the matching `orderId`.
+6. Guards: a second `POST /admin/orders/:id/cancel` and a `PATCH …/status {status:"delivered"}` both return **409 `INVALID_TRANSITION`**.
+7. The customer page shows `Cancelled`, the cancellation reason and the payment note with real timestamps, and `GET /api/v1/orders/:id` agrees (`status`, `paymentStatus: refunded`, `cancellationReason`).
+
+**Backend**
+
+| Change | Detail |
+| --- | --- |
+| `toOrderResponse` | `statusHistory` entries are constructed field by field (`status`, `at`, `byUserId`, `note`). |
+| `backend/src/tests/order.mapper.test.js` | New test: a two-entry history keeps the note, timestamp and actor id, normalises legacy status labels and maps a null actor. |
+
+**Verification**
+
+| Gate | Result |
+| --- | --- |
+| `backend: npm test` | 20 files, **114 tests passed** (1 new) |
+| `frontend: npm run lint` | 0 errors, 0 warnings |
+| `frontend: npm run build` | Passed |
+| E2E `e2e/order-cancel.spec.js` | 1 test passed |
+| Full E2E suite | 14 specs / **24 tests passed** |
+
+The suite still leaves E2E orders and customers in the database, as before; keep using a non-production database for the run.

@@ -540,7 +540,11 @@ export default function OrderDetailPage() {
         variant="danger"
         loading={cancelMutation.isPending}
       >
+        <label className="status-note-label" htmlFor="cancel-reason">
+          Cancellation reason
+        </label>
         <textarea
+          id="cancel-reason"
           value={cancelReason}
           onChange={(e) => {
             setCancelReason(e.target.value);
@@ -548,11 +552,17 @@ export default function OrderDetailPage() {
           }}
           placeholder="Reason for cancellation..."
           rows={3}
+          maxLength={300}
           className={`modal-form-input ${cancelError ? 'has-error' : ''}`.trim()}
           aria-invalid={cancelError ? 'true' : undefined}
+          aria-describedby={cancelError ? 'cancel-reason-error' : undefined}
           required
         />
-        {cancelError ? <p className="field-error" role="alert">{cancelError}</p> : null}
+        {cancelError ? (
+          <p className="field-error" id="cancel-reason-error" role="alert">
+            {cancelError}
+          </p>
+        ) : null}
       </ConfirmDialog>
     </div>
   );

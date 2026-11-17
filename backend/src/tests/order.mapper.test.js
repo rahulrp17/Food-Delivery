@@ -76,4 +76,36 @@ describe("order response mapping", () => {
     expect(response.pricing.totalPaise).toBe(50940);
     expect(response.payment.sessionId).toBe("cs_test_1");
   });
+
+  it("keeps the timeline note, timestamp and actor", () => {
+    const actorId = new mongoose.Types.ObjectId();
+    const cancelledAt = new Date("2026-11-16T10:30:00.000Z");
+    const order = {
+      _id: new mongoose.Types.ObjectId(),
+      userId: new mongoose.Types.ObjectId(),
+      items: [],
+      amount: 12,
+      status: "cancelled",
+      paymentStatus: "refunded",
+      statusHistory: [
+        { status: "Pending Payment", at: cancelledAt, byUserId: null, note: "Order placed" },
+        { status: "cancelled", at: cancelledAt, byUserId: actorId, note: "Customer asked to cancel" },
+      ],
+    };
+
+    const response = toOrderResponse(order, { admin: true });
+
+    expect(response.statusHistory).toHaveLength(2);
+    expect(response.statusHistory[1]).toMatchObject({
+      status: "cancelled",
+      note: "Customer asked to cancel",
+      byUserId: String(actorId),
+    });
+    expect(response.statusHistory[1].at).toEqual(cancelledAt);
+    expect(response.statusHistory[0]).toMatchObject({
+      status: "pending_payment",
+      note: "Order placed",
+      byUserId: null,
+    });
+  });
 });
