@@ -82,42 +82,50 @@ const ProductCard = ({ product, dense = false, headingLevel = "h3" }) => {
           imageClassName={styles.imageEl}
         />
 
-        {/* The classic square veg / non-veg marker, plus a discount ribbon. */}
-        <span
-          className={`${styles.dietMark} ${product.isVeg ? styles.dietVeg : styles.dietNonVeg}`}
-          title={product.isVeg ? "Vegetarian" : "Non-vegetarian"}
-        >
-          <span className={styles.dietDot} aria-hidden="true" />
-          <span className="visually-hidden">
-            {product.isVeg ? "Vegetarian" : "Non-vegetarian"}
-          </span>
-        </span>
+        <span className={styles.scrim} aria-hidden="true" />
+
+        {badges.length ? <div className={styles.badges}>{badges.slice(0, 1)}</div> : null}
 
         {discountPercent > 0 ? (
-          <span className={styles.discount}>{discountPercent}% off</span>
+          <span className={styles.discount}>
+            <Icon name="tag" size={12} />
+            {discountPercent}% off
+          </span>
         ) : null}
 
         {product.ratingCount > 0 ? (
           <span className={styles.ratingPill}>
             <Icon name="star-filled" size={12} />
-            <span>{product.ratingAvg.toFixed(1)}</span>
+            <span className={styles.ratingValue}>{product.ratingAvg.toFixed(1)}</span>
             <span className={styles.ratingCount}>
               ({product.ratingCount > 999 ? `${(product.ratingCount / 1000).toFixed(1)}k` : product.ratingCount})
             </span>
           </span>
         ) : null}
 
-        {badges.length ? <div className={styles.badges}>{badges.slice(0, 1)}</div> : null}
+        <span className={styles.deliveryPill}>
+          <Icon name="clock" size={12} />
+          {deliveryWindow(product.prepTimeMinutes)}
+        </span>
       </div>
 
       <div className={styles.body}>
         <div className={styles.meta}>
+          <span
+            className={`${styles.dietMark} ${product.isVeg ? styles.dietVeg : styles.dietNonVeg}`}
+            title={product.isVeg ? "Vegetarian" : "Non-vegetarian"}
+          >
+            <span className={styles.dietDot} aria-hidden="true" />
+            <span className="visually-hidden">
+              {product.isVeg ? "Vegetarian" : "Non-vegetarian"}
+            </span>
+          </span>
           <span className={styles.category}>
             {product.category?.name || "Kitchen fresh"}
           </span>
-          <span className={styles.delivery}>
-            <Icon name="clock" size={13} />
-            {deliveryWindow(product.prepTimeMinutes)}
+          <span className={styles.ratingInline}>
+            <Icon name="star-filled" size={12} />
+            {product.ratingAvg.toFixed(1)}
           </span>
         </div>
 

@@ -3,14 +3,12 @@
   display: flex;
   flex-direction: column;
   min-width: 0;
-  /* Query the card itself: the grid decides the width, and the compact rules
-     below adapt the internals to whatever column size results. */
   container-type: inline-size;
   overflow: hidden;
   border: 1px solid var(--color-border);
-  border-radius: var(--radius-lg);
+  border-radius: calc(var(--radius-md) + 8px);
   background: var(--color-surface);
-  box-shadow: var(--shadow-xs);
+  box-shadow: var(--shadow-sm);
   transition:
     transform var(--duration-base) var(--ease-standard),
     box-shadow var(--duration-base) var(--ease-standard),
@@ -18,13 +16,16 @@
 }
 
 .card:hover {
-  transform: translateY(-4px);
-  border-color: var(--color-border-strong);
-  box-shadow: var(--shadow-md);
+  transform: translateY(-5px);
+  border-color: color-mix(in srgb, var(--color-primary) 26%, var(--color-border));
+  box-shadow:
+    0 2px 4px rgb(23 18 15 / 0.05),
+    0 18px 36px -12px rgb(120 53 15 / 0.22);
 }
 
 .card:focus-within {
-  border-color: var(--color-border-strong);
+  border-color: var(--color-primary);
+  box-shadow: var(--shadow-focus);
 }
 
 .overlay {
@@ -50,13 +51,29 @@
 }
 
 .imageEl {
-  transition: transform var(--duration-moderate) var(--ease-standard);
+  transition: transform var(--duration-slow) var(--ease-standard);
 }
 
 .card:hover .imageEl {
-  transform: scale(1.06);
+  transform: scale(1.07);
 }
 
+/* Warm gradient scrim: keeps light photography readable under the glass
+   chips without dimming the whole dish. */
+.scrim {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background:
+    linear-gradient(180deg, rgb(23 18 15 / 0.22) 0%, transparent 34%),
+    linear-gradient(0deg, rgb(23 18 15 / 0.42) 0%, transparent 46%);
+  pointer-events: none;
+}
+
+/* ---------- Overlays on the image ----------
+   Corner assignments are fixed so the chips never fight each other:
+   badge top-left, discount top-right, rating bottom-left, delivery
+   bottom-right. All of them are glass-on-photo pills. */
 .badges {
   position: absolute;
   left: var(--space-3);
@@ -68,41 +85,116 @@
   max-width: calc(100% - var(--space-6));
 }
 
-.delivery {
+.badges > :global(span) {
+  border: 1px solid rgb(255 255 255 / 0.35);
+  background: rgb(23 18 15 / 0.55);
+  color: var(--color-text-inverse);
+  backdrop-filter: blur(6px);
+}
+
+.discount {
+  position: absolute;
+  right: var(--space-3);
+  top: var(--space-3);
+  z-index: 3;
   display: inline-flex;
   align-items: center;
-  gap: 5px;
-  color: var(--color-text-muted);
+  gap: 3px;
+  min-height: 24px;
+  padding: 0 8px;
+  border-radius: var(--radius-full);
+  background: linear-gradient(135deg, var(--color-accent), var(--color-accent-strong));
+  color: var(--color-on-primary);
   font-size: var(--text-caption);
-  font-weight: 600;
+  font-weight: 700;
+  letter-spacing: 0.01em;
   font-variant-numeric: tabular-nums;
+  box-shadow: 0 4px 12px -4px rgb(120 53 15 / 0.55);
 }
 
-.delivery svg {
-  color: var(--color-secondary);
-}
-
-/* ---------- Food-platform markers on the image ---------- */
-
-/* The classic square veg / non-veg marker. */
-.dietMark {
+.ratingPill {
   position: absolute;
   left: var(--space-3);
   bottom: var(--space-3);
   z-index: 3;
-  display: grid;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  min-height: 26px;
+  padding: 0 9px;
+  border-radius: var(--radius-full);
+  background: rgb(255 250 243 / 0.94);
+  border: 1px solid rgb(255 255 255 / 0.6);
+  color: var(--color-text);
+  font-size: var(--text-caption);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  backdrop-filter: blur(6px);
+  box-shadow: 0 2px 10px rgb(23 18 15 / 0.16);
+}
+
+.ratingPill svg {
+  color: var(--color-accent);
+}
+
+.ratingCount {
+  color: var(--color-text-muted);
+  font-weight: 500;
+}
+
+.deliveryPill {
+  position: absolute;
+  right: var(--space-3);
+  bottom: var(--space-3);
+  z-index: 3;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  min-height: 24px;
+  padding: 0 8px;
+  border-radius: var(--radius-full);
+  background: rgb(23 18 15 / 0.55);
+  color: var(--color-text-inverse);
+  font-size: var(--text-overline);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  font-variant-numeric: tabular-nums;
+  backdrop-filter: blur(6px);
+}
+
+/* ---------- Body ---------- */
+.body {
+  position: relative;
+  z-index: 3;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-4);
+}
+
+.meta {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: 20px;
+}
+
+/* The classic square veg / non-veg marker, now inline with the category so
+   it reads as part of the title block instead of floating on the photo. */
+.dietMark {
+  display: inline-grid;
   place-items: center;
-  width: 18px;
-  height: 18px;
+  width: 14px;
+  height: 14px;
+  flex: none;
   border-radius: 3px;
   border: 1.5px solid currentColor;
-  background: color-mix(in srgb, var(--color-surface) 92%, transparent);
-  backdrop-filter: blur(4px);
 }
 
 .dietDot {
-  width: 8px;
-  height: 8px;
+  width: 6px;
+  height: 6px;
   border-radius: 2px;
   background: currentColor;
 }
@@ -115,54 +207,196 @@
   color: var(--danger-600);
 }
 
-/* Discount ribbon. */
-.discount {
-  position: absolute;
-  right: var(--space-3);
-  top: var(--space-3);
-  z-index: 3;
-  display: inline-flex;
-  align-items: center;
-  min-height: 24px;
-  padding: 0 9px;
-  border-radius: var(--radius-full);
-  background: var(--color-primary);
-  color: var(--color-on-primary);
-  font-size: var(--text-caption);
+.category {
+  overflow: hidden;
+  color: var(--color-primary);
+  font-size: var(--text-overline);
   font-weight: 700;
-  letter-spacing: 0.01em;
-  font-variant-numeric: tabular-nums;
-  box-shadow: var(--shadow-xs);
+  letter-spacing: 0.1em;
+  text-overflow: ellipsis;
+  text-transform: uppercase;
+  white-space: nowrap;
 }
 
-/* Rating pill, bottom-right of the image. */
-.ratingPill {
-  position: absolute;
-  right: var(--space-3);
-  bottom: var(--space-3);
-  z-index: 3;
-  display: inline-flex;
+.ratingInline {
+  display: none;
   align-items: center;
-  gap: 4px;
-  min-height: 26px;
-  padding: 0 10px;
-  border-radius: var(--radius-full);
-  background: color-mix(in srgb, var(--color-surface) 92%, transparent);
-  border: 1px solid var(--color-border);
+  gap: 3px;
+  margin-left: auto;
   color: var(--color-text);
   font-size: var(--text-caption);
   font-weight: 700;
   font-variant-numeric: tabular-nums;
-  backdrop-filter: blur(6px);
 }
 
-.ratingPill svg {
+.ratingInline svg {
   color: var(--color-accent);
 }
 
-.ratingCount {
+.title {
+  display: -webkit-box;
+  overflow: hidden;
+  color: var(--color-text);
+  font-family: var(--font-display);
+  font-size: var(--text-h4);
+  font-weight: 700;
+  line-height: 1.22;
+  letter-spacing: -0.01em;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.description {
+  display: -webkit-box;
+  overflow: hidden;
   color: var(--color-text-muted);
-  font-weight: 500;
+  font-size: var(--text-body-s);
+  line-height: 1.5;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  margin-top: auto;
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--color-border-subtle);
+}
+
+.prices {
+  display: flex;
+  flex: 1 1 auto;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--space-2);
+  min-width: 0;
+}
+
+.price {
+  color: var(--color-text);
+  font-family: var(--font-display);
+  font-size: var(--text-price);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.compare {
+  color: var(--color-text-subtle);
+  font-size: var(--text-body-s);
+  font-variant-numeric: tabular-nums;
+  text-decoration: line-through;
+}
+
+.actions {
+  position: relative;
+  z-index: 3;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex-shrink: 0;
+}
+
+.addToCart {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-1);
+  min-height: 44px;
+  padding: 0 var(--space-4);
+  overflow: hidden;
+  border: 1px solid transparent;
+  border-radius: var(--radius-full);
+  background: linear-gradient(135deg, var(--color-primary), var(--color-primary-hover));
+  color: var(--color-on-primary);
+  font-size: var(--text-body-s);
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+  box-shadow: 0 6px 14px -6px rgb(180 50 31 / 0.65);
+  transition:
+    box-shadow var(--duration-fast) var(--ease-standard),
+    transform var(--duration-fast) var(--ease-standard);
+}
+
+.addToCart::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    110deg,
+    transparent 20%,
+    rgb(255 255 255 / 0.42) 48%,
+    transparent 72%
+  );
+  transform: translateX(-120%);
+  transition: transform var(--duration-slow) var(--ease-standard);
+  pointer-events: none;
+}
+
+.card:hover .addToCart:not(:disabled)::after {
+  transform: translateX(120%);
+}
+
+.addToCart:hover:not(:disabled) {
+  box-shadow: 0 10px 20px -8px rgb(180 50 31 / 0.75);
+}
+
+.addToCart:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
+}
+
+.addToCart:disabled {
+  cursor: not-allowed;
+}
+
+.disabled {
+  border-color: var(--color-border);
+  background: var(--color-surface-2);
+  color: var(--color-text-subtle);
+  box-shadow: none;
+}
+
+.view {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  flex: none;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-full);
+  background: var(--color-surface);
+  color: var(--color-text-muted);
+  transition:
+    color var(--duration-fast) var(--ease-standard),
+    border-color var(--duration-fast) var(--ease-standard),
+    background-color var(--duration-fast) var(--ease-standard);
+}
+
+.view:hover {
+  border-color: var(--color-primary);
+  background: var(--color-primary-soft);
+  color: var(--color-primary);
+}
+
+.view:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+}
+
+.soldOut .media {
+  filter: saturate(0.55);
+}
+
+.soldOut .imageEl {
+  opacity: 0.65;
 }
 
 /* ---------- Inline quantity stepper ---------- */
@@ -216,217 +450,6 @@
   font-variant-numeric: tabular-nums;
 }
 
-.body {
-  position: relative;
-  z-index: 3;
-  display: flex;
-  flex: 1;
-  flex-direction: column;
-  gap: var(--space-2);
-  padding: var(--space-4);
-}
-
-.meta {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-2);
-  min-height: 22px;
-}
-
-.category {
-  overflow: hidden;
-  color: var(--color-primary);
-  font-size: var(--text-overline);
-  font-weight: 700;
-  letter-spacing: 0.1em;
-  text-overflow: ellipsis;
-  text-transform: uppercase;
-  white-space: nowrap;
-}
-
-.title {
-  display: -webkit-box;
-  overflow: hidden;
-  color: var(--color-text);
-  font-family: var(--font-display);
-  font-size: var(--text-h4);
-  font-weight: 700;
-  line-height: 1.25;
-  letter-spacing: -0.01em;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-}
-
-.description {
-  display: -webkit-box;
-  overflow: hidden;
-  color: var(--color-text-muted);
-  font-size: var(--text-body-s);
-  line-height: 1.55;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-}
-
-.footer {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-3);
-  margin-top: auto;
-  padding-top: var(--space-3);
-  border-top: 1px solid var(--color-border-subtle);
-}
-
-.prices {
-  display: flex;
-  flex: 1 1 auto;
-  flex-wrap: wrap;
-  align-items: baseline;
-  gap: var(--space-2);
-  min-width: 0;
-}
-
-.price {
-  color: var(--color-text);
-  font-family: var(--font-display);
-  font-size: var(--text-price);
-  font-weight: 700;
-  letter-spacing: -0.02em;
-  font-variant-numeric: tabular-nums;
-  white-space: nowrap;
-}
-
-.compare {
-  color: var(--color-text-subtle);
-  font-size: var(--text-body-s);
-  font-variant-numeric: tabular-nums;
-  text-decoration: line-through;
-}
-
-.actions {
-  position: relative;
-  z-index: 3;
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-2);
-  flex-shrink: 0;
-}
-
-.addToCart {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: var(--space-1);
-  min-height: 44px;
-  padding: 0 var(--space-4);
-  border: 1px solid transparent;
-  border-radius: var(--radius-full);
-  background: var(--color-primary);
-  color: var(--color-on-primary);
-  font-size: var(--text-body-s);
-  font-weight: 600;
-  white-space: nowrap;
-  transition:
-    background-color var(--duration-fast) var(--ease-standard),
-    box-shadow var(--duration-fast) var(--ease-standard);
-}
-
-.addToCart:hover:not(:disabled) {
-  background: var(--color-primary-hover);
-  box-shadow: var(--shadow-sm);
-}
-
-.addToCart:focus-visible {
-  outline: none;
-  box-shadow: var(--shadow-focus);
-}
-
-.addToCart:disabled {
-  cursor: not-allowed;
-}
-
-.disabled {
-  border-color: var(--color-border);
-  background: var(--color-surface-2);
-  color: var(--color-text-subtle);
-}
-
-.view {
-  display: grid;
-  place-items: center;
-  width: 44px;
-  height: 44px;
-  flex: none;
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-full);
-  background: var(--color-surface);
-  color: var(--color-text-muted);
-  transition:
-    color var(--duration-fast) var(--ease-standard),
-    border-color var(--duration-fast) var(--ease-standard),
-    background-color var(--duration-fast) var(--ease-standard);
-}
-
-.view:hover {
-  border-color: var(--color-primary);
-  background: var(--color-primary-soft);
-  color: var(--color-primary);
-}
-
-.view:focus-visible {
-  outline: 2px solid var(--color-focus);
-  outline-offset: 2px;
-}
-
-.soldOut .media {
-  filter: saturate(0.55);
-}
-
-.soldOut .imageEl {
-  opacity: 0.65;
-}
-
-/* ---------- Dense variant ----------
-   The menu lists the whole catalogue, so the cards trade their breathing
-   room for a tighter grid. */
-.dense .body {
-  gap: var(--space-1);
-  padding: var(--space-3);
-}
-
-.dense .description {
-  -webkit-line-clamp: 2;
-  font-size: var(--text-caption);
-}
-
-.dense .footer {
-  gap: var(--space-2);
-  padding-top: var(--space-2);
-}
-
-.dense .addToCart {
-  padding: 0 var(--space-3);
-}
-
-@media (max-width: 639px) {
-  .footer {
-    flex-direction: column;
-    align-items: stretch;
-    gap: var(--space-3);
-  }
-
-  .actions {
-    justify-content: space-between;
-  }
-
-  .addToCart {
-    flex: 1;
-    padding: 0 var(--space-3);
-  }
-}
-
 /* ---------- Compact cards ----------
    The storefront grid runs 2 / 4 / 5 columns (mobile / tablet / desktop), so a
    card is often only 160-250px wide. Below 250px the editorial footer can no
@@ -443,7 +466,12 @@
     gap: var(--space-1);
   }
 
-  .delivery {
+  .deliveryPill {
+    right: var(--space-2);
+    bottom: var(--space-2);
+    min-height: 22px;
+    padding: 0 7px;
+    gap: 3px;
     font-size: var(--text-overline);
   }
 
@@ -489,25 +517,42 @@
     font-size: var(--text-overline);
   }
 
-  .dietMark {
-    left: var(--space-2);
-    bottom: var(--space-2);
-    width: 16px;
-    height: 16px;
-  }
-
-  .dietDot {
-    width: 7px;
-    height: 7px;
-  }
-
   .ratingPill {
-    right: var(--space-2);
+    left: var(--space-2);
     bottom: var(--space-2);
     min-height: 22px;
     padding: 0 7px;
     gap: 3px;
     font-size: var(--text-overline);
+  }
+}
+
+/* Roomy cards (search results, editorial rails) earn the second line of
+   copy and an inline rating instead of the photo pill. */
+@container (min-width: 251px) {
+  .ratingInline {
+    display: inline-flex;
+  }
+
+  .ratingPill {
+    display: none;
+  }
+}
+
+@media (max-width: 639px) {
+  .footer {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--space-3);
+  }
+
+  .actions {
+    justify-content: space-between;
+  }
+
+  .addToCart {
+    flex: 1;
+    padding: 0 var(--space-3);
   }
 }
 
@@ -518,5 +563,9 @@
 
   .card:hover .imageEl {
     transform: none;
+  }
+
+  .card:hover .addToCart::after {
+    transform: translateX(-120%);
   }
 }

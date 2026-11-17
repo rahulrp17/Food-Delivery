@@ -909,7 +909,8 @@ Error boundary wraps the router; a global `ErrorState` renders on render crashes
 ### 8.7 Food card grid
 
 - Storefront grids use a fixed column plan instead of fluid `auto-fit`: **2 cards on mobile (< 768px), 4 on tablet (768-1199px), 5 on desktop (>= 1200px)**. `ProductGrid.module.css` owns the plan; `ProductRail.module.css` uses the same numbers for the home rails and their skeletons; the `dense` menu variant only tightens the gutters.
-- Cards adapt to their track with a CSS container query rather than JS measuring: `.card` declares `container-type: inline-size`, and `@container (max-width: 250px)` stacks the footer, hides the optional description and the redundant view arrow, and shrinks the overlay chips so a 160px phone card stays legible. Tap targets keep their 44px minimum.
+- Cards adapt to their track with a CSS container query rather than JS measuring: `.card` declares `container-type: inline-size`, and `@container (max-width: 250px)` stacks the footer, hides the optional description and the redundant view arrow, and shrinks the overlay chips so a 160px phone card stays legible. Tap targets keep their 44px minimum. On roomy cards (>= 251px) the photo rating pill is swapped for an inline rating and the delivery pill moves into the body.
+- Cards carry a premium surface: warm gradient scrim over the photo with glass corner chips — a saffron discount ribbon with tag icon top‑right, a glass rating pill bottom‑left, a dark-glass delivery pill bottom‑right; photo zooms 1.07 on hover; the veg/non‑veg square is inline in the meta row; a tomato gradient Add CTA has a shine sweep on hover and press scale, and in‑cart state becomes a compact stepper, all while 44px touch targets are preserved.
 - Loading skeletons share the grid classes, so the layout does not reflow when data lands.
 - `frontend/e2e/product-grid.spec.js` pins the plan at 390/430/768/1280/1600px and asserts there is no horizontal overflow.
 ---

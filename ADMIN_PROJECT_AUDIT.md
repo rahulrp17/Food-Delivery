@@ -1092,7 +1092,7 @@ A 2-up phone card is ~150px wide while a 4-up tablet card is ~170px and a 5-up d
 - the category/time meta wraps, and the discount, diet, rating and bestseller overlays shrink and pull in to 8px so they never collide;
 - the add/stepper controls keep their 44px minimum touch target.
 
-No JS measuring, no resize listeners, and no duplicate DOM per breakpoint. The viewport `@media (max-width: 639px)` block that used to emulate this is gone - the container query is the single source of truth.
+No JS measuring, no resize listeners, and no duplicate DOM per breakpoint. The `@container (max-width: 250px)` block is the single source of truth for density; the `@media (max-width: 639px)` block provides a viewport-level fallback for stacking the footer on very narrow screens.
 
 **Verification**
 
@@ -1112,3 +1112,32 @@ No JS measuring, no resize listeners, and no duplicate DOM per breakpoint. The v
 | `frontend/src/components/home/ProductRail.module.css` | Home rail + skeleton grids follow the same plan. |
 | `frontend/src/components/product/ProductCard.module.css` | `container-type` + `@container (max-width: 250px)` compact composition. |
 | `frontend/e2e/product-grid.spec.js` | New spec pinning the plan and guarding overflow. |
+### 15.17 Premium storefront food card
+
+**What changed**
+
+After the grid pass the cards were on one column plan but still read as a plain e‑commerce tile: flat photo, text below, single Add button. The card is now the storefront's premium surface while keeping every DOM hook the tests and flows rely on (`aria-label^="Add "`, stepper, overlay link, heading levels):
+
+- **Image zone**: warm gradient scrim under the chips; fixed corner assignments — badge top-left, saffron discount ribbon with tag icon top-right, glass rating pill bottom-left, dark-glass delivery pill bottom-right; photo zooms 1.07 on hover; sold-out desaturates the photo.
+- **Body**: the veg/non‑veg square moved inline into the meta row next to the category overline; roomy cards (>= 251px) swap the photo rating pill for an inline rating; display‑font title, clamped description, hairline footer with display‑font price + compare‑at strike.
+- **Action**: tomato gradient "Add" CTA with a shine sweep on hover and press scale; in‑cart state becomes the compact stepper; 44px touch targets everywhere.
+- **Density**: the `@container (max-width: 250px)` compact composition stays the single source of truth; the `@media (max-width: 639px)` block only stacks the footer for viewport‑level narrow screens.
+
+**Verification**
+
+| Gate | Result |
+| --- | --- |
+| `frontend: npm run lint` | 0 errors, 0 warnings |
+| `frontend: npm run build` | Passed |
+| E2E `e2e/product-grid.spec.js` | 6 tests passed (2 / 4 / 5 columns at 390, 430, 768, 1280 and 1600px, home rails, card width floor, no horizontal overflow) |
+| `frontend: npm run test:responsive` | 4 specs passed (overflow sweep and tap targets across the breakpoint matrix) |
+| Full E2E suite | 18 specs / **34 tests passed** |
+
+**Files**
+
+| File | Change |
+| --- | --- |
+| `frontend/src/components/product/ProductCard.jsx` | Scrim span, chips repositioned (rating pill bottom‑left, delivery pill bottom‑right), diet mark moved inline into meta, inline rating for roomy cards |
+| `frontend/src/components/product/ProductCard.module.css` | Premium surfaces: scrim gradient, glass chips (badges, discount ribbon with tag icon, rating pill, delivery pill), tomato gradient Add CTA with shine sweep, hover lift, container-query compact composition |
+| `frontend/e2e/product-grid.spec.js` | Unchanged; pinning still passes all 6 assertions |
+| `frontend/src/components/product/ProductGrid.module.css`, `frontend/src/components/home/ProductRail.module.css` | Unchanged; grid plan stays 2 / 4 / 5 across mobile / tablet / desktop |
