@@ -247,7 +247,7 @@ const ProductCard = ({ product, dense = false, headingLevel = "h3" }) => {
                 ) : (
                   <Icon name="plus" size={16} />
                 )}
-                <span>{isAdding ? "Adding" : "Add"}</span>
+                <span>{soldOut ? "Sold out" : isAdding ? "Adding" : "Add"}</span>
               </motion.button>
             )}
           </div>

@@ -396,33 +396,33 @@
   border-color: var(--color-dark-bg);
 }
 
-.cardAll .index {
+.card.cardAll .index {
   color: var(--color-dark-muted);
 }
 
-.cardAll .name {
+.card.cardAll .name {
   color: var(--color-dark-text);
 }
 
-.cardAll .caption {
+.card.cardAll .caption {
   color: var(--color-dark-muted);
 }
 
-.cardAll .rule {
+.card.cardAll .rule {
   background: var(--saffron-400);
   opacity: 1;
 }
 
-.cardAll .cta {
+.card.cardAll .cta {
   color: var(--saffron-400);
 }
 
-.cardAll:hover .rule {
+.card.cardAll:hover .rule {
   width: 36px;
   background: var(--saffron-400);
 }
 
-.cardAll:hover .cta {
+.card.cardAll:hover .cta {
   color: var(--saffron-300);
 }
 
