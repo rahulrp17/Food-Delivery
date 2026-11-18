@@ -22,6 +22,8 @@ import Button from '../components/ui/Button';
 import Badge from '../components/ui/Badge';
 import EmptyState from '../components/ui/EmptyState';
 import Icon from '../components/ui/Icon';
+import SafeImage from '../components/ui/SafeImage';
+import { resolveOrderImage } from '../lib/orderImages';
 import './OrderDetailPage.css';
 
 /** Statuses that end an order outside the normal delivery path. */
@@ -374,19 +376,23 @@ export default function OrderDetailPage() {
               <article key={item.productId || `${item.name}-${index}`} className="order-item">
                 {item.slug ? (
                   <Link to={`/product/${item.slug}`} className="item-image-link">
-                    {item.imageUrl ? (
-                      <img src={item.imageUrl} alt={item.name} className="item-image" loading="lazy" />
-                    ) : (
-                      <span className="item-image item-image-fallback">
-                        <Icon name="chef-hat" size={24} />
-                      </span>
-                    )}
+                    <SafeImage
+                      src={resolveOrderImage(item.imageUrl)}
+                      alt={item.name}
+                      className="item-image"
+                      fallbackClassName="item-image-fallback"
+                      fallbackSize={24}
+                    />
                   </Link>
                 ) : (
                   <span className="item-image-link">
-                    <span className="item-image item-image-fallback">
-                      <Icon name="chef-hat" size={24} />
-                    </span>
+                    <SafeImage
+                      src={resolveOrderImage(item.imageUrl)}
+                      alt={item.name}
+                      className="item-image"
+                      fallbackClassName="item-image-fallback"
+                      fallbackSize={24}
+                    />
                   </span>
                 )}
                 <div className="item-details">

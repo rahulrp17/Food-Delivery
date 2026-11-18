@@ -430,19 +430,38 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-4);
-  padding-left: var(--space-4);
-  border-left: 2px solid var(--color-border);
+  padding-left: 0;
+  border-left: 0;
 }
 
 .timeline-item {
   position: relative;
-  padding-left: var(--space-4);
+  display: grid;
+  grid-template-columns: 20px minmax(0, 1fr);
+  column-gap: var(--space-3);
+  padding-left: 0;
+}
+
+/* Continuous rail drawn by each item, centred under the marker. Drawing the
+   segment to the next item (instead of a border on the list) keeps the line
+   aligned on every viewport and prevents it from floating off-centre. */
+.timeline-item:not(:last-child)::after {
+  content: "";
+  position: absolute;
+  top: 20px;
+  left: 9px;
+  width: 2px;
+  height: calc(100% + var(--space-4) - 20px);
+  border-radius: var(--radius-full);
+  background: var(--color-border);
 }
 
 .timeline-marker {
-  position: absolute;
-  left: -11px;
-  top: 2px;
+  position: relative;
+  z-index: 1;
+  top: 4px;
+  left: auto;
+  justify-self: center;
   width: 10px;
   height: 10px;
   border-radius: 50%;
@@ -586,7 +605,7 @@
 
 @media (max-width: 639px) {
   .order-detail-page {
-    padding: var(--space-6) var(--space-4);
+    padding: var(--space-5) var(--space-4) calc(var(--space-10) + 96px);
   }
 
   .header-main {
@@ -632,6 +651,15 @@
 
   .order-status-note {
     align-items: flex-start;
+  }
+
+  .timeline-header {
+    flex-wrap: wrap;
+    gap: 2px var(--space-2);
+  }
+
+  .timeline-time {
+    font-size: var(--text-overline);
   }
 }
 /* ---------- Next step + order facts ---------- */

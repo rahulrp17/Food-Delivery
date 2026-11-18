@@ -509,8 +509,9 @@
 }
 
 @media (max-width: 639px) {
+  /* Clear the fixed cart bar so the last order is fully reachable. */
   .orders-page {
-    padding: var(--space-6) var(--space-4) var(--space-12);
+    padding: var(--space-5) var(--space-4) calc(var(--space-10) + 96px);
   }
 
   .orders-total-pill {
@@ -519,27 +520,86 @@
   }
 
   .order-header {
-    flex-direction: column;
+    flex-direction: row;
     align-items: flex-start;
+    gap: var(--space-2);
+    padding: var(--space-3) var(--space-4);
+  }
+
+  .order-meta {
+    gap: 2px;
+  }
+
+  .order-date {
+    font-size: var(--text-overline);
+  }
+
+  .order-items-preview {
+    gap: var(--space-3);
+    padding: var(--space-3) var(--space-4);
+  }
+
+  .item-thumb {
+    width: 44px;
+    height: 44px;
+  }
+
+  .item-name {
+    max-width: 52vw;
+  }
+
+  .more-items {
+    display: none;
   }
 
   .order-footer {
     flex-direction: column;
     align-items: stretch;
+    gap: var(--space-3);
+    padding: var(--space-3) var(--space-4) var(--space-4);
+  }
+
+  .order-total {
+    flex-direction: row;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--space-2);
+  }
+
+  .order-total span {
+    order: 2;
+  }
+
+  .order-total strong {
+    order: 1;
+    font-size: var(--text-heading-s);
   }
 
   .order-actions {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .order-actions > * {
-    justify-content: center;
-    text-align: center;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-2);
+    padding-top: var(--space-3);
+    border-top: 1px dashed var(--color-border);
   }
 
   .order-actions .btn-view {
-    grid-column: 1 / -1;
+    order: -1;
+    margin-right: auto;
+    padding: 0.5rem 0.875rem;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-full);
+    background: var(--color-surface-2);
+  }
+
+  .order-actions .btn {
+    min-height: 2.375rem;
+    padding-inline: var(--space-3);
+  }
+
+  .order-cancel-button {
+    margin-left: auto;
   }
 
   .order-cancel-actions {

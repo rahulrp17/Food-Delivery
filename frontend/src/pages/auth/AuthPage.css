@@ -193,11 +193,14 @@
 }
 
 .auth-actions {
+  display: flex;
+  justify-content: center;
   margin-top: var(--space-7);
 }
 
 .auth-actions .btn {
   width: 100%;
+  max-width: 280px;
 }
 
 @media (max-width: 479px) {

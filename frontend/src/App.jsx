@@ -5,6 +5,7 @@ import { AdminRoute, AdminLoginGuard, PermissionRoute } from "./components/layou
 import SiteLayout from "./components/layout/SiteLayout";
 import AdminLayout from "./components/layout/AdminLayout";
 import RouteFallback from "./components/ui/RouteFallback";
+import HomePageSkeleton from "./components/home/HomePageSkeleton";
 import ScrollToTop from "./ScrollToTop";
 const HomePage = lazy(() => import("./pages/HomePage"));
 
@@ -48,7 +49,7 @@ function App() {
       <ScrollToTop />
       <Routes>
         <Route element={<SiteLayout />}>
-          <Route index element={<Suspense fallback={<div>Loading home…</div>}><HomePage /></Suspense>} />
+          <Route index element={<Suspense fallback={<HomePageSkeleton />}><HomePage /></Suspense>} />
           <Route path="menu" element={<MenuPage />} />
           <Route path="search" element={<SearchPage />} />
           <Route path="product/:slug" element={<ProductPage />} />

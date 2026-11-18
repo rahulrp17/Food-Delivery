@@ -22,6 +22,8 @@ import Button from '../components/ui/Button';
 import EmptyState from '../components/ui/EmptyState';
 import Badge from '../components/ui/Badge';
 import Icon from '../components/ui/Icon';
+import SafeImage from '../components/ui/SafeImage';
+import { resolveOrderImage } from '../lib/orderImages';
 import './OrdersPage.css';
 
 const getItemCount = (order) =>
@@ -311,13 +313,13 @@ export default function OrdersPage() {
                 <div className="order-items-preview">
                   {(order.items || []).slice(0, 3).map((item, index) => (
                     <div key={`${item.productId || item.name}-${index}`} className="order-item-preview">
-                      {item.imageUrl ? (
-                        <img src={item.imageUrl} alt="" className="item-thumb" loading="lazy" />
-                      ) : (
-                        <span className="item-thumb item-thumb-fallback">
-                          <Icon name="chef-hat" size={18} />
-                        </span>
-                      )}
+                      <SafeImage
+                        src={resolveOrderImage(item.imageUrl)}
+                        alt=""
+                        className="item-thumb"
+                        fallbackClassName="item-thumb-fallback"
+                        fallbackSize={18}
+                      />
                       <div className="item-info">
                         <span className="item-name">{item.name}</span>
                         <span className="item-qty">Qty {item.quantity}</span>
