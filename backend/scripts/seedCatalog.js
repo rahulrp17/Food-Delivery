@@ -455,7 +455,7 @@ const run = async () => {
       categoryId: category._id,
       category: category.name,
       pricePaise: dish.price * 100,
-      image: `/images/food_${dish.image}.png`,
+      image: `/images/food_${dish.image}.webp`,
       isVeg: dish.isVeg,
       prepTimeMinutes: dish.prepTimeMinutes,
       tags: dish.tags,
