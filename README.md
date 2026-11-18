@@ -76,12 +76,17 @@ Health probes: `GET /healthz` (liveness) and `GET /readyz` (Mongo connected).
 npm run migrate       # migrate:catalog + migrate:chicken + fix:catalog
 npm run seed:catalog  # create/refresh the 30-dish menu (safe to re-run)
 npm run seed:admin    # create the ADMIN_EMAIL / ADMIN_PASSWORD admin account
+npm run cleanup:test  # soft-delete E2E/Playwright leftovers (-- --dry-run to preview)
 ```
 
 `seed:catalog` is idempotent: it creates missing dishes, updates the seeded
 fields on existing ones, and leaves stock, availability and reviews untouched.
 Dish photos live in `frontend/public/images` (`/images/food_N.png`), so they
 survive a backend redeploy.
+
+`cleanup:test` soft-deletes categories and products named `E2E ...`/`Toast ...`
+and pulls those products out of carts and wishlists, so test runs never leak
+into the storefront.
 
 ### Backend tests
 
