@@ -34,3 +34,14 @@ Thumbs.db
 
 # Scratch duplicate files
 *- Copy.*
+
+# Local-only project documentation (kept on disk, not published)
+/ADMIN_DESIGN_SYSTEM.md
+/ADMIN_PROJECT_AUDIT.md
+/ARCHITECTURE.md
+/DESIGN.md
+/PRODUCT_CARD_QA.md
+/PROJECT_AUDIT.md
+/UI_QA_REPORT.md
+/UI_UX_AUDIT.md
+/design-system/foodie/MASTER.md
