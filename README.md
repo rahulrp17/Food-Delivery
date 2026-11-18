@@ -72,14 +72,20 @@ Health probes: `GET /healthz` (liveness) and `GET /readyz` (Mongo connected).
 ### Database scripts
 
 ```bash
-npm run migrate      # migrate:catalog + migrate:chicken + fix:catalog
-npm run seed:admin   # create the ADMIN_EMAIL / ADMIN_PASSWORD admin account
+npm run migrate       # migrate:catalog + migrate:chicken + fix:catalog
+npm run seed:catalog  # create/refresh the 30-dish menu (safe to re-run)
+npm run seed:admin    # create the ADMIN_EMAIL / ADMIN_PASSWORD admin account
 ```
+
+`seed:catalog` is idempotent: it creates missing dishes, updates the seeded
+fields on existing ones, and leaves stock, availability and reviews untouched.
+Dish photos live in `frontend/public/images` (`/images/food_N.png`), so they
+survive a backend redeploy.
 
 ### Backend tests
 
 ```bash
-cd backend && npm test      # 21 files, 120 tests
+cd backend && npm test      # 22 files, 123 tests
 ```
 
 ## 3. Frontend setup
