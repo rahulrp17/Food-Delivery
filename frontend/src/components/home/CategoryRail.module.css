@@ -287,6 +287,7 @@
 }
 
 .name {
+  color: var(--cream-50);
   font-family: var(--font-display);
   font-size: 1.3rem;
   font-weight: 700;

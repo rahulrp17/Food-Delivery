@@ -234,7 +234,9 @@ const ProductCard = ({ product, dense = false, headingLevel = "h3" }) => {
                 className={`${styles.addToCart} ${soldOut ? styles.disabled : ""}`.trim()}
                 onClick={handleAddToCart}
                 disabled={soldOut || isAdding}
-                aria-label={soldOut ? "Sold out" : `Add ${product.name} to cart`}
+                aria-label={
+              soldOut ? "Sold out" : isAdding ? `Adding ${product.name} to cart` : `Add ${product.name} to cart`
+            }
                 aria-busy={isAdding || undefined}
                 whileHover={reduceMotion ? undefined : { y: -1.5 }}
                 whileTap={reduceMotion ? undefined : { scale: 0.97 }}
