@@ -23,6 +23,7 @@ const CATEGORIES = [
   { name: "Pure Veg", slug: "pure-veg", description: "Vegetable-led plates from the kitchen.", sortOrder: 6 },
   { name: "Desserts", slug: "deserts", description: "Ice creams and sweet finishes.", sortOrder: 7 },
   { name: "Cake", slug: "cake", description: "Cakes by the slice.", sortOrder: 8 },
+  { name: "Chicken", slug: "chicken", description: "Chicken-led plates from the kitchen.", sortOrder: 9 },
 ];
 
 const DISHES = [
@@ -68,7 +69,7 @@ const DISHES = [
   {
     name: "Chicken Salad",
     slug: "chiken-salad",
-    category: "salad",
+    category: "chicken",
     image: 4,
     price: 299,
     isVeg: false,
@@ -107,7 +108,7 @@ const DISHES = [
   {
     name: "Chicken Rolls",
     slug: "chiken-rolls",
-    category: "rolls",
+    category: "chicken",
     image: 7,
     price: 289,
     isVeg: false,
@@ -184,7 +185,7 @@ const DISHES = [
   {
     name: "Chicken Sandwich",
     slug: "chiken-sandwich",
-    category: "sandwich",
+    category: "chicken",
     image: 13,
     price: 249,
     isVeg: false,
@@ -377,7 +378,7 @@ const DISHES = [
   {
     name: "Chicken Pasta",
     slug: "chiken-pastaa",
-    category: "pasta",
+    category: "chicken",
     image: 28,
     price: 299,
     isVeg: false,
