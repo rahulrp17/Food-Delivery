@@ -13,10 +13,17 @@ const baseCookieOptions = () => ({
   ...(env.COOKIE_DOMAIN ? { domain: env.COOKIE_DOMAIN } : {}),
 });
 
+/* Same-site by default. When the API and the storefront are separate sites
+   (two *.onrender.com services, for example) the browser drops Lax/Strict
+   cookies on cross-site requests, so opt into SameSite=None + Secure. */
+const crossSite = () => env.CROSS_SITE_COOKIES && env.isProduction;
+const laxSameSite = () => (crossSite() ? "none" : "lax");
+const strictSameSite = () => (crossSite() ? "none" : "strict");
+
 const accessCookieOptions = () => ({
   ...baseCookieOptions(),
   httpOnly: true,
-  sameSite: "lax",
+  sameSite: laxSameSite(),
   path: "/",
   maxAge: accessTokenMaxAgeMs(),
 });
@@ -24,7 +31,7 @@ const accessCookieOptions = () => ({
 const refreshCookieOptions = () => ({
   ...baseCookieOptions(),
   httpOnly: true,
-  sameSite: "strict",
+  sameSite: strictSameSite(),
   path: REFRESH_COOKIE_PATH,
   maxAge: refreshTokenMaxAgeMs(),
 });
@@ -32,7 +39,7 @@ const refreshCookieOptions = () => ({
 const csrfCookieOptions = () => ({
   ...baseCookieOptions(),
   httpOnly: false,
-  sameSite: "lax",
+  sameSite: laxSameSite(),
   path: "/",
   maxAge: refreshTokenMaxAgeMs(),
 });
@@ -40,7 +47,7 @@ const csrfCookieOptions = () => ({
 const guestCookieOptions = () => ({
   ...baseCookieOptions(),
   httpOnly: true,
-  sameSite: "lax",
+  sameSite: laxSameSite(),
   path: "/",
   maxAge: 1000 * 60 * 60 * 24 * 30,
 });
@@ -81,12 +88,12 @@ export const setAuthCookies = (res, { accessToken, refreshToken, csrfToken }) =>
 
 export const clearAuthCookies = (res) => {
   const base = baseCookieOptions();
-  res.clearCookie(COOKIES.ACCESS, { ...base, httpOnly: true, sameSite: "lax", path: "/" });
+  res.clearCookie(COOKIES.ACCESS, { ...base, httpOnly: true, sameSite: laxSameSite(), path: "/" });
   res.clearCookie(COOKIES.REFRESH, {
     ...base,
     httpOnly: true,
-    sameSite: "strict",
+    sameSite: strictSameSite(),
     path: REFRESH_COOKIE_PATH,
   });
-  res.clearCookie(COOKIES.CSRF, { ...base, sameSite: "lax", path: "/" });
+  res.clearCookie(COOKIES.CSRF, { ...base, sameSite: laxSameSite(), path: "/" });
 };

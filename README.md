@@ -50,6 +50,7 @@ Optional in `.env` (the defaults below are what the app uses):
 | `ADDITIONAL_ORIGINS` | empty | Extra allowed origins, comma separated. |
 | `COOKIE_DOMAIN` | empty | Shared cookie domain in production. |
 | `TRUST_PROXY` | `false` | Set to `true` behind a proxy so rate limits see the real client IP. |
+| `CROSS_SITE_COOKIES` | `false` | Set to `true` when the storefront and API are on different sites (e.g. two `*.onrender.com` services) so session cookies use `SameSite=None`. |
 | `ACCESS_TOKEN_TTL` | `15m` | Access token lifetime. |
 | `REFRESH_TOKEN_TTL_DAYS` | `30` | Refresh token lifetime. |
 | `STORAGE_DRIVER` | `local` | Uploads are written to `backend/uploads`. |

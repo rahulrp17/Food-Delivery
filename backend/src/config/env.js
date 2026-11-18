@@ -24,6 +24,10 @@ const envSchema = z.object({
   CLIENT_URL: z.url().default("http://localhost:5173"),
   ADDITIONAL_ORIGINS: z.string().optional().default(""),
   COOKIE_DOMAIN: z.string().optional().default(""),
+  /* Set when the frontend and API live on different registrable domains
+     (e.g. two *.onrender.com services). Uses SameSite=None cookies so the
+     browser accepts and sends the session across sites. */
+  CROSS_SITE_COOKIES: booleanish.default(false),
   TRUST_PROXY: booleanish.default(false),
 
   ACCESS_TOKEN_TTL: z.string().default("15m"),
