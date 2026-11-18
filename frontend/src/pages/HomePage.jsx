@@ -44,6 +44,7 @@ const HomePage = () => {
             title="We could not load the menu categories"
             description={categories.error.message}
             onRetry={categories.reload}
+            headingLevel="h2"
           />
         </div>
       ) : (
@@ -56,6 +57,7 @@ const HomePage = () => {
             title="Tonight's picks are taking a moment"
             description={picks.error.message}
             onRetry={picks.reload}
+            headingLevel="h2"
           />
         </div>
       ) : (
@@ -85,6 +87,7 @@ const HomePage = () => {
             title="Everyday value could not load"
             description={value.error.message}
             onRetry={value.reload}
+            headingLevel="h2"
           />
         </div>
       ) : (

@@ -75,9 +75,9 @@
   --color-text-inverse: #fffaf3;
 
   /* ---------- Semantic: brand ---------- */
-  --color-primary: #e4482e;
-  --color-primary-hover: #cc3b24;
-  --color-primary-active: #b4321f;
+  --color-primary: #cf3a22;
+  --color-primary-hover: #b4321f;
+  --color-primary-active: #9a2417;
   --color-primary-soft: #fbe6e0;
   --color-on-primary: #ffffff;
   --color-primary-contrast: #ffffff;
