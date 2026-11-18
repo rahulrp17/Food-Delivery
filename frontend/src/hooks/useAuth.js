@@ -24,6 +24,15 @@ export function useAuth() {
   const setMerging = useCartUiStore((s) => s.setMerging);
 
   const bootstrap = useCallback(async () => {
+    // Without a persisted user there is no session to verify; calling
+    // /auth/me would only produce a guaranteed 401 in the console.
+    if (!useAuthStore.getState().user?.id) {
+      setUser(null);
+      setStatus('unauthenticated');
+      setBootstrapped(true);
+      return;
+    }
+
     setStatus('loading');
     try {
       const { user } = await authApi.me();

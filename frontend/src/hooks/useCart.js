@@ -1,6 +1,7 @@
 import { useCallback, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useCartUiStore, selectGuestToken } from '../stores/cartUi.store';
+import { useAuthStore } from '../stores/auth.store';
 import { cartApi } from '../api/cart.api';
 import { useUiStore } from '../stores/ui.store';
 
@@ -48,13 +49,17 @@ export function useCart() {
   const showSuccess = useUiStore((s) => s.success);
   const showError = useUiStore((s) => s.error);
   const guestToken = useCartUiStore(selectGuestToken);
+  const isAuthenticated = useAuthStore((s) => s.status === 'authenticated');
   const setItems = useCartUiStore((s) => s.setItems);
   const setCoupon = useCartUiStore((s) => s.setCoupon);
   const clearCoupon = useCartUiStore((s) => s.clearCoupon);
+  // A signed-out visitor with no guest cart has nothing to fetch. Skipping the
+  // call avoids a guaranteed 403 on first paint.
+  const canLoadCart = Boolean(guestToken) || isAuthenticated;
   const { data: serverCart, isLoading, error, refetch } = useQuery({
     queryKey: CART_QUERY_KEY,
     queryFn: () => cartApi.get(guestToken),
-    enabled: true,
+    enabled: canLoadCart,
     staleTime: 1000 * 30,
   });
 
