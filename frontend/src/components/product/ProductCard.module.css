@@ -464,6 +464,31 @@
   font-variant-numeric: tabular-nums;
 }
 
+/* ---------- Touch targets ----------
+   A mouse keeps the tighter editorial scale; coarse pointers (phones and
+   tablets) get 44px controls so every card action is thumb-friendly.
+   Declared before the compact container rules so narrow cards can shrink
+   the stepper instead of wrapping it onto a second line. */
+@media (pointer: coarse) {
+  .wishlist {
+    width: 44px;
+    height: 44px;
+  }
+
+  .addToCart {
+    min-height: 44px;
+  }
+
+  .stepper {
+    height: 48px;
+  }
+
+  .stepperBtn {
+    width: 44px;
+    height: 44px;
+  }
+}
+
 /* ---------- Compact cards ----------
    A phone card in the 2-up grid is ~140-190px wide. Below 220px the
    editorial composition no longer fits: the footer becomes a single line
@@ -527,16 +552,25 @@
     display: none;
   }
 
-  /* Price and Add share one line; a wide stepper wraps below it instead of
-     squeezing the price. */
+  /* Price and action always share one line on phones: the stepper shrinks
+     to fit instead of dropping below the price. */
   .footer {
-    flex-wrap: wrap;
-    gap: var(--space-2);
+    flex-wrap: nowrap;
+    gap: 6px;
     padding-top: var(--space-2);
   }
 
+  .prices {
+    flex-wrap: nowrap;
+    gap: 2px;
+  }
+
   .price {
-    font-size: var(--text-price);
+    font-size: 1rem;
+  }
+
+  .compare {
+    display: none;
   }
 
   .actions {
@@ -549,35 +583,45 @@
   }
 
   .stepper {
-    height: 44px;
+    height: 36px;
+    padding: 0 2px;
+    gap: 0;
   }
 
   .stepperBtn {
-    width: 36px;
-    height: 36px;
+    width: 32px;
+    height: 32px;
+  }
+
+  .stepperValue {
+    min-width: 16px;
+    font-size: var(--text-body-s);
   }
 }
 
-/* ---------- Touch targets ----------
-   A mouse keeps the tighter editorial scale; coarse pointers (phones and
-   tablets) get 44px controls so every card action is thumb-friendly. */
-@media (pointer: coarse) {
-  .wishlist {
-    width: 44px;
-    height: 44px;
+/* Ultra-narrow cards (small phones in a 2-up grid): keep the same line by
+   tightening the stepper to 28px targets, the WCAG minimum. */
+@container (max-width: 159px) {
+  .footer {
+    gap: 2px;
   }
 
-  .addToCart {
-    min-height: 44px;
+  .price {
+    font-size: 0.9375rem;
   }
 
   .stepper {
-    height: 48px;
+    height: 32px;
+    padding: 0;
   }
 
   .stepperBtn {
-    width: 44px;
-    height: 44px;
+    width: 28px;
+    height: 28px;
+  }
+
+  .stepperValue {
+    min-width: 14px;
   }
 }
 
