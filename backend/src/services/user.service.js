@@ -4,6 +4,7 @@ import Order from "../models/order.model.js";
 import foodModel from "../models/product.model.js";
 import ApiError from "../utils/apiError.js";
 import { toPublicUser, createUser } from "./auth.service.js";
+import { toProductListItem } from "./catalog.service.js";
 import { attachMissingItemImages, toOrderResponse } from "./order.service.js";
 import { resolvePermissions } from "../config/permissions.js";
 import { formatDateCsv, formatInrCsv, toCsv } from "../utils/csv.js";
@@ -87,14 +88,17 @@ export const deleteAddress = async (userId, addressId) => {
 export const getWishlist = async (userId) => {
   const user = await User.findById(userId).populate({
     path: "wishlist",
-    select: "name description price image category",
+    match: { deletedAt: null },
+    populate: { path: "categoryId", select: "name slug" },
   });
 
   if (!user) {
     throw ApiError.notFound("User not found");
   }
 
-  return user.wishlist;
+  /* Archived products populate as null; serialize the live ones exactly like
+     the storefront cards so the saved list links and prices stay valid. */
+  return (user.wishlist || []).filter(Boolean).map(toProductListItem);
 };
 
 export const addToWishlist = async (userId, productId) => {

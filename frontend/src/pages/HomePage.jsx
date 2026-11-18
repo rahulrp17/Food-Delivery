@@ -65,6 +65,7 @@ const HomePage = () => {
           description="The dishes we would order ourselves. Cooked to order and ready in around half an hour."
           products={pickItems}
           loading={picks.loading}
+          skeletonCount={8}
         />
       )}
 

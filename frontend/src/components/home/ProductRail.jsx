@@ -12,8 +12,11 @@ import { ProductCardSkeleton } from "../loading";
 import SectionHeading from "./SectionHeading";
 import styles from "./ProductRail.module.css";
 
-const RailSkeleton = ({ count = 4 }) => (
-  <div className={styles.skeletonGrid} aria-busy="true">
+const RailSkeleton = ({ count = 4, wide = false }) => (
+  <div
+    className={`${styles.skeletonGrid} ${wide ? styles.gridWide : ""}`.trim()}
+    aria-busy="true"
+  >
     {Array.from({ length: count }).map((_, index) => (
       <ProductCardSkeleton key={index} />
     ))}
@@ -132,6 +135,10 @@ const ProductRail = ({
   emptyActions = null,
 }) => {
   const headingId = useId();
+  /* Wide screens can fit five smaller cards when the rail actually carries
+     five or more dishes; a four-dish rail stays four so no row has a hole. */
+  const wideGrid =
+    variant === "grid" && (products.length >= 5 || (loading && skeletonCount >= 5));
 
   return (
     <section className={`container ${styles.section}`} aria-labelledby={headingId}>
@@ -154,7 +161,7 @@ const ProductRail = ({
         variant === "list" ? (
           <ListSkeleton count={skeletonCount} />
         ) : (
-          <RailSkeleton count={skeletonCount} />
+          <RailSkeleton count={skeletonCount} wide={wideGrid} />
         )
       ) : error ? (
         <ErrorState
@@ -178,7 +185,7 @@ const ProductRail = ({
           ))}
         </ul>
       ) : (
-        <div className={styles.grid}>
+        <div className={`${styles.grid} ${wideGrid ? styles.gridWide : ""}`.trim()}>
           {products.map((product) => (
             <ProductCard key={product.id} product={product} />
           ))}

@@ -25,7 +25,8 @@ export function useWishlist() {
     staleTime: 60_000,
   });
 
-  const items = wishlist.data?.items || [];
+  /* Deleted products can surface as null entries in an old cached list. */
+  const items = (wishlist.data?.items || []).filter(Boolean);
 
   const add = useMutation({
     mutationFn: (product) => userApi.addToWishlist(product.id),

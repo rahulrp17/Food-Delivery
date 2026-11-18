@@ -60,24 +60,50 @@
 }
 
 /* ---------- Chips over the photo ----------
-   Corner assignments are fixed so they never collide: badges top-left,
-   wishlist top-right, preparation time bottom-left. */
-.badges {
+   Corner assignments are fixed so they never collide: rating + badges
+   top-left, wishlist top-right, preparation time bottom-left. */
+.topChips {
   position: absolute;
   left: 10px;
   top: 10px;
   z-index: 3;
   display: flex;
   flex-wrap: wrap;
+  align-items: flex-start;
   gap: 6px;
   max-width: calc(100% - 68px);
   pointer-events: none;
 }
 
-.badges > span {
+.badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.badges > span,
+.ratingPill {
   border: 1px solid rgb(255 255 255 / 0.4);
   box-shadow: 0 2px 8px rgb(23 18 15 / 0.18);
   backdrop-filter: blur(6px);
+}
+
+.ratingPill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  min-height: 24px;
+  padding: 0 9px;
+  border-radius: var(--radius-full);
+  background: rgb(255 250 243 / 0.92);
+  color: var(--color-text);
+  font-size: var(--text-caption);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.ratingPill svg {
+  color: var(--color-accent);
 }
 
 .discount {
@@ -177,9 +203,10 @@
 }
 
 /* ---------- Body ---------- */
+/* The body stays under the overlay link so a click anywhere on the card
+   opens the dish; `.actions` lifts itself above the overlay again. */
 .body {
   position: relative;
-  z-index: 3;
   display: flex;
   flex: 1;
   flex-direction: column;
@@ -258,20 +285,6 @@
   line-height: 1.5;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
-}
-
-.ratingRow {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  color: var(--color-text);
-  font-size: var(--text-caption);
-  font-weight: 700;
-  font-variant-numeric: tabular-nums;
-}
-
-.ratingRow svg {
-  color: var(--color-accent);
 }
 
 .ratingCount {
@@ -453,8 +466,9 @@
 
 /* ---------- Compact cards ----------
    A phone card in the 2-up grid is ~140-190px wide. Below 220px the
-   editorial composition no longer fits: stack the footer, drop the optional
-   copy and shrink the chips so the name, price and action stay legible. */
+   editorial composition no longer fits: the footer becomes a single line
+   (price left, action right) and the copy and chips shrink so the name,
+   price and action stay legible. */
 @container (max-width: 219px) {
   .body {
     gap: 6px;
@@ -465,14 +479,19 @@
     padding: var(--space-3);
   }
 
-  .badges {
+  .topChips {
     left: 8px;
     top: 8px;
     gap: 4px;
-    max-width: calc(100% - 58px);
+    max-width: calc(100% - 60px);
   }
 
-  .badges > span {
+  .badges {
+    gap: 4px;
+  }
+
+  .badges > span,
+  .ratingPill {
     font-size: var(--text-overline);
     min-height: 21px;
     padding: 0 7px;
@@ -508,13 +527,10 @@
     display: none;
   }
 
-  .ratingRow {
-    font-size: var(--text-overline);
-  }
-
+  /* Price and Add share one line; a wide stepper wraps below it instead of
+     squeezing the price. */
   .footer {
-    flex-direction: column;
-    align-items: stretch;
+    flex-wrap: wrap;
     gap: var(--space-2);
     padding-top: var(--space-2);
   }
@@ -524,19 +540,16 @@
   }
 
   .actions {
-    margin-left: 0;
+    margin-left: auto;
   }
 
   .addToCart {
-    flex: 1;
     min-height: 44px;
     padding: 0 var(--space-3);
   }
 
   .stepper {
-    flex: 1;
     height: 44px;
-    justify-content: space-between;
   }
 
   .stepperBtn {

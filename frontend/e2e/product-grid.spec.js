@@ -14,8 +14,9 @@ import { test, expect } from "@playwright/test";
  *   1024-1439 4 columns
  *   >= 1440   5 columns
  *
- * Product rails never go past four columns, because a four-dish rail would
- * leave a hole in a five-up row.
+ * Product rails stay at four on laptops and widen to five on wide screens
+ * only when they carry five or more dishes, so a four-dish rail never leaves
+ * a hole in a five-up row.
  */
 
 const ADD_BUTTON = 'button[aria-label^="Add "][aria-label$=" to cart"]';
@@ -95,12 +96,14 @@ for (const viewport of viewports) {
   });
 }
 
-test("home rails use 2 / 3 / 4 columns and never five", async ({ browser }) => {
+test("home rails use 2 / 3 / 4 columns and widen to five only on wide screens", async ({
+  browser,
+}) => {
   for (const { width, columns } of [
     { width: 390, columns: 2 },
     { width: 768, columns: 3 },
     { width: 1280, columns: 4 },
-    { width: 1600, columns: 4 },
+    { width: 1600, columns: 5 },
   ]) {
     const context = await browser.newContext({ viewport: { width, height: 900 } });
     const page = await context.newPage();
@@ -125,6 +128,83 @@ test("the add control keeps a 44px touch target in the 2-up phone grid", async (
 
     expect(box).not.toBeNull();
     expect(box.height).toBeGreaterThanOrEqual(43.5);
+  } finally {
+    await context.close();
+  }
+});
+
+test("the rating sits over the top-left of the photo", async ({ browser }) => {
+  const context = await browser.newContext({ viewport: { width: 1280, height: 900 } });
+  const page = await context.newPage();
+
+  try {
+    await page.goto("/menu");
+    const rating = page.locator('[aria-label^="Rated "]').first();
+    await expect(rating).toBeVisible({ timeout: 30_000 });
+    await rating.scrollIntoViewIfNeeded();
+
+    const geometry = await rating.evaluate((element) => {
+      const box = element.getBoundingClientRect();
+      const card = element.closest("article").getBoundingClientRect();
+      return {
+        left: box.left - card.left,
+        top: box.top - card.top,
+        cardWidth: card.width,
+        cardHeight: card.height,
+      };
+    });
+
+    expect(geometry.left).toBeLessThan(geometry.cardWidth * 0.12);
+    expect(geometry.top).toBeLessThan(geometry.cardHeight * 0.12);
+  } finally {
+    await context.close();
+  }
+});
+
+test("the price and Add share a line on a 2-up phone card", async ({ browser }) => {
+  const context = await browser.newContext({ viewport: { width: 390, height: 844 } });
+  const page = await context.newPage();
+
+  try {
+    await page.goto("/menu");
+    const add = page.locator(ADD_BUTTON).first();
+    await expect(add).toBeVisible({ timeout: 30_000 });
+
+    const alignment = await add.evaluate((button) => {
+      let footer = button.parentElement;
+      while (footer && getComputedStyle(footer).display !== "flex") {
+        footer = footer.parentElement;
+      }
+      const price = footer.firstElementChild.getBoundingClientRect();
+      const action = button.parentElement.getBoundingClientRect();
+      return {
+        priceCenter: price.top + price.height / 2,
+        actionCenter: action.top + action.height / 2,
+      };
+    });
+
+    expect(Math.abs(alignment.priceCenter - alignment.actionCenter)).toBeLessThan(8);
+  } finally {
+    await context.close();
+  }
+});
+
+test("the whole card opens the dish details", async ({ browser }) => {
+  const context = await browser.newContext({ viewport: { width: 1280, height: 900 } });
+  const page = await context.newPage();
+
+  try {
+    await page.goto("/menu");
+    const card = page.locator("article").first();
+    await expect(page.locator(ADD_BUTTON).first()).toBeVisible({ timeout: 30_000 });
+
+    const heading = card.locator("h2, h3").first();
+    await heading.scrollIntoViewIfNeeded();
+    const box = await heading.boundingBox();
+    expect(box).not.toBeNull();
+
+    await page.mouse.click(box.x + 4, box.y + box.height / 2);
+    await expect(page).toHaveURL(/\/product\/[^/]+$/);
   } finally {
     await context.close();
   }

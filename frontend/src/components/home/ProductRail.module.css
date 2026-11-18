@@ -234,13 +234,19 @@
   }
 }
 
-/* Rails never go past four columns: they carry four to eight dishes and a
-   five-up row would leave a visible hole under a four-dish rail. */
 @media (min-width: 1024px) {
   .grid,
   .skeletonGrid {
     grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: var(--space-5);
+  }
+}
+
+/* A rail with five or more dishes widens to five smaller cards on wide
+   screens. Four-dish rails stay at four so no row is left with a hole. */
+@media (min-width: 1440px) {
+  .gridWide {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
   }
 }
 

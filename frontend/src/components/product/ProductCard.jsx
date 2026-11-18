@@ -96,19 +96,39 @@ const ProductCard = ({ product, dense = false, headingLevel = "h3" }) => {
           imageClassName={styles.imageEl}
         />
 
-        {statusBadge || discountPercent > 0 ? (
-          <div className={styles.badges}>
-            {statusBadge ? (
-              <Badge tone={statusBadge.tone}>{statusBadge.label}</Badge>
-            ) : null}
-            {discountPercent > 0 ? (
-              <span className={styles.discount}>
-                <Icon name="tag" size={11} />
-                {discountPercent}% off
+        <div className={styles.topChips}>
+          {product.ratingCount > 0 ? (
+            <span
+              className={styles.ratingPill}
+              role="img"
+              aria-label={`Rated ${product.ratingAvg.toFixed(1)} out of 5 from ${
+                product.ratingCount === 1 ? "1 review" : `${product.ratingCount} reviews`
+              }`}
+            >
+              <Icon name="star-filled" size={11} />
+              <span>{product.ratingAvg.toFixed(1)}</span>
+              <span className={styles.ratingCount}>
+                ({product.ratingCount > 999
+                  ? `${(product.ratingCount / 1000).toFixed(1)}k`
+                  : product.ratingCount})
               </span>
-            ) : null}
-          </div>
-        ) : null}
+            </span>
+          ) : null}
+
+          {statusBadge || discountPercent > 0 ? (
+            <div className={styles.badges}>
+              {statusBadge ? (
+                <Badge tone={statusBadge.tone}>{statusBadge.label}</Badge>
+              ) : null}
+              {discountPercent > 0 ? (
+                <span className={styles.discount}>
+                  <Icon name="tag" size={11} />
+                  {discountPercent}% off
+                </span>
+              ) : null}
+            </div>
+          ) : null}
+        </div>
 
         <button
           type="button"
@@ -152,22 +172,6 @@ const ProductCard = ({ product, dense = false, headingLevel = "h3" }) => {
 
         {product.shortDescription ? (
           <p className={styles.description}>{product.shortDescription}</p>
-        ) : null}
-
-        {product.ratingCount > 0 ? (
-          <span
-            className={styles.ratingRow}
-            role="img"
-            aria-label={`Rated ${product.ratingAvg.toFixed(1)} out of 5 from ${
-              product.ratingCount === 1 ? "1 review" : `${product.ratingCount} reviews`
-            }`}
-          >
-            <Icon name="star-filled" size={12} />
-            <span>{product.ratingAvg.toFixed(1)}</span>
-            <span className={styles.ratingCount}>
-              ({product.ratingCount > 999 ? `${(product.ratingCount / 1000).toFixed(1)}k` : product.ratingCount})
-            </span>
-          </span>
         ) : null}
 
         <div className={styles.footer}>
