@@ -488,7 +488,7 @@ const run = async () => {
     const firstDish = DISHES.find((dish) => dish.category === category.slug);
     if (!firstDish) continue;
 
-    doc.image = `/images/food_${firstDish.image}.png`;
+    doc.image = `/images/food_${firstDish.image}.webp`;
     await doc.save();
   }
 
