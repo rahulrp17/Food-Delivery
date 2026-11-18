@@ -738,17 +738,28 @@ a.infoCard:hover {
   .cta {
     padding: var(--space-6);
     margin-top: var(--space-12);
+    margin-bottom: 10px;
   }
 
   .ctaActions {
     width: 100%;
   }
+    .values{
+margin-bottom: 10px;
+}
+  
 }
 
 @media (max-width: 479px) {
   .stats {
     grid-template-columns: minmax(0, 1fr);
   }
+  .cta{
+    margin-bottom: 10px;
+  }
+  .values{
+margin-bottom: 10px;
+}
 }
 
 @media (prefers-reduced-motion: reduce) {
