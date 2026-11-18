@@ -15,19 +15,6 @@
   gap: var(--space-3);
 }
 
-.skeletonCard {
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-  border: 1px solid var(--color-border-subtle);
-  border-radius: var(--radius-lg);
-  background: var(--color-surface);
-}
-
-.skeletonCard > .skeleton {
-  border-radius: 0;
-}
-
 .skeletonBody {
   display: flex;
   flex-direction: column;
@@ -212,10 +199,17 @@
 }
 
 /* ---------- Responsive ---------- */
+@media (max-width: 359px) {
+  .grid,
+  .skeletonGrid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
 @media (min-width: 768px) {
   .grid,
   .skeletonGrid {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: var(--space-4);
   }
 
@@ -240,10 +234,12 @@
   }
 }
 
-@media (min-width: 1200px) {
+/* Rails never go past four columns: they carry four to eight dishes and a
+   five-up row would leave a visible hole under a four-dish rail. */
+@media (min-width: 1024px) {
   .grid,
   .skeletonGrid {
-    grid-template-columns: repeat(5, minmax(0, 1fr));
+    grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: var(--space-5);
   }
 }

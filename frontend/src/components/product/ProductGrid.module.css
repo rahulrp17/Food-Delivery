@@ -4,16 +4,31 @@
   gap: var(--space-3);
 }
 
-/* Tablet: four cards across. */
+/* A 320px phone cannot hold two readable cards; give it one. */
+@media (max-width: 359px) {
+  .grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* Tablet: three cards across. */
 @media (min-width: 768px) {
   .grid {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: var(--space-4);
   }
 }
 
-/* Desktop: five cards across so the catalogue reads like a menu board. */
-@media (min-width: 1200px) {
+/* Laptop: four cards across. */
+@media (min-width: 1024px) {
+  .grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: var(--space-5);
+  }
+}
+
+/* Desktop: five cards only once the container is wide enough. */
+@media (min-width: 1440px) {
   .grid {
     grid-template-columns: repeat(5, minmax(0, 1fr));
     gap: var(--space-5);
@@ -23,7 +38,7 @@
 /* ---------- Dense variant ----------
    Used by the menu, which lists the whole catalogue and benefits from
    tighter gutters than the editorial rails. The column counts stay in step
-   with the base grid (2 / 4 / 5). */
+   with the base grid. */
 .dense {
   gap: var(--space-2);
 }
@@ -34,7 +49,13 @@
   }
 }
 
-@media (min-width: 1200px) {
+@media (min-width: 1024px) {
+  .dense {
+    gap: var(--space-4);
+  }
+}
+
+@media (min-width: 1440px) {
   .dense {
     gap: var(--space-4);
   }

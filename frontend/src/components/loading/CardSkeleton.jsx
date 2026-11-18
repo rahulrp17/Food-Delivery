@@ -1,14 +1,17 @@
 import { Skeleton, TextSkeleton } from "./Skeleton";
 import "./loading.css";
 
-/** A product card placeholder: image, title, description, price and action. */
+/** A product card placeholder that mirrors the real card's geometry. */
 export function ProductCardSkeleton() {
   return (
     <div className="ld-product-card" aria-hidden="true">
       <span className="skeleton ld-product-media" />
       <div className="ld-product-body">
-        <TextSkeleton lines={2} lastLineWidth="45%" />
-        <span className="skeleton ld-line-sm" style={{ width: "85%" }} />
+        <span className="skeleton ld-line-sm" style={{ width: "36%" }} />
+        <TextSkeleton lines={2} lastLineWidth="58%" />
+        <span className="skeleton ld-line-sm" style={{ width: "86%" }} />
+        <span className="skeleton ld-line-sm" style={{ width: "62%" }} />
+        <span className="skeleton ld-line-sm" style={{ width: "34%" }} />
         <div className="ld-product-foot">
           <span className="skeleton ld-price" />
           <span className="skeleton ld-btn" />

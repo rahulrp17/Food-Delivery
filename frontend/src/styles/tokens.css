@@ -5,7 +5,7 @@
    Visual direction: "Food Delivery / On-Demand" — an appetising
    tomato-red brand on a warm cream ground, with a saffron-gold accent
    for CTAs and highlights, and a culinary serif (Playfair Display SC)
-   over a grotesque body face (Karla). See UI_UX_AUDIT.md §7 and
+   over a geometric body face (Manrope). See UI_UX_AUDIT.md §7 and
    design-system/foodie/MASTER.md.
    ============================================================ */
 
@@ -122,9 +122,9 @@
 
   /* ---------- Typography ---------- */
   /* Playfair Display SC is the culinary display face (small caps by
-     default); Karla carries body copy and UI labels. */
+     default); Manrope carries body copy and UI labels. */
   --font-display: "Playfair Display SC", "Plus Jakarta Sans", Georgia, "Times New Roman", serif;
-  --font-body: "Karla", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-body: "Manrope", system-ui, -apple-system, "Segoe UI", sans-serif;
   --font-mono: ui-monospace, "SFMono-Regular", "Menlo", monospace;
   --font-feature-body: "calt";
   --font-feature-price: "tnum";

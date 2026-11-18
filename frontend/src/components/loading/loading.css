@@ -247,7 +247,8 @@
   overflow: hidden;
   background: var(--color-surface);
   border: 1px solid var(--color-border);
-  border-radius: var(--radius-lg);
+  border-radius: calc(var(--radius-md) + 8px);
+  box-shadow: var(--shadow-xs);
 }
 
 .ld-product-media {
@@ -258,8 +259,9 @@
 
 .ld-product-body {
   display: flex;
+  flex: 1;
   flex-direction: column;
-  gap: var(--space-3);
+  gap: var(--space-2);
   padding: var(--space-4);
 }
 
@@ -268,19 +270,21 @@
   align-items: center;
   justify-content: space-between;
   gap: var(--space-3);
-  margin-top: var(--space-1);
+  margin-top: auto;
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--color-border-subtle);
 }
 
 .ld-price {
   width: 4.5rem;
-  height: 1.125rem;
+  height: 1.25rem;
   border-radius: var(--radius-sm);
 }
 
 .ld-btn {
-  width: 6.5rem;
-  height: 2.25rem;
-  border-radius: var(--radius-md);
+  width: 5.5rem;
+  height: 2.5rem;
+  border-radius: var(--radius-full);
 }
 
 /* ---------- Order card ---------- */

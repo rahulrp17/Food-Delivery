@@ -8,21 +8,14 @@ import ErrorState from "../ui/ErrorState";
 import Icon from "../ui/Icon";
 import SmartImage from "../ui/SmartImage";
 import ProductCard from "../product/ProductCard";
+import { ProductCardSkeleton } from "../loading";
 import SectionHeading from "./SectionHeading";
 import styles from "./ProductRail.module.css";
 
 const RailSkeleton = ({ count = 4 }) => (
   <div className={styles.skeletonGrid} aria-busy="true">
     {Array.from({ length: count }).map((_, index) => (
-      <div className={styles.skeletonCard} key={index} aria-hidden="true">
-        <span className="skeleton" style={{ aspectRatio: "4 / 3" }} />
-        <div className={styles.skeletonBody}>
-          <span className="skeleton" style={{ width: "42%", height: "0.625rem" }} />
-          <span className="skeleton" style={{ width: "82%", height: "1.125rem" }} />
-          <span className="skeleton" style={{ width: "100%", height: "0.75rem" }} />
-          <span className="skeleton" style={{ width: "34%", height: "1.25rem" }} />
-        </div>
-      </div>
+      <ProductCardSkeleton key={index} />
     ))}
   </div>
 );

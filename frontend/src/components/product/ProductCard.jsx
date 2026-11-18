@@ -1,7 +1,8 @@
-import { Link } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { motion, useReducedMotion } from "motion/react";
-import { deliveryWindow, formatINR } from "../../lib/format";
+import { formatINR } from "../../lib/format";
 import { useCart } from "../../hooks/useCart";
+import { useWishlist } from "../../hooks/useWishlist";
 import Badge from "../ui/Badge";
 import Icon from "../ui/Icon";
 import SmartImage from "../ui/SmartImage";
@@ -15,6 +16,9 @@ import styles from "./ProductCard.module.css";
  */
 const ProductCard = ({ product, dense = false, headingLevel = "h3" }) => {
   const { addItem, isAdding, items, updateQuantity, removeItem, isUpdating } = useCart();
+  const wishlist = useWishlist();
+  const navigate = useNavigate();
+  const location = useLocation();
   const reduceMotion = useReducedMotion();
   const Heading = headingLevel;
 
@@ -23,6 +27,9 @@ const ProductCard = ({ product, dense = false, headingLevel = "h3" }) => {
   const inCartQuantity = inCart?.quantity || 0;
   const cartBusy = isUpdating && inCartQuantity > 0;
 
+  const saved = wishlist.isWishlisted(product.id);
+  const wishlistBusy = wishlist.isPendingFor(product.id);
+
   const discountPercent =
     product.compareAtPricePaise > product.pricePaise
       ? Math.round(
@@ -30,23 +37,30 @@ const ProductCard = ({ product, dense = false, headingLevel = "h3" }) => {
         )
       : 0;
 
-  const badges = [];
+  const prepMinutes = Number(product.prepTimeMinutes);
+  const prepTime = Number.isFinite(prepMinutes) && prepMinutes > 0 ? Math.round(prepMinutes) : null;
 
-  if (product.isBestseller) {
-    badges.push(<Badge key="bestseller" tone="bestseller">Bestseller</Badge>);
-  } else if (product.isNew) {
-    badges.push(<Badge key="new" tone="new">New</Badge>);
-  }
-
-  if (soldOut) {
-    badges.push(<Badge key="soldout" tone="soldOut">Sold out</Badge>);
-  }
+  const statusBadge = soldOut
+    ? { tone: "soldOut", label: "Sold out" }
+    : product.isBestseller
+      ? { tone: "bestseller", label: "Bestseller" }
+      : product.isNew
+        ? { tone: "new", label: "New" }
+        : null;
 
   const handleAddToCart = (event) => {
     event.preventDefault();
     event.stopPropagation();
     if (!soldOut) {
       addItem(product.id, 1);
+    }
+  };
+
+  const handleWishlist = (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+    if (wishlist.toggle(product) === "auth") {
+      navigate("/login", { state: { from: location } });
     }
   };
 
@@ -82,31 +96,40 @@ const ProductCard = ({ product, dense = false, headingLevel = "h3" }) => {
           imageClassName={styles.imageEl}
         />
 
-        <span className={styles.scrim} aria-hidden="true" />
-
-        {badges.length ? <div className={styles.badges}>{badges.slice(0, 1)}</div> : null}
-
-        {discountPercent > 0 ? (
-          <span className={styles.discount}>
-            <Icon name="tag" size={12} />
-            {discountPercent}% off
-          </span>
+        {statusBadge || discountPercent > 0 ? (
+          <div className={styles.badges}>
+            {statusBadge ? (
+              <Badge tone={statusBadge.tone}>{statusBadge.label}</Badge>
+            ) : null}
+            {discountPercent > 0 ? (
+              <span className={styles.discount}>
+                <Icon name="tag" size={11} />
+                {discountPercent}% off
+              </span>
+            ) : null}
+          </div>
         ) : null}
 
-        {product.ratingCount > 0 ? (
-          <span className={styles.ratingPill}>
-            <Icon name="star-filled" size={12} />
-            <span className={styles.ratingValue}>{product.ratingAvg.toFixed(1)}</span>
-            <span className={styles.ratingCount}>
-              ({product.ratingCount > 999 ? `${(product.ratingCount / 1000).toFixed(1)}k` : product.ratingCount})
-            </span>
+        <button
+          type="button"
+          className={`${styles.wishlist} ${saved ? styles.wishlistSaved : ""}`.trim()}
+          onClick={handleWishlist}
+          disabled={wishlistBusy}
+          aria-pressed={saved}
+          aria-label={
+            saved ? `Remove ${product.name} from wishlist` : `Save ${product.name} to wishlist`
+          }
+          title={saved ? "Remove from wishlist" : "Save to wishlist"}
+        >
+          <Icon name="heart" size={17} />
+        </button>
+
+        {prepTime ? (
+          <span className={styles.prepPill} aria-label={`Ready in about ${prepTime} minutes`}>
+            <Icon name="clock" size={11} />
+            {prepTime} min
           </span>
         ) : null}
-
-        <span className={styles.deliveryPill}>
-          <Icon name="clock" size={12} />
-          {deliveryWindow(product.prepTimeMinutes)}
-        </span>
       </div>
 
       <div className={styles.body}>
@@ -123,16 +146,28 @@ const ProductCard = ({ product, dense = false, headingLevel = "h3" }) => {
           <span className={styles.category}>
             {product.category?.name || "Kitchen fresh"}
           </span>
-          <span className={styles.ratingInline}>
-            <Icon name="star-filled" size={12} />
-            {product.ratingAvg.toFixed(1)}
-          </span>
         </div>
 
         <Heading className={styles.title}>{product.name}</Heading>
 
         {product.shortDescription ? (
           <p className={styles.description}>{product.shortDescription}</p>
+        ) : null}
+
+        {product.ratingCount > 0 ? (
+          <span
+            className={styles.ratingRow}
+            role="img"
+            aria-label={`Rated ${product.ratingAvg.toFixed(1)} out of 5 from ${
+              product.ratingCount === 1 ? "1 review" : `${product.ratingCount} reviews`
+            }`}
+          >
+            <Icon name="star-filled" size={12} />
+            <span>{product.ratingAvg.toFixed(1)}</span>
+            <span className={styles.ratingCount}>
+              ({product.ratingCount > 999 ? `${(product.ratingCount / 1000).toFixed(1)}k` : product.ratingCount})
+            </span>
+          </span>
         ) : null}
 
         <div className={styles.footer}>
@@ -197,29 +232,18 @@ const ProductCard = ({ product, dense = false, headingLevel = "h3" }) => {
                 disabled={soldOut || isAdding}
                 aria-label={soldOut ? "Sold out" : `Add ${product.name} to cart`}
                 aria-busy={isAdding || undefined}
-                whileHover={reduceMotion ? undefined : { y: -2 }}
+                whileHover={reduceMotion ? undefined : { y: -1.5 }}
                 whileTap={reduceMotion ? undefined : { scale: 0.97 }}
                 transition={{ duration: 0.15 }}
               >
                 {isAdding ? (
-                  <Icon name="spinner" size={18} className="spinner-animate" />
+                  <Icon name="spinner" size={16} className="spinner-animate" />
                 ) : (
-                  <Icon name="plus" size={18} />
+                  <Icon name="plus" size={16} />
                 )}
                 <span>{isAdding ? "Adding" : "Add"}</span>
               </motion.button>
             )}
-
-            {!dense ? (
-              <Link
-                to={`/product/${product.slug}`}
-                className={styles.view}
-                tabIndex={-1}
-                aria-label={`View ${product.name}`}
-              >
-                <Icon name="arrow-up-right" size={17} />
-              </Link>
-            ) : null}
           </div>
         </div>
       </div>

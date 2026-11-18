@@ -659,7 +659,7 @@ Before implementing Phase 2:
 | Backend tests | `backend: npm test` | 21 files, **120 tests passed** |
 | Frontend lint | `frontend: npm run lint` | **0 errors**, 0 warnings |
 | Frontend build | `frontend: npm run build` | Passed |
-| E2E | `frontend: npm run test:e2e` | 18 Playwright specs / **34 tests passed**: the extended checkout/webhook + admin flow (status update, Orders board, detail drawer, internal-notes save, Settings tabs/payment status, Inventory CSV download, Staff, Activity Log, notification panel), an admin modules flow (coupon create, redemption history with CSV download, delete, mobile drawer navigation), an RBAC flow (support staff creation, limited navigation, route guard, API 403, suspension), products/categories/archive, settings tabs, reviews, customers directory, overview dashboard, order cancellation with refund + restock, coupons (edit, date filters, limits, analytics), the inventory ledger (stock correction, filters, summary, CSV), staff permission overrides with a suspension lockout, and the food-card grid (2/4/5 columns, container-query density, no overflow) |
+| E2E | `frontend: npm run test:e2e` | 17 Playwright spec files / **42 tests passed**: the extended checkout/webhook + admin flow (status update, Orders board, detail drawer, internal-notes save, Settings tabs/payment status, Inventory CSV download, Staff, Activity Log, notification panel), an admin modules flow (coupon create, redemption history with CSV download, delete, mobile drawer navigation), an RBAC flow (support staff creation, limited navigation, route guard, API 403, suspension), products/categories/archive, settings tabs, reviews, customers directory, overview dashboard, order cancellation with refund + restock, coupons (edit, date filters, limits, analytics), the inventory ledger (stock correction, filters, summary, CSV), staff permission overrides with a suspension lockout, and the premium food-card system (column plan at ten viewports, rail cap, Add/heart touch targets, guest wishlist redirect, no overflow) |
 | Live API smoke | Admin session against `localhost:4000` | `/admin/notifications`, `/admin/staff`, `/admin/inventory/logs`, `/admin/audit-logs`, `read-all`, `PATCH /admin/orders/:id/notes`, `PATCH /admin/settings`, `PATCH /auth/profile`, `GET/DELETE /auth/sessions`, `GET /admin/customers/export`, `GET /admin/inventory/export`, `GET /admin/coupons/:id/redemptions`, `PATCH /admin/reviews/:id/report`, `GET /admin/coupons/:id/redemptions/export` (correct headers and filename, invalid date range rejected with 400), and `POST /admin/products/:id/duplicate` (copy created as inactive draft, then deleted) all behave as expected |
 
 ### 15.2 Status against the master prompt
@@ -680,9 +680,9 @@ Before implementing Phase 2:
 | Phase 12 Inventory/Staff/Audit/Notifications | **Done** | Inventory logs + summary + filtered CSV export (E2E: §15.14), staff RBAC management with explicit permission overrides, suspension lockout and nav/route gating (E2E: §15.15), audit log, notification center |
 | Phase 13 Security | **Mostly done** | HttpOnly cookies, CSRF, refresh rotation, bcrypt, rate limits, Zod validation, backend RBAC (`requirePermission`), frontend permission route guard, audit logging, legacy API **removed** (2026-11-16), safe uploads, session listing/revocation; **no 2FA** |
 | Phase 14 State/performance | **Done** | TanStack Query, Zustand, lazy routes, server pagination, hidden-tab polling pause |
-| Phase 15 Animations | **Partial** | CSS transitions/keyframes + `prefers-reduced-motion`; no Framer Motion/Motion dependency |
-| Phase 16 Responsive | **Done** | Breakpoints at 1199/1023/899/767/639/479px, mobile drawer, table-to-card collapse; full admin UI refresh (see 15.5); every admin page, popup, form and the admin login page are premium-styled and responsive down to 360px; storefront food cards use a fixed 2 / 4 / 5 column grid with container-query density (§15.16) |
-| Phase 17 Testing | **Done** | 120 backend unit/integration tests + 18 E2E specs / 34 E2E tests (checkout/admin flow, admin modules coupon CRUD + redemption CSV + mobile nav, RBAC limited nav + route guard + API 403 + suspension, products CRUD + bulk update + delete, categories CRUD + reorder + delete, category drag-and-drop + keyboard reorder, product archive + restore, reviews approve/reply, settings store-info save, settings tabs — hours, delivery & pricing, tax & invoice, delivery estimate, pincodes, notifications, profile, security, **customers directory — search, role/status filters, activity, saved addresses, CSV export, suspend/reactivate, role change and the self-protection guards** (2026-11-16, §15.10), **overview dashboard — KPIs, series table, distribution panels, CSV export, 7/30-day switch and range scoping** (2026-11-16, §15.11), **order cancellation — reason validation, refund badge, restock, inventory log, 409 guards and the customer timeline** (2026-11-16, §15.12), **coupons — create, edit, date-based filters, server-side limits, redemption history and analytics that survive a cancellation** (2026-11-16, §15.13), **inventory ledger - stock correction and adjustment, validation and OUT_OF_STOCK guards, movement table with summary cards, reason filter and CSV export** (2026-11-17, §15.14), **staff administration - explicit permission overrides that replace role defaults, nav and route gating, API 403s, suspension lockout with the inline login error, and reactivation back to role defaults** (2026-11-17, §15.15), **food-card grid - 2 / 4 / 5 columns on mobile / tablet / desktop, container-query card density and no horizontal overflow** (2026-11-17, §15.16) |
+| Phase 15 Animations | **Done** | CSS transitions/keyframes + `motion/react` for card hover/press and rail entrances; `prefers-reduced-motion` disables transform motion |
+| Phase 16 Responsive | **Done** | Breakpoints at 1199/1023/899/767/639/479px, mobile drawer, table-to-card collapse; full admin UI refresh (see 15.5); every admin page, popup, form and the admin login page are premium-styled and responsive down to 360px; storefront food cards run a 1 / 2 / 3 / 4 / 5 plan with a 219px container tier and 44px coarse-pointer targets (§15.18) |
+| Phase 17 Testing | **Done** | 120 backend unit/integration tests + 17 E2E spec files / 42 E2E tests (checkout/admin flow, admin modules coupon CRUD + redemption CSV + mobile nav, RBAC limited nav + route guard + API 403 + suspension, products CRUD + bulk update + delete, categories CRUD + reorder + delete, category drag-and-drop + keyboard reorder, product archive + restore, reviews approve/reply, settings store-info save, settings tabs — hours, delivery & pricing, tax & invoice, delivery estimate, pincodes, notifications, profile, security, **customers directory — search, role/status filters, activity, saved addresses, CSV export, suspend/reactivate, role change and the self-protection guards** (2026-11-16, §15.10), **overview dashboard — KPIs, series table, distribution panels, CSV export, 7/30-day switch and range scoping** (2026-11-16, §15.11), **order cancellation — reason validation, refund badge, restock, inventory log, 409 guards and the customer timeline** (2026-11-16, §15.12), **coupons — create, edit, date-based filters, server-side limits, redemption history and analytics that survive a cancellation** (2026-11-16, §15.13), **inventory ledger - stock correction and adjustment, validation and OUT_OF_STOCK guards, movement table with summary cards, reason filter and CSV export** (2026-11-17, §15.14), **staff administration - explicit permission overrides that replace role defaults, nav and route gating, API 403s, suspension lockout with the inline login error, and reactivation back to role defaults** (2026-11-17, §15.15), **premium food-card system - 1 / 2 / 3 / 4 / 5 plan from 320 to 1920px, rail cap, 44px Add/heart targets and the guest wishlist redirect** (2026-11-18, §15.18) |
 
 ### 15.3 Remaining gaps (prioritized)
 
@@ -1071,6 +1071,8 @@ The analytics aggregated `$discountPaise`, but the discount is stored at `pricin
 | Full E2E suite | 17 specs / **28 tests passed** |
 ### 15.16 Food card grid: 2 / 4 / 5 columns
 
+> Superseded by §15.18: the final plan is 1 / 2 / 3 / 4 / 5 with rails capped at 4.
+
 **What changed**
 
 The storefront previously used a fluid column plan (1 column under 400px, 2 at 400px, 3 at 768px, 4 at 1200px) with a separate dense variant for the menu (3 / 4 / 5). That left phone cards full-width and desktop cards uneven between the menu, search and the home rails. Cards are now on one fixed plan across the whole storefront:
@@ -1114,6 +1116,8 @@ No JS measuring, no resize listeners, and no duplicate DOM per breakpoint. The `
 | `frontend/e2e/product-grid.spec.js` | New spec pinning the plan and guarding overflow. |
 ### 15.17 Premium storefront food card
 
+> Superseded by §15.18: overlays, wishlist, type and touch targets were rebuilt in the final pass.
+
 **What changed**
 
 After the grid pass the cards were on one column plan but still read as a plain e‑commerce tile: flat photo, text below, single Add button. The card is now the storefront's premium surface while keeping every DOM hook the tests and flows rely on (`aria-label^="Add "`, stepper, overlay link, heading levels):
@@ -1141,3 +1145,73 @@ After the grid pass the cards were on one column plan but still read as a plain 
 | `frontend/src/components/product/ProductCard.module.css` | Premium surfaces: scrim gradient, glass chips (badges, discount ribbon with tag icon, rating pill, delivery pill), tomato gradient Add CTA with shine sweep, hover lift, container-query compact composition |
 | `frontend/e2e/product-grid.spec.js` | Unchanged; pinning still passes all 6 assertions |
 | `frontend/src/components/product/ProductGrid.module.css`, `frontend/src/components/home/ProductRail.module.css` | Unchanged; grid plan stays 2 / 4 / 5 across mobile / tablet / desktop |
+
+**Superseded by §15.18.** The final column plan, card geometry and verification are documented there.
+
+### 15.18 Premium food card rebuild (final pass)
+
+**What changed**
+
+The card system from §15.16/§15.17 was rebuilt against the final brief. The previous pass leaned on overlay chips (rating pill, delivery pill, scrim) that crowded the photo on small cards and used a 2/4/5 plan. The card is now an editorial food tile with one fixed overlay per corner and a deliberate column plan across the whole storefront.
+
+| Viewport | Menu / search | Home rails |
+| --- | --- | --- |
+| `< 360px` | 1 | 1 |
+| `360-767px` | 2 | 2 |
+| `768-1023px` | 3 | 3 |
+| `1024-1439px` | 4 | 4 |
+| `>= 1440px` | 5 | 4 (capped) |
+
+**Image overlays**
+
+- Status badge top-left with priority **Sold out > Bestseller > New**; a real discount chip (`compareAtPricePaise > pricePaise`) sits beside it with a tag icon. At most two chips render.
+- Glass wishlist heart top-right: 38px on mouse devices, 44px on coarse pointers (34px visually in the compact tier before the pointer rule). `aria-pressed` reflects the saved state, the icon fills when saved, and a guest click routes to `/login` (`state.from` preserved).
+- Prep-time pill bottom-left from the real `prepTimeMinutes` (omitted at 0). No invented data.
+
+**Body and action**
+
+- Diet mark + category overline, 2-line clamped display title, 2-line clamped `shortDescription` (hidden in the compact tier), star rating row only when `ratingCount > 0` (`role="img"` with a spoken label), hairline footer with price + compare-at strike.
+- Tomato gradient Add (40px mouse / 44px touch) with plus icon, hover shine and press scale; in-cart becomes a 40px/48px stepper with the remove-at-one behavior. Sold-out cards desaturate and disable the action.
+- `@container (max-width: 219px)` is the only density switch: stacked footer, hidden description, 16px title, tighter chips.
+
+**Wishlist integration**
+
+`frontend/src/hooks/useWishlist.js` wraps the existing `/users/me/wishlist` API in TanStack Query (`['wishlist']`, enabled only for authenticated users, 60s stale time). Add/remove are optimistic with rollback and invalidation; the card shows a busy state while the mutation is pending. The account page keeps its existing view, so there is one source of truth for the list.
+
+**Typography**
+
+The interface face moved from Karla to **Manrope** (400-800) to match the brief; the display face stays Playfair Display SC, so headings and prices keep the editorial character. `index.html` and `tokens.css` were the only font touchpoints.
+
+**Verification**
+
+| Gate | Result |
+| --- | --- |
+| `frontend: npm run lint` | 0 errors, 0 warnings |
+| `frontend: npm run build` | Passed (index 429.44 kB / 136.61 kB gzip) |
+| E2E `e2e/product-grid.spec.js` | **14 tests passed** (10 viewport plans, rail cap, Add touch target, heart touch target, signed-out redirect) |
+| Full E2E suite | **17 spec files / 42 tests passed** |
+| `frontend: npm run test:responsive` | 4 specs passed (customer/admin overflow sweeps + tap-target advisories across 320-1920px) |
+| Backend | Unchanged (21 files / 120 tests) |
+
+**Verified states** (Playwright screenshots against the live API at 320/360/390/430/600/768/1024/1280/1440/1920px): default card, rated card, discount + bestseller, new + discount, sold out, in-cart stepper (phone), saved wishlist heart after reload, signed-out heart redirect, hover lift/zoom, menu grid + search + home rails + related rail, and the card skeletons on both menu and home while products load.
+
+**Decisions and known gaps**
+
+- Palette tokens were kept (the brief's tomato already matched `--color-primary`); no app-wide restyle.
+- No `Popular` flag exists in the product model, so the badge set is limited to the real status fields; seed data has no compare-at prices, so the discount chip was verified with an intercepted products response.
+- Home rails stay at four columns; a five-up rail looked wrong under a four-dish dataset.
+- The compact tier triggers at a 219px container, so cards stay roomy at 320px (single column) and only the 2-up phone cards stack the footer.
+- Seed/E2E fixtures still create categories named `E2E Category ...`; they appear in the storefront menu and were left alone.
+
+**Files**
+
+| File | Change |
+| --- | --- |
+| `frontend/src/components/product/ProductCard.jsx` / `.module.css` | Card rebuilt: overlays, wishlist heart, prep pill, rating row, footer, Add/stepper, compact tier, coarse-pointer targets |
+| `frontend/src/hooks/useWishlist.js` | New optimistic wishlist hook |
+| `frontend/src/components/product/ProductGrid.module.css` | 1 / 2 / 3 / 4 / 5 plan |
+| `frontend/src/components/home/ProductRail.module.css`, `ProductRail.jsx` | Rails 1 / 2 / 3 / 4 and `ProductCardSkeleton` |
+| `frontend/src/components/loading/CardSkeleton.jsx`, `loading.css` | Skeleton matches the new geometry |
+| `frontend/e2e/product-grid.spec.js` | 14 assertions across the plan, rails, touch targets and guest wishlist |
+| `frontend/index.html`, `frontend/src/styles/tokens.css` | Manrope interface face |
+| `PRODUCT_CARD_QA.md` | Viewport/state QA record and remaining issues |
